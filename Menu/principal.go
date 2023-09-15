@@ -2,11 +2,12 @@ package menu
 
 import (
 	char "ProjetRed/Character"
-	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
 	"time"
+
+	term "github.com/nsf/termbox-go"
 )
 
 func ClearTerminal() {
@@ -19,102 +20,110 @@ func LoadingScreen() {
 
 	ClearTerminal()
 	fmt.Println("                                                                               ")
-	fmt.Println("                                                                               ")
-	fmt.Println("          PROJET  RED                           Antoine de Barbarin            ")
-	fmt.Println("                                                                               ")
-	fmt.Println("                                                      Vito Deriu               ")
+	time.Sleep(time.Millisecond * 70)
+	fmt.Println("          PROJET  RED                                    /ito Deriu            ")
+	time.Sleep(time.Millisecond * 70)
+	fmt.Println("                                                     \\  /\\                     ")
+	time.Sleep(time.Millisecond * 70)
+	fmt.Println("                                                      \\/¯¯\\ntoine de Barbarin  ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("                             -|             |-                                 ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("         -|                  [-_-_-_-_-_-_-_-]                  |-             ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("         [-_-_-_-_-]          |             |          [-_-_-_-_-]             ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("          | o   o |           [  0   0   0  ]           | o   o |              ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("           |     |    -|       |           |       |-    |     |               ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("           |     |_-___-___-___-|         |-___-___-___-_|     |               ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("           |  o  ]              [    0    ]              [  o  |               ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("           |     ]   o   o   o  [ _______ ]  o   o   o   [     | ----__________")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("_____----- |     ]              [ ||||||| ]              [     |               ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("           |     ]              [ ||||||| ]              [     |               ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("       _-_-|_____]--------------[_|||||||_]--------------[_____|-_-_           ")
+	time.Sleep(time.Millisecond * 70)
 	fmt.Println("      ( (__________------------_____________-------------_________) )          ")
-	fmt.Println()
-
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Millisecond * 70)
+	fmt.Println("                                                                               ")
+	time.Sleep(time.Second * 2)
 }
 
 func PrincipalMenu() {
 
 	pointingAt := 1
 	var selectedOption int
-	var displayNumber int
+
+	err := term.Init()
+	if err != nil {
+		panic(err)
+	}
+	defer term.Close()
 
 	ClearTerminal()
 	fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 	fmt.Println("▓                                                                            ▓")
 	fmt.Println("▓                                                                            ▓")
+	fmt.Println("▓              /(                                                            ▓")
+	fmt.Println("▓          O\\\\\\{}============-      Nouvelle partie                          ▓")
+	fmt.Println("▓              \\(                                                            ▓")
+	fmt.Println("▓                                   Écran de chargement                      ▓")
 	fmt.Println("▓                                                                            ▓")
+	fmt.Println("▓                                   Bonus                                    ▓")
 	fmt.Println("▓                                                                            ▓")
+	fmt.Println("▓                                   Crédits                                  ▓")
 	fmt.Println("▓                                                                            ▓")
-	fmt.Println("▓                           ➵  Nouvelle partie                               ▓")
-	fmt.Println("▓                              Paramètres                                    ▓")
-	fmt.Println("▓                              Bonus                                         ▓")
-	fmt.Println("▓                              Crédits                                       ▓")
-	fmt.Println("▓                              Quitter                                       ▓")
-	fmt.Println("▓                                                                            ▓")
-	fmt.Println("▓                                                                            ▓")
-	fmt.Println("▓                                                                            ▓")
-	fmt.Println("▓                                                                            ▓")
+	fmt.Println("▓                                   Quitter                             /    ▓")
+	fmt.Println("▓                                                                   \\  /\\    ▓")
+	fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 	fmt.Println("▓                                                                            ▓")
 	fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	for selectedOption == 0 {
-		for displayNumber == 0 {
-			consoleReader := bufio.NewReaderSize(os.Stdin, 2)
-			input, _ := consoleReader.ReadByte()
-			ascii := input
-
-			switch ascii {
-
-			// Arrow up
-			case 38:
+		switch ev := term.PollEvent(); ev.Type {
+		case term.EventKey:
+			switch ev.Key {
+			case term.KeyArrowUp:
 				if pointingAt > 1 {
 					pointingAt--
-					displayNumber = pointingAt
 				}
-
-				// Arrow down
-			case 40:
+			case term.KeyArrowDown:
 				if pointingAt < 5 {
 					pointingAt++
-					displayNumber = pointingAt
 				}
-
-				//Enter
-			case 13:
+			case term.KeyEnter:
 				selectedOption = pointingAt
-
 			}
+		case term.EventError:
+			panic(ev.Err)
 		}
 
-		switch displayNumber {
+		switch pointingAt {
 		case 1:
 			ClearTerminal()
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓              /(                                                            ▓")
+			fmt.Println("▓          O\\\\\\{}============-      Nouvelle partie                          ▓")
+			fmt.Println("▓              \\(                                                            ▓")
+			fmt.Println("▓                                   Écran de chargement                      ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Bonus                                    ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Crédits                                  ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                           ➵  Nouvelle partie                               ▓")
-			fmt.Println("▓                              Paramètres                                    ▓")
-			fmt.Println("▓                              Bonus                                         ▓")
-			fmt.Println("▓                              Crédits                                       ▓")
-			fmt.Println("▓                              Quitter                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Quitter                             /    ▓")
+			fmt.Println("▓                                                                   \\  /\\    ▓")
+			fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-			displayNumber = 0
 
 		case 2:
 			ClearTerminal()
@@ -122,20 +131,19 @@ func PrincipalMenu() {
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Nouvelle partie                          ▓")
+			fmt.Println("▓              /(                                                            ▓")
+			fmt.Println("▓          O\\\\\\{}============-      Écran de chargement                      ▓")
+			fmt.Println("▓              \\(                                                            ▓")
+			fmt.Println("▓                                   Bonus                                    ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Crédits                                  ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Nouvelle partie                               ▓")
-			fmt.Println("▓                           ➵  Paramètres                                    ▓")
-			fmt.Println("▓                              Bonus                                         ▓")
-			fmt.Println("▓                              Crédits                                       ▓")
-			fmt.Println("▓                              Quitter                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Quitter                             /    ▓")
+			fmt.Println("▓                                                                   \\  /\\    ▓")
+			fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-			displayNumber = 0
 
 		case 3:
 			ClearTerminal()
@@ -143,20 +151,19 @@ func PrincipalMenu() {
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Nouvelle partie                          ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Écran de chargement                      ▓")
+			fmt.Println("▓              /(                                                            ▓")
+			fmt.Println("▓          O\\\\\\{}============-      Bonus                                    ▓")
+			fmt.Println("▓              \\(                                                            ▓")
+			fmt.Println("▓                                   Crédits                                  ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Nouvelle partie                               ▓")
-			fmt.Println("▓                              Paramètres                                    ▓")
-			fmt.Println("▓                           ➵  Bonus                                         ▓")
-			fmt.Println("▓                              Crédits                                       ▓")
-			fmt.Println("▓                              Quitter                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Quitter                             /    ▓")
+			fmt.Println("▓                                                                   \\  /\\    ▓")
+			fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-			displayNumber = 0
 
 		case 4:
 			ClearTerminal()
@@ -164,20 +171,19 @@ func PrincipalMenu() {
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Nouvelle partie                          ▓")
 			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Écran de chargement                      ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Nouvelle partie                               ▓")
-			fmt.Println("▓                              Paramètres                                    ▓")
-			fmt.Println("▓                              Bonus                                         ▓")
-			fmt.Println("▓                           ➵  Crédits                                       ▓")
-			fmt.Println("▓                              Quitter                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Bonus                                    ▓")
+			fmt.Println("▓              /(                                                            ▓")
+			fmt.Println("▓          O\\\\\\{}============-      Crédits                                  ▓")
+			fmt.Println("▓              \\(                                                            ▓")
+			fmt.Println("▓                                   Quitter                             /    ▓")
+			fmt.Println("▓                                                                   \\  /\\    ▓")
+			fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-			displayNumber = 0
 
 		case 5:
 			ClearTerminal()
@@ -185,40 +191,42 @@ func PrincipalMenu() {
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Nouvelle partie                               ▓")
+			fmt.Println("▓                                   Nouvelle partie                          ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Paramètres                                    ▓")
+			fmt.Println("▓                                   Écran de chargement                      ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Bonus                                         ▓")
+			fmt.Println("▓                                   Bonus                                    ▓")
 			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                              Crédits                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓   [O\\\\\\[===============-    Quitter                                       ▓")
-			fmt.Println("▓                                                                            ▓")
-			fmt.Println("▓                                                                            ▓")
+			fmt.Println("▓                                   Crédits                                  ▓")
+			fmt.Println("▓              /(                                                            ▓")
+			fmt.Println("▓          O\\\\\\{}============-      Quitter                             /    ▓")
+			fmt.Println("▓              \\(                                                   \\  /\\    ▓")
+			fmt.Println("▓                                                                    \\/¯¯\\   ▓")
 			fmt.Println("▓                                                                            ▓")
 			fmt.Println("₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-			displayNumber = 0
 		}
 	}
-	ClearTerminal()
-	fmt.Println("Tu as sélectionné le menu nº ", selectedOption)
 
 	switch selectedOption {
 	case 1:
 		var Thorgan char.Character
 		Thorgan.CreateCharacter("Thorgan", "Elfe", 999, 90000, 80000, map[string]int{"Potion de vie": 3, "Épée de la mort": 1, "Hache des ténèbres": 2})
+		ClearTerminal()
 		Thorgan.DisplayInfo()
+		time.Sleep(time.Second * 3)
+		PrincipalMenu()
 
 	case 2:
 		ClearTerminal()
-		fmt.Println("Paramètres...")
-		fmt.Println("En cours de conception")
+		LoadingScreen()
+		PrincipalMenu()
 
 	case 3:
 		ClearTerminal()
 		fmt.Println("Bonus")
 		fmt.Println("Désolé, il n'y a rien pour le moment !")
+		time.Sleep(time.Second * 3)
+		PrincipalMenu()
 
 	case 4:
 		ClearTerminal()
@@ -239,11 +247,14 @@ func PrincipalMenu() {
 		fmt.Println("   ▓                                                                        ▓")
 		fmt.Println("   ▓                                                                        ▓")
 		fmt.Println("   ▓                                                                   Ⓒ Ⓡ  ▓")
-		fmt.Println("   ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+		fmt.Printf("   ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+		time.Sleep(time.Second * 3)
+		PrincipalMenu()
 
 	case 5:
 		ClearTerminal()
 		fmt.Println("Bye bye !")
+		time.Sleep(time.Second * 3)
 		os.Exit(0)
 	}
 }
