@@ -3,6 +3,7 @@ package character
 import (
 	"fmt"
 	"strconv"
+	"time"
 )
 
 type Character struct {
@@ -34,8 +35,8 @@ func CreateRaces() {
 	Dwarf.name = "Nain"
 	Dwarf.hpMax = 120
 
-	races = append(races, Elf)
 	races = append(races, Human)
+	races = append(races, Elf)
 	races = append(races, Dwarf)
 }
 
@@ -96,4 +97,6 @@ func (char Character) DisplayInfo() {
 		fmt.Println("  ▓                                                                            ▓")
 	}
 	fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+	time.Sleep(time.Second * 10)
+	return
 }

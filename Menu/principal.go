@@ -2,6 +2,7 @@ package menu
 
 import (
 	char "ProjetRed/Character"
+	"bufio"
 	"fmt"
 	"os"
 	"os/exec"
@@ -25,11 +26,11 @@ func PresentationCinematic() {
 	for i := 0; i < len(introductionStory); i++ {
 		for j := 1; j <= len(introductionStory[i]); j++ {
 			fmt.Print("\r", string(introductionStory[i][:j]))
-			time.Sleep(time.Millisecond * 45)
+			time.Sleep(time.Millisecond * 40)
 		}
 		if i < len(introductionStory)-1 {
 			fmt.Println()
-			time.Sleep(time.Millisecond * 800)
+			time.Sleep(time.Millisecond * 500)
 		}
 	}
 	time.Sleep(time.Second * 3)
@@ -39,19 +40,20 @@ func PresentationCinematic() {
 func PrincipalMenu() {
 
 	pointingAt := 1
-	var selectedOption int
+	previousPointingAt := 1
+	selectedOption := 0
+	options := 5
 
-	//Initializing keyboard input variables
+	//Initializing keyboard input variables --Use only once!--
 	err := term.Init()
 	if err != nil {
 		panic(err)
 	}
 	defer term.Close()
 
-	principalMenu1()
+	principalMenuDisplay(pointingAt)
 
 	for selectedOption == 0 {
-
 		//Switch case expecting keyboard input
 		switch ev := term.PollEvent(); ev.Type {
 		case term.EventKey:
@@ -61,51 +63,34 @@ func PrincipalMenu() {
 			case term.KeyArrowUp:
 				if pointingAt > 1 {
 					pointingAt--
-				} else {
-					continue
 				}
 
 			//Arrow down
 			case term.KeyArrowDown:
-				if pointingAt < 5 {
+				if pointingAt < options {
 					pointingAt++
-				} else {
-					continue
 				}
 
 			//Enter
 			case term.KeyEnter:
 				selectedOption = pointingAt
 
-			//Autres touches
-			default:
-				continue
 			}
 		case term.EventError:
 			panic(ev.Err)
 		}
 
-		switch pointingAt {
-		case 1:
-			principalMenu1()
-		case 2:
-			principalMenu2()
-		case 3:
-			principalMenu3()
-		case 4:
-			principalMenu4()
-		case 5:
-			principalMenu5()
+		//Change the display only if necessary.
+		if previousPointingAt != pointingAt {
+			previousPointingAt = pointingAt
+			principalMenuDisplay(pointingAt)
 		}
 	}
 
 	switch selectedOption {
 	case 1:
-		fmt.Println("Nouvelle partie")
-		fmt.Println("Désolé, il n'y a rien pour le moment !")
-
-		//À debugguer avant de réactiver
-		// CharacterCreationMenu()
+		ClearTerminal()
+		CharacterCreationMenu()
 
 	case 2:
 		ClearTerminal()
@@ -114,8 +99,6 @@ func PrincipalMenu() {
 
 	case 3:
 		ClearTerminal()
-		// fmt.Println("Bonus")
-		// fmt.Println("Désolé, il n'y a rien pour le moment !")
 		asciiArtTesting()
 		time.Sleep(time.Second * 3)
 		PrincipalMenu()
@@ -128,18 +111,30 @@ func PrincipalMenu() {
 		ClearTerminal()
 		fmt.Println("Bye bye !")
 		time.Sleep(time.Second * 3)
+		ClearTerminal()
 		os.Exit(0)
 	}
 }
 
 func CharacterCreationMenu() {
+
 	var name string
 	var nameRegistered bool
+
 	CharacterCreationDisplayName(false)
+
 	for !nameRegistered {
-		fmt.Scan(&name)
-		fmt.Print(name)
+
+		//To debug, it doesn't show the keyboard entry but does take it into account.
+		scanner := bufio.NewScanner(os.Stdin)
+		scanner.Scan()
+		name = scanner.Text()
+
+		// fmt.Scan(&name)
+		// fmt.Print(name)
+
 		isAlphaNumeric := true
+
 		for _, char := range name {
 			if char < 48 || (char > 57 && char < 65) || (char > 90 && char < 97) || char > 122 {
 				isAlphaNumeric = false
@@ -155,11 +150,13 @@ func CharacterCreationMenu() {
 	nameCharSpaces := char.Spaces(name, 17)
 
 	pointingAt := 1
-	var selectedOption int
+	selectedOption := 0
+	previousPointingAt := 0
+	options := 3
+
+	CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
 
 	for selectedOption == 0 {
-
-		CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
 
 		//Switch case expecting keyboard input
 		switch ev := term.PollEvent(); ev.Type {
@@ -170,29 +167,28 @@ func CharacterCreationMenu() {
 			case term.KeyArrowUp:
 				if pointingAt > 1 {
 					pointingAt--
-				} else {
-					continue
 				}
 
 			//Arrow down
 			case term.KeyArrowDown:
-				if pointingAt < 3 {
+				if pointingAt < options {
 					pointingAt++
-				} else {
-					continue
 				}
 
 			//Enter
 			case term.KeyEnter:
 				selectedOption = pointingAt
-
-			//Autres touches
-			default:
-				continue
 			}
 		case term.EventError:
 			panic(ev.Err)
 		}
+
+		//Change the display only if necessary.
+		if previousPointingAt != pointingAt {
+			previousPointingAt = pointingAt
+			CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
+		}
 	}
 	char.CreateMainCharacter(name, selectedOption).DisplayInfo()
+	PrincipalMenu()
 }
