@@ -71,11 +71,11 @@ func (char Character) DisplayInfo() {
 	fmt.Println("  ▓                                                                            ▓")
 	fmt.Println("  ▓      nom :      ", char.name, nameSpaces, "                                       ▓")
 	fmt.Println("  ▓                                                                            ▓")
-	fmt.Println("  ▓      race :     ", char.class.name, raceSpaces, "                                                     ▓")
+	fmt.Println("  ▓      race :     ", char.class.name, raceSpaces, "                                                    ▓")
 	fmt.Println("  ▓                                                                            ▓")
 	fmt.Println("  ▓      niveau :   ", char.level, levelSpaces, "                                                       ▓")
 	fmt.Println("  ▓                                                                            ▓")
-	fmt.Println("  ▓      HP :       ", char.hp, "/", char.hpMax, hpSpaces, "                                                  ▓")
+	fmt.Println("  ▓      HP :       ", char.hp, "/", char.hpMax, hpSpaces, "                                                 ▓")
 	fmt.Println("  ▓                                                                            ▓")
 	fmt.Println("  ▓      Inventaire :                                                          ▓")
 	i := 0
@@ -98,5 +98,4 @@ func (char Character) DisplayInfo() {
 	}
 	fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 	time.Sleep(time.Second * 10)
-	return
 }
