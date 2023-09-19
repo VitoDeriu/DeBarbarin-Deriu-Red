@@ -7,7 +7,8 @@ import (
 
 func main() {
 	// menu.LoadingScreen()
-	// menu.PresentationCinematic()
+	// menu.LoadingScreen()
+	//menu.PresentationCinematic()
 
 	menu.PrincipalMenu()
 
