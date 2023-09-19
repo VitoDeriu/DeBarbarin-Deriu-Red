@@ -5,6 +5,117 @@ import (
 	"time"
 )
 
+var MenuLateralBar,
+	LogoLittle,
+	Sword,
+	SoldierArt,
+	PrincipalMenuOptions,
+	CharCreationMenuText,
+	ElfDescription,
+	HumanDescription,
+	DwarfDescription,
+	CharMenuText [][]rune
+
+var BottomBar,
+	CharMenuTitleBar,
+	PrincipalMenuTitleBar,
+	CharCreationMenuTitleBar,
+	CharCreationName,
+	CharCreationNameError,
+	SimpleMenuCursor []rune
+
+func CreateDisplayVariables() {
+
+	MenuLateralBar = append(MenuLateralBar, []rune(" /┃\\ "))
+	MenuLateralBar = append(MenuLateralBar, []rune("//┃\\\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\\\┃//"))
+	MenuLateralBar = append(MenuLateralBar, []rune("/\\┃/\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\/┃\\/"))
+	MenuLateralBar = append(MenuLateralBar, []rune("//┃\\\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\\\┃//"))
+	MenuLateralBar = append(MenuLateralBar, []rune("/\\┃/\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\/┃\\/"))
+	MenuLateralBar = append(MenuLateralBar, []rune("//┃\\\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\\\┃//"))
+	MenuLateralBar = append(MenuLateralBar, []rune("/\\┃/\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\/┃\\/"))
+	MenuLateralBar = append(MenuLateralBar, []rune("//┃\\\\"))
+	MenuLateralBar = append(MenuLateralBar, []rune("\\\\┃//"))
+	MenuLateralBar = append(MenuLateralBar, []rune(" \\┃/ "))
+
+	LogoLittle = append(LogoLittle, []rune("    /"))
+	LogoLittle = append(LogoLittle, []rune("\\  /\\"))
+	LogoLittle = append(LogoLittle, []rune(" \\/¯¯\\"))
+
+	Sword = append(Sword, []rune("    /("))
+	Sword = append(Sword, []rune("O\\\\\\{}============-"))
+	Sword = append(Sword, []rune("    \\("))
+
+	SoldierArt = append(SoldierArt, []rune("   .-."))
+	SoldierArt = append(SoldierArt, []rune(" __|=|__"))
+	SoldierArt = append(SoldierArt, []rune("(_/`-`\\_)"))
+	SoldierArt = append(SoldierArt, []rune("//\\___/\\\\"))
+	SoldierArt = append(SoldierArt, []rune("<>/   \\<>"))
+	SoldierArt = append(SoldierArt, []rune(" \\|_._|/"))
+	SoldierArt = append(SoldierArt, []rune("  <_I_>"))
+	SoldierArt = append(SoldierArt, []rune("   |||"))
+	SoldierArt = append(SoldierArt, []rune("  /_|_\\"))
+
+	PrincipalMenuOptions = append(PrincipalMenuOptions, []rune("Nouvelle partie"))
+	PrincipalMenuOptions = append(PrincipalMenuOptions, []rune("Écran de chargement"))
+	PrincipalMenuOptions = append(PrincipalMenuOptions, []rune("Bonus"))
+	PrincipalMenuOptions = append(PrincipalMenuOptions, []rune("Crédits"))
+	PrincipalMenuOptions = append(PrincipalMenuOptions, []rune("Quitter"))
+
+	CharCreationMenuText = append(CharCreationMenuText, []rune("Choix de la race :"))
+	CharCreationMenuText = append(CharCreationMenuText, []rune("Humain"))
+	CharCreationMenuText = append(CharCreationMenuText, []rune("Elfe"))
+	CharCreationMenuText = append(CharCreationMenuText, []rune("Nain"))
+	CharCreationMenuText = append(CharCreationMenuText, []rune("Description :"))
+
+	ElfDescription = append(ElfDescription, []rune("Les elfes se spécialisent dans la magie"))
+	ElfDescription = append(ElfDescription, []rune("et la perception : 80 HP et 120 Mana"))
+
+	HumanDescription = append(HumanDescription, []rune("Les humains sont équilibrés dans leurs statistiques"))
+	HumanDescription = append(HumanDescription, []rune("et leurs compétences : 100 HP et 100 Mana"))
+
+	DwarfDescription = append(DwarfDescription, []rune("Les nains se spécialisent dans l'endurance"))
+	DwarfDescription = append(DwarfDescription, []rune("et leur constitution: 120 HP et 80 Mana"))
+
+	CharMenuText = append(CharMenuText, []rune("Nom :"))
+	CharMenuText = append(CharMenuText, []rune("Race :"))
+	CharMenuText = append(CharMenuText, []rune("Niveau :"))
+	CharMenuText = append(CharMenuText, []rune("Expérience :"))
+	CharMenuText = append(CharMenuText, []rune("HP :"))
+	CharMenuText = append(CharMenuText, []rune("MP :"))
+	CharMenuText = append(CharMenuText, []rune("Force :"))
+	CharMenuText = append(CharMenuText, []rune("Endurance :"))
+	CharMenuText = append(CharMenuText, []rune("Perception :"))
+	CharMenuText = append(CharMenuText, []rune("Prestige :"))
+	CharMenuText = append(CharMenuText, []rune("Pièces d'or :"))
+	CharMenuText = append(CharMenuText, []rune("Compétences :"))
+	CharMenuText = append(CharMenuText, []rune("Équipement :"))
+	CharMenuText = append(CharMenuText, []rune("Points stat"))
+	CharMenuText = append(CharMenuText, []rune("Inventaire"))
+	CharMenuText = append(CharMenuText, []rune("Équipement"))
+	CharMenuText = append(CharMenuText, []rune("Retour"))
+
+	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	CharMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	PrincipalMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	CharCreationMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	CharCreationName = []rune("Nom du personnage (max 20 caractères) :")
+
+	CharCreationNameError = []rune("Erreur : veuillez rentrer un nom valide !")
+
+	SimpleMenuCursor = append(SimpleMenuCursor, '➢')
+
+}
+
 func LoadingScreen() {
 	ClearTerminal()
 	// fmt.Println("                                                                               ")
@@ -55,6 +166,12 @@ func loadingBar() {
 		fmt.Print("\r", int(loadingPercentage), "% ", loadingBar)
 	}
 }
+
+// func displayMenuBars() {
+// 	line := 0
+// 	for index := range MenuLateralBar
+// 	DisplayText(0, line, string(MenuLateralBar[]))
+// }
 
 func principalMenuDisplay(pointingAt int) {
 
@@ -172,7 +289,7 @@ func displayCredits() {
 	fmt.Println(" /┃\\                                                                       /┃\\  ")
 	fmt.Println("//┃\\\\                      /                              PROJET RED      //┃\\\\")
 	fmt.Println("\\\\┃//                     / ITO                                           \\\\┃//")
-	fmt.Println("/\\┃/\\             \\      /\\                            SETEMBRE 2023      /\\┃/\\")
+	fmt.Println("/\\┃/\\             \\      /\\                           SEPTEMBRE 2023      /\\┃/\\")
 	fmt.Println("\\/┃\\/              \\    /  \\                                              \\/┃\\/")
 	fmt.Println("//┃\\\\               \\  /¯¯¯¯\\ NTOINE                                      //┃\\\\")
 	fmt.Println("\\\\┃//                \\/      \\                                            \\\\┃//")

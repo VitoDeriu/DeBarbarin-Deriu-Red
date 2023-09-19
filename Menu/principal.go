@@ -13,6 +13,7 @@ import (
 )
 
 var introductionStory [][]rune
+var MainChar char.Character
 
 func ClearTerminal() {
 	cmd := exec.Command("cmd", "/c", "cls")
@@ -52,6 +53,7 @@ func PrincipalMenu() {
 	}
 	defer term.Close()
 
+	term.Clear(term.ColorDefault, term.ColorDefault)
 	principalMenuDisplay(pointingAt)
 
 	for selectedOption == 0 {
@@ -411,6 +413,9 @@ func TextInput() string {
 				enterKeyIsPressed = true
 
 			case term.KeyBackspace:
+				if column == 13 {
+					continue
+				}
 				column -= rwidth.RuneWidth(name[len(name)-1])
 				DisplayRune(column, line, ' ')
 				DisplayText(0, line, writingLineBefore)
@@ -499,6 +504,6 @@ func CharacterCreationMenu() {
 		}
 	}
 	ClearTerminal()
-	char.CreateMainCharacter(name, selectedOption).DisplayInfo()
+	MainChar = char.CreateMainCharacter(name, selectedOption)
 	PrincipalMenu()
 }
