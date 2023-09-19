@@ -1,21 +1,30 @@
 package character
 
+var Merchant Character
+
 func InitialiseMerchant() {
-	var Merchant Character
 
 	Merchant.name = "Marchant"
 	Merchant.inventory = map[string]int{"Potion de soin": 1, "Truc de fou": 2, "Item de malade": 5}
 }
 
-func () BuyPotion() {
-	if Merchant.inventory["Potion de soin"] > 0 {
+type Item struct {
+	name     string
+	typeItem string
+	price    int
+}
 
-		p.inventory["Potion de soin"] += 1
-		println("Vous avez acheté une potion de soin (Gratuit)")
-		Merchant.inventory["Potion de soin"] -= 1
+func (char *Character) BuyItem(s Item) {
+
+	InitialiseMerchant()
+
+	if Merchant.inventory[s.name] > 0 {
+
+		char.inventory[s.name] += 1
+		println("achat de 1 ", s.name) // il faut ajouter la perte de piece d'or
 
 	} else {
 
-		println("J'ai plus de potion frérot")
+		println("je n'ai plus de ", s.name, " frérot !")
 	}
 }
