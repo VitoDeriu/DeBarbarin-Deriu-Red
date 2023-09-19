@@ -28,3 +28,18 @@ func (char *Character) TakePotion() {
 	}
 	fmt.Println(char.name, " ➵  Je n'ai pas de potion !")
 }
+
+func (char *Character) addInventory(s string) {
+	char.inventory[s] += 1
+}
+
+func (char *Character) removeInventory(s string) {
+	if char.inventory[s] < 0 {
+		char.inventory[s] -= 1
+		if char.inventory[s] == 0 {
+			delete(char.inventory, s)
+		}
+	} else {
+		println("Impossible de retirer un objet que tu ne possède pas")
+	}
+}
