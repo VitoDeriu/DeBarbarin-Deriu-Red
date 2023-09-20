@@ -3,63 +3,63 @@ package character
 //Struct de la création de perso
 
 type Character struct {
-	name       string
-	class      Race
-	level      int
-	xp         int
-	statPoints int
-	hp         int
-	hpMax      int
-	mp         int
-	mpMax      int
-	attack     int
-	defense    int
-	agility    int
-	skills     []Skill
-	inventory  map[string]int
-	gold       int
+	Name       string
+	Class      Race
+	Level      int
+	Xp         int
+	StatPoints int
+	Hp         int
+	HpMax      int
+	Mp         int
+	MpMax      int
+	Attack     int
+	Defense    int
+	Agility    int
+	Skills     []Skill
+	Inventory  map[string]int
+	Gold       int
 }
 
 type Race struct {
-	name        string
-	hpMax       int
-	mpMax       int
-	attack      int
-	defense     int
-	agility     int
-	innateSkill Skill
+	Name        string
+	HpMax       int
+	MpMax       int
+	Attack      int
+	Defense     int
+	Agility     int
+	InnateSkill Skill
 }
 
 type Skill struct {
-	name       string
-	attack     int
-	defense    int
-	statBuffed string
-	buff       int
-	mpCost     int
+	Name       string
+	Attack     int
+	Defense    int
+	StatBuffed string
+	Buff       int
+	MpCost     int
 }
 
 // struct des items
 
 type Potion struct {
-	name         string
-	gainHp       int
-	lossHp       int
-	effectOnTime int //durée de l'effet en seconde
-	price        int
+	Name         string
+	GainHp       int
+	LossHp       int
+	EffectOnTime int //durée de l'effet en seconde
+	Price        int
 }
 
 type Equipement struct {
-	name       string
-	shield     int
-	perception int
-	force      int
-	mpMax      int
-	price      int
+	Name       string
+	Shield     int
+	Perception int
+	Force      int
+	MpMax      int
+	Price      int
 }
 
 type SpellBook struct {
-	name  string
-	skill Skill
-	price int
+	Name  string
+	Skill Skill
+	Price int
 }

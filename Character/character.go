@@ -15,26 +15,26 @@ var dwarfPunch Skill
 var skills []Skill
 
 func CreateRaces() {
-	Elf.name = "Elfe"
-	Elf.hpMax = 80
-	Elf.mpMax = 120
-	Elf.attack = 5
-	Elf.defense = 7
-	Elf.agility = 12
+	Elf.Name = "Elfe"
+	Elf.HpMax = 80
+	Elf.MpMax = 120
+	Elf.Attack = 5
+	Elf.Defense = 7
+	Elf.Agility = 12
 
-	Human.name = "Humain"
-	Human.hpMax = 100
-	Human.mpMax = 100
-	Human.attack = 7
-	Human.defense = 7
-	Human.agility = 10
+	Human.Name = "Humain"
+	Human.HpMax = 100
+	Human.MpMax = 100
+	Human.Attack = 7
+	Human.Defense = 7
+	Human.Agility = 10
 
-	Dwarf.name = "Nain"
-	Dwarf.hpMax = 120
-	Dwarf.mpMax = 80
-	Dwarf.attack = 12
-	Dwarf.defense = 7
-	Dwarf.agility = 5
+	Dwarf.Name = "Nain"
+	Dwarf.HpMax = 120
+	Dwarf.MpMax = 80
+	Dwarf.Attack = 12
+	Dwarf.Defense = 7
+	Dwarf.Agility = 5
 
 	races = append(races, Human)
 	races = append(races, Elf)
@@ -45,32 +45,32 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateRaces()
 	CreateSkills()
 	var MainChar Character
-	MainChar.name = name
-	MainChar.class = races[selectedRace-1]
-	MainChar.level = 1
-	MainChar.xp = 0
-	MainChar.statPoints = 1
-	MainChar.hp = races[selectedRace-1].hpMax / 2
-	MainChar.hpMax = races[selectedRace-1].hpMax
-	MainChar.mp = races[selectedRace-1].mpMax / 2
-	MainChar.mpMax = races[selectedRace-1].mpMax
-	MainChar.attack = races[selectedRace-1].attack
-	MainChar.defense = races[selectedRace-1].defense
-	MainChar.agility = races[selectedRace-1].agility
-	MainChar.skills = append(MainChar.skills, races[selectedRace-1].innateSkill)
-	MainChar.inventory = map[string]int{"épée d'entrainement": 1, "potion de vie": 1}
-	MainChar.gold = 10
+	MainChar.Name = name
+	MainChar.Class = races[selectedRace-1] // la bendo la bendo
+	MainChar.Level = 1
+	MainChar.Xp = 0
+	MainChar.StatPoints = 1
+	MainChar.Hp = races[selectedRace-1].HpMax / 2
+	MainChar.HpMax = races[selectedRace-1].HpMax
+	MainChar.Mp = races[selectedRace-1].MpMax / 2
+	MainChar.MpMax = races[selectedRace-1].MpMax
+	MainChar.Attack = races[selectedRace-1].Attack
+	MainChar.Defense = races[selectedRace-1].Defense
+	MainChar.Agility = races[selectedRace-1].Agility
+	MainChar.Skills = append(MainChar.Skills, races[selectedRace-1].InnateSkill)
+	MainChar.Inventory = map[string]int{"épée d'entrainement": 1, "potion de vie": 1}
+	MainChar.Gold = 10
 	return MainChar
 }
 
 // fonction de mort et respawn. a faire checker a chaque dégat prit
 func (char *Character) Dead() {
-	if char.hp <= 0 {
+	if char.Hp <= 0 {
 		println("Vous avez succombé a vos blessures sale noob")
 		time.Sleep(1 * time.Second)
 		println("Aller, go respawn !")
-		char.hp = char.hpMax / 2
-		println("PV : ", char.hp)
+		char.Hp = char.HpMax / 2
+		println("PV : ", char.Hp)
 	}
 	return
 }
