@@ -12,9 +12,9 @@ type Character struct {
 	hpMax      int
 	mp         int
 	mpMax      int
-	strength   int
-	endurance  int
-	perception int
+	attack     int
+	defense    int
+	agility    int
 	skills     []Skill
 	inventory  map[string]int
 	gold       int
@@ -24,9 +24,9 @@ type Race struct {
 	name        string
 	hpMax       int
 	mpMax       int
-	strength    int
-	endurance   int
-	perception  int
+	attack      int
+	defense     int
+	agility     int
 	innateSkill Skill
 }
 
@@ -39,10 +39,27 @@ type Skill struct {
 	mpCost     int
 }
 
-// Struct du Marchant
+// struct des items
 
-type Item struct {
-	name     string
-	typeItem string
-	price    int
+type Potion struct {
+	name         string
+	gainHp       int
+	lossHp       int
+	effectOnTime int //durée de l'effet en seconde
+	price        int
+}
+
+type Equipement struct {
+	name       string
+	shield     int
+	perception int
+	force      int
+	mpMax      int
+	price      int
+}
+
+type SpellBook struct {
+	name  string
+	skill Skill
+	price int
 }
