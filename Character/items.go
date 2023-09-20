@@ -9,11 +9,11 @@ package character // initialisation de tous les items
 var PotionDeSoin Potion
 var PotionDePoison Potion
 var SpellBookFireBall SpellBook
-var fireBall Skill
+var FireBall Skill
 
-var allPotion []Potion
-var allEquipement []Equipement
-var allSpellBook []SpellBook
+var AllPotion []Potion
+var AllEquipement []Equipement
+var AllSpellBook []SpellBook
 
 func CreateItems() {
 
@@ -27,47 +27,47 @@ func CreateItems() {
 	PotionDePoison.EffectOnTime = 3
 	PotionDePoison.Price = 30
 
-	allPotion = append(allPotion, PotionDeSoin)
-	allPotion = append(allPotion, PotionDePoison)
+	AllPotion = append(AllPotion, PotionDeSoin)
+	AllPotion = append(AllPotion, PotionDePoison)
 
 	//Créations des SpellBook
 	SpellBookFireBall.Name = "Livre de sort : Boule de feu"
-	SpellBookFireBall.Skill = fireBall
+	SpellBookFireBall.Skill = FireBall
 	SpellBookFireBall.Price = 100
 
-	allSpellBook = append(allSpellBook, SpellBookFireBall)
+	AllSpellBook = append(AllSpellBook, SpellBookFireBall)
 
 }
 
 func CreateSkills() {
-	elfPunch.Name = "Coup de poing elfe"
-	elfPunch.Attack = 10
-	elfPunch.Defense = 0
-	elfPunch.StatBuffed = "Agilité"
-	elfPunch.Buff = 5
-	elfPunch.MpCost = 0
+	ElfPunch.Name = "Coup de poing elfe"
+	ElfPunch.Attack = 10
+	ElfPunch.Defense = 0
+	ElfPunch.StatBuffed = "Agilité"
+	ElfPunch.Buff = 5
+	ElfPunch.MpCost = 0
 
-	humanPunch.Name = "Coup de poing humain"
-	humanPunch.Attack = 10
-	humanPunch.Defense = 0
-	humanPunch.StatBuffed = "Attaque"
-	humanPunch.Buff = 5
-	humanPunch.MpCost = 0
+	HumanPunch.Name = "Coup de poing humain"
+	HumanPunch.Attack = 10
+	HumanPunch.Defense = 0
+	HumanPunch.StatBuffed = "Attaque"
+	HumanPunch.Buff = 5
+	HumanPunch.MpCost = 0
 
-	dwarfPunch.Name = "Coup de poing nain"
-	dwarfPunch.Attack = 10
-	dwarfPunch.Defense = 0
-	dwarfPunch.StatBuffed = "Défense"
-	dwarfPunch.Buff = 5
-	dwarfPunch.MpCost = 0
+	DwarfPunch.Name = "Coup de poing nain"
+	DwarfPunch.Attack = 10
+	DwarfPunch.Defense = 0
+	DwarfPunch.StatBuffed = "Défense"
+	DwarfPunch.Buff = 5
+	DwarfPunch.MpCost = 0
 
-	fireBall.Name = "Boule de feu"
-	fireBall.Attack = 20
-	fireBall.MpCost = 10
+	FireBall.Name = "Boule de feu"
+	FireBall.Attack = 20
+	FireBall.MpCost = 10
 
-	skills = append(skills, humanPunch)
-	skills = append(skills, elfPunch)
-	skills = append(skills, dwarfPunch)
-	skills = append(skills, fireBall)
+	Skills = append(Skills, HumanPunch)
+	Skills = append(Skills, ElfPunch)
+	Skills = append(Skills, DwarfPunch)
+	Skills = append(Skills, FireBall)
 
 }

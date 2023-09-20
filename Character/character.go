@@ -7,12 +7,12 @@ import (
 var Elf Race
 var Human Race
 var Dwarf Race
-var races []Race
+var Races []Race
 
-var elfPunch Skill
-var humanPunch Skill
-var dwarfPunch Skill
-var skills []Skill
+var ElfPunch Skill
+var HumanPunch Skill
+var DwarfPunch Skill
+var Skills []Skill
 
 func CreateRaces() {
 	Elf.Name = "Elfe"
@@ -21,7 +21,7 @@ func CreateRaces() {
 	Elf.Attack = 5
 	Elf.Defense = 7
 	Elf.Agility = 12
-	Elf.InnateSkill = elfPunch
+	Elf.InnateSkill = ElfPunch
 
 	Human.Name = "Humain"
 	Human.HpMax = 100
@@ -29,7 +29,7 @@ func CreateRaces() {
 	Human.Attack = 7
 	Human.Defense = 7
 	Human.Agility = 10
-	Human.InnateSkill = humanPunch
+	Human.InnateSkill = HumanPunch
 
 	Dwarf.Name = "Nain"
 	Dwarf.HpMax = 120
@@ -37,11 +37,11 @@ func CreateRaces() {
 	Dwarf.Attack = 12
 	Dwarf.Defense = 7
 	Dwarf.Agility = 5
-	Dwarf.InnateSkill = dwarfPunch
+	Dwarf.InnateSkill = DwarfPunch
 
-	races = append(races, Human)
-	races = append(races, Elf)
-	races = append(races, Dwarf)
+	Races = append(Races, Human)
+	Races = append(Races, Elf)
+	Races = append(Races, Dwarf)
 }
 
 func CreateMainCharacter(name string, selectedRace int) Character {
@@ -49,18 +49,18 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateRaces()
 	var MainChar Character
 	MainChar.Name = name
-	MainChar.Class = races[selectedRace-1] // la bendo la bendo
+	MainChar.Class = Races[selectedRace-1] // la bendo la bendo
 	MainChar.Level = 1
 	MainChar.Xp = 0
 	MainChar.StatPoints = 1
-	MainChar.Hp = races[selectedRace-1].HpMax / 2
-	MainChar.HpMax = races[selectedRace-1].HpMax
-	MainChar.Mp = races[selectedRace-1].MpMax / 2
-	MainChar.MpMax = races[selectedRace-1].MpMax
-	MainChar.Attack = races[selectedRace-1].Attack
-	MainChar.Defense = races[selectedRace-1].Defense
-	MainChar.Agility = races[selectedRace-1].Agility
-	MainChar.Skills = append(MainChar.Skills, races[selectedRace-1].InnateSkill)
+	MainChar.Hp = Races[selectedRace-1].HpMax / 2
+	MainChar.HpMax = Races[selectedRace-1].HpMax
+	MainChar.Mp = Races[selectedRace-1].MpMax / 2
+	MainChar.MpMax = Races[selectedRace-1].MpMax
+	MainChar.Attack = Races[selectedRace-1].Attack
+	MainChar.Defense = Races[selectedRace-1].Defense
+	MainChar.Agility = Races[selectedRace-1].Agility
+	MainChar.Skills = append(MainChar.Skills, Races[selectedRace-1].InnateSkill)
 	MainChar.Inventory = map[string]int{"épée d'entrainement": 1, "potion de vie": 1}
 	MainChar.Gold = 10
 	return MainChar
