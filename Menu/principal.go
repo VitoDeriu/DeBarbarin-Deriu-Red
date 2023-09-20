@@ -54,7 +54,9 @@ func PrincipalMenu() {
 	defer term.Close()
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
-	principalMenuDisplay(pointingAt)
+	DisplayBlankMenu(PRINCIPAL_MENU)
+	DisplayMenuOptions(PRINCIPAL_MENU)
+	DisplayPrincipalCursor(pointingAt, 0)
 
 	for selectedOption == 0 {
 		//Switch case expecting keyboard input
@@ -85,8 +87,10 @@ func PrincipalMenu() {
 
 		//Change the display only if necessary.
 		if previousPointingAt != pointingAt {
+			// DisplayBlankMenu(PRINCIPAL_MENU)
+			// DisplayMenuOptions(PRINCIPAL_MENU)
+			DisplayPrincipalCursor(pointingAt, previousPointingAt)
 			previousPointingAt = pointingAt
-			principalMenuDisplay(pointingAt)
 		}
 	}
 
@@ -104,12 +108,14 @@ func PrincipalMenu() {
 
 	case 3:
 		ClearTerminal()
-		asciiArtTesting()
+		DisplayBlankMenu(PRINCIPAL_MENU)
+		DisplayMenuOptions(PRINCIPAL_MENU)
 		time.Sleep(time.Second * 3)
 		PrincipalMenu()
 
 	case 4:
 		displayCredits()
+		ClearTerminal()
 		PrincipalMenu()
 
 	case 5:
@@ -135,8 +141,6 @@ func DisplayText(column, line int, text string) {
 }
 
 func TextInput() string {
-
-	term.Clear(term.ColorDefault, term.ColorDefault)
 
 	var enterKeyIsPressed bool
 	var name []rune
@@ -413,14 +417,17 @@ func TextInput() string {
 				enterKeyIsPressed = true
 
 			case term.KeyBackspace:
-				if column == 13 {
-					continue
+				if column > 13 {
+					column -= rwidth.RuneWidth(name[len(name)-1])
+					DisplayRune(column, line, ' ')
+					DisplayText(0, line, writingLineBefore)
+					DisplayText(57, line, writingLineAfter)
+					if len(name) < 2 {
+						name = []rune("")
+					} else {
+						name = append(name[:len(name)-2], name[len(name)-2])
+					}
 				}
-				column -= rwidth.RuneWidth(name[len(name)-1])
-				DisplayRune(column, line, ' ')
-				DisplayText(0, line, writingLineBefore)
-				DisplayText(57, line, writingLineAfter)
-				name = append(name[:len(name)-2], name[:len(name)-1]...)
 
 			case term.KeySpace:
 				DisplayRune(column, line, ' ')
@@ -434,7 +441,6 @@ func TextInput() string {
 		case term.EventError:
 			panic(ev.Err)
 		}
-		// term.Clear(term.ColorDefault, term.ColorDefault)
 	}
 	return string(name)
 }
@@ -444,14 +450,17 @@ func CharacterCreationMenu() {
 	var name string
 	var nameRegistered bool
 
-	CharacterCreationDisplayName(false)
+	DisplayBlankMenu(CHAR_CREATION_MENU)
+	CharCreationNameDisplay(false)
 
 	for !nameRegistered {
 
 		name = TextInput()
 
 		if len([]rune(name)) > 20 || len([]rune(name)) < 2 {
-			CharacterCreationDisplayName(true)
+			term.Clear(term.ColorDefault, term.ColorDefault)
+			DisplayBlankMenu(CHAR_CREATION_MENU)
+			CharCreationNameDisplay(true)
 			name = ""
 		} else {
 			chars := []rune(name)
@@ -461,14 +470,16 @@ func CharacterCreationMenu() {
 		}
 	}
 
-	nameCharSpaces := char.Spaces(name, 17)
+	// nameCharSpaces := char.Spaces(name, 17)
 
 	pointingAt := 1
 	selectedOption := 0
-	previousPointingAt := 0
+	previousPointingAt := 1
 	options := 3
 
-	CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
+	CharCreationMenuMainDisplay(name)
+	CharCreationMenuChangingDisplay(pointingAt, 0)
+	// CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
 
 	for selectedOption == 0 {
 
@@ -499,8 +510,9 @@ func CharacterCreationMenu() {
 
 		//Change the display only if necessary.
 		if previousPointingAt != pointingAt {
+			CharCreationMenuChangingDisplay(pointingAt, previousPointingAt)
 			previousPointingAt = pointingAt
-			CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
+			// CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
 		}
 	}
 	ClearTerminal()

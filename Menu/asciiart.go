@@ -1,8 +1,11 @@
 package menu
 
 import (
+	char "ProjetRed/Character"
 	"fmt"
 	"time"
+
+	rwidth "github.com/mattn/go-runewidth"
 )
 
 var MenuLateralBar,
@@ -14,7 +17,8 @@ var MenuLateralBar,
 	ElfDescription,
 	HumanDescription,
 	DwarfDescription,
-	CharMenuText [][]rune
+	CharMenuText,
+	CharMenuMainGrid [][]rune
 
 var BottomBar,
 	CharMenuTitleBar,
@@ -22,7 +26,13 @@ var BottomBar,
 	CharCreationMenuTitleBar,
 	CharCreationName,
 	CharCreationNameError,
-	SimpleMenuCursor []rune
+	CharCreationMenuCursor []rune
+
+const (
+	PRINCIPAL_MENU     = 0
+	CHAR_CREATION_MENU = 1
+	CHAR_MENU          = 2
+)
 
 func CreateDisplayVariables() {
 
@@ -73,32 +83,37 @@ func CreateDisplayVariables() {
 	CharCreationMenuText = append(CharCreationMenuText, []rune("Nain"))
 	CharCreationMenuText = append(CharCreationMenuText, []rune("Description :"))
 
-	ElfDescription = append(ElfDescription, []rune("Les elfes se spécialisent dans la magie"))
-	ElfDescription = append(ElfDescription, []rune("et la perception : 80 HP et 120 Mana"))
+	ElfDescription = append(ElfDescription, []rune("Les elfes se spécialisent dans la magie            "))
+	ElfDescription = append(ElfDescription, []rune("et la perception : 80 HP et 120 Mana     "))
 
 	HumanDescription = append(HumanDescription, []rune("Les humains sont équilibrés dans leurs statistiques"))
 	HumanDescription = append(HumanDescription, []rune("et leurs compétences : 100 HP et 100 Mana"))
 
-	DwarfDescription = append(DwarfDescription, []rune("Les nains se spécialisent dans l'endurance"))
-	DwarfDescription = append(DwarfDescription, []rune("et leur constitution: 120 HP et 80 Mana"))
+	DwarfDescription = append(DwarfDescription, []rune("Les nains se spécialisent dans l'endurance         "))
+	DwarfDescription = append(DwarfDescription, []rune("et leur constitution : 120 HP et 80 Mana "))
 
-	CharMenuText = append(CharMenuText, []rune("Nom :"))
-	CharMenuText = append(CharMenuText, []rune("Race :"))
-	CharMenuText = append(CharMenuText, []rune("Niveau :"))
-	CharMenuText = append(CharMenuText, []rune("Expérience :"))
-	CharMenuText = append(CharMenuText, []rune("HP :"))
-	CharMenuText = append(CharMenuText, []rune("MP :"))
-	CharMenuText = append(CharMenuText, []rune("Force :"))
-	CharMenuText = append(CharMenuText, []rune("Endurance :"))
-	CharMenuText = append(CharMenuText, []rune("Perception :"))
-	CharMenuText = append(CharMenuText, []rune("Prestige :"))
-	CharMenuText = append(CharMenuText, []rune("Pièces d'or :"))
-	CharMenuText = append(CharMenuText, []rune("Compétences :"))
-	CharMenuText = append(CharMenuText, []rune("Équipement :"))
-	CharMenuText = append(CharMenuText, []rune("Points stat"))
 	CharMenuText = append(CharMenuText, []rune("Inventaire"))
 	CharMenuText = append(CharMenuText, []rune("Équipement"))
 	CharMenuText = append(CharMenuText, []rune("Retour"))
+	CharMenuText = append(CharMenuText, []rune("Quitter"))
+	CharMenuText = append(CharMenuText, []rune("Niveau :"))
+	CharMenuText = append(CharMenuText, []rune("Force :"))
+	CharMenuText = append(CharMenuText, []rune("Endurance :"))
+	CharMenuText = append(CharMenuText, []rune("Perception :"))
+	CharMenuText = append(CharMenuText, []rune("Expérience :"))
+	CharMenuText = append(CharMenuText, []rune("HP :"))
+	CharMenuText = append(CharMenuText, []rune("MP :"))
+	CharMenuText = append(CharMenuText, []rune("Or :"))
+	CharMenuText = append(CharMenuText, []rune("Équipement :"))
+	CharMenuText = append(CharMenuText, []rune("Compétences :"))
+
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│ ├────────┬───────────────────────┤"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┬───────────────┤ │"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│├──────────────────────┼─────┼─────┼─────────┼─────┤"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰┴──────────────────────┴─────┴─────┴─────────┴─────╯"))
 
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
@@ -112,13 +127,11 @@ func CreateDisplayVariables() {
 
 	CharCreationNameError = []rune("Erreur : veuillez rentrer un nom valide !")
 
-	SimpleMenuCursor = append(SimpleMenuCursor, '➢')
-
+	CharCreationMenuCursor = []rune("⎯{===-")
 }
 
 func LoadingScreen() {
 	ClearTerminal()
-	// fmt.Println("                                                                               ")
 	time.Sleep(time.Millisecond * 70)
 	fmt.Println("          PROJET  RED                                    /ito Deriu            ")
 	time.Sleep(time.Millisecond * 70)
@@ -167,119 +180,165 @@ func loadingBar() {
 	}
 }
 
-// func displayMenuBars() {
-// 	line := 0
-// 	for index := range MenuLateralBar
-// 	DisplayText(0, line, string(MenuLateralBar[]))
-// }
+func displayTopBar(menuNb int) {
+	var CurrentTopBar []rune
+	switch menuNb {
 
-func principalMenuDisplay(pointingAt int) {
+	case PRINCIPAL_MENU:
+		CurrentTopBar = PrincipalMenuTitleBar
 
-	switch pointingAt {
-	case 1:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//          /(                                                            \\\\┃//")
-		fmt.Println("/\\┃/\\      O\\\\\\{}============-      Nouvelle partie                          /\\┃/\\")
-		fmt.Println("\\/┃\\/          \\(                                                            \\/┃\\/")
-		fmt.Println("//┃\\\\                               Écran de chargement                      //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Bonus                                    /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Crédits                                  //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Quitter                                  /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                    /   \\/┃\\/")
-		fmt.Println("//┃\\\\                                                                \\  /\\   //┃\\\\")
-		fmt.Println("\\\\┃//                                                                 \\/¯¯\\  \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+	case CHAR_CREATION_MENU:
+		CurrentTopBar = CharCreationMenuTitleBar
 
-	case 2:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Nouvelle partie                          /\\┃/\\")
-		fmt.Println("\\/┃\\/          /(                                                            \\/┃\\/")
-		fmt.Println("//┃\\\\      O\\\\\\{}============-      Écran de chargement                      //┃\\\\")
-		fmt.Println("\\\\┃//          \\(                                                            \\\\┃//")
-		fmt.Println("/\\┃/\\                               Bonus                                    /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Crédits                                  //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Quitter                                  /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                    /   \\/┃\\/")
-		fmt.Println("//┃\\\\                                                                \\  /\\   //┃\\\\")
-		fmt.Println("\\\\┃//                                                                 \\/¯¯\\  \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+	case CHAR_MENU:
+		CurrentTopBar = CharMenuTitleBar
 
-	case 3:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Nouvelle partie                          /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Écran de chargement                      //┃\\\\")
-		fmt.Println("\\\\┃//          /(                                                            \\\\┃//")
-		fmt.Println("/\\┃/\\      O\\\\\\{}============-      Bonus                                    /\\┃/\\")
-		fmt.Println("\\/┃\\/          \\(                                                            \\/┃\\/")
-		fmt.Println("//┃\\\\                               Crédits                                  //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Quitter                                  /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                    /   \\/┃\\/")
-		fmt.Println("//┃\\\\                                                                \\  /\\   //┃\\\\")
-		fmt.Println("\\\\┃//                                                                 \\/¯¯\\  \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+	}
+	column := 0
+	for _, char := range CurrentTopBar {
+		DisplayRune(column, 0, char)
+		column += rwidth.RuneWidth(char)
+	}
+}
 
-	case 4:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Nouvelle partie                          /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Écran de chargement                      //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Bonus                                    /\\┃/\\")
-		fmt.Println("\\/┃\\/          /(                                                            \\/┃\\/")
-		fmt.Println("//┃\\\\      O\\\\\\{}============-      Crédits                                  //┃\\\\")
-		fmt.Println("\\\\┃//          \\(                                                            \\\\┃//")
-		fmt.Println("/\\┃/\\                               Quitter                                  /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                    /   \\/┃\\/")
-		fmt.Println("//┃\\\\                                                                \\  /\\   //┃\\\\")
-		fmt.Println("\\\\┃//                                                                 \\/¯¯\\  \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+func displayMenuBars() {
+	for i := range MenuLateralBar {
+		column := 0
+		for _, char := range MenuLateralBar[i] {
+			DisplayRune(column, i+1, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+	for i := range MenuLateralBar {
+		column := 77
+		for _, char := range MenuLateralBar[i] {
+			DisplayRune(column, i+1, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
 
-	case 5:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Nouvelle partie                          /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Écran de chargement                      //┃\\\\")
-		fmt.Println("\\\\┃//                                                                        \\\\┃//")
-		fmt.Println("/\\┃/\\                               Bonus                                    /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                        \\/┃\\/")
-		fmt.Println("//┃\\\\                               Crédits                                  //┃\\\\")
-		fmt.Println("\\\\┃//          /(                                                            \\\\┃//")
-		fmt.Println("/\\┃/\\      O\\\\\\{}============-      Quitter                                  /\\┃/\\")
-		fmt.Println("\\/┃\\/          \\(                                                        /   \\/┃\\/")
-		fmt.Println("//┃\\\\                                                                \\  /\\   //┃\\\\")
-		fmt.Println("\\\\┃//                                                                 \\/¯¯\\  \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+func displayBottomBar() {
+	column := 0
+	for _, char := range BottomBar {
+		DisplayRune(column, 17, char)
+		column += rwidth.RuneWidth(char)
+	}
+}
+
+func displayLogo() {
+	column := 69
+	line := 13
+	for i := range LogoLittle {
+		column = 69
+		for _, char := range LogoLittle[i] {
+			DisplayRune(column, line+i, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displaySoldier() {
+	column := 57
+	line := 3
+	for i := range SoldierArt {
+		column = 57
+		for _, char := range SoldierArt[i] {
+			DisplayRune(column, line+i, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func DisplayBlankMenu(menuNb int) {
+	displayTopBar(menuNb)
+	displayMenuBars()
+	displayBottomBar()
+	if menuNb != CHAR_MENU {
+		displayLogo()
+	}
+	if menuNb == CHAR_CREATION_MENU {
+		displaySoldier()
+	}
+}
+
+func DisplayMenuOptions(menuNb int) {
+	var menuOptions [][]rune
+	switch menuNb {
+	case PRINCIPAL_MENU:
+		menuOptions = PrincipalMenuOptions
+	}
+	column := 36
+	line := 4
+	for i := range menuOptions {
+		column = 36
+		for _, char := range menuOptions[i] {
+			DisplayRune(column, line+(2*i), char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func DisplayPrincipalCursor(option, previousOption int) {
+
+	var cursor [][]rune
+	var column, line int
+	column = 11
+
+	if previousOption != 0 {
+
+		cursor = append(cursor, []rune("      "))
+		cursor = append(cursor, []rune("                   "))
+		cursor = append(cursor, []rune("      "))
+
+		switch previousOption {
+
+		case 1:
+			line = 3
+		case 2:
+			line = 5
+		case 3:
+			line = 7
+		case 4:
+			line = 9
+		case 5:
+			line = 11
+		}
+		for i := range cursor {
+			column = 11
+			for _, char := range cursor[i] {
+				DisplayRune(column, line+i, char)
+				column += rwidth.RuneWidth(char)
+			}
+		}
+
+		previousOption = 0
+
+		DisplayPrincipalCursor(option, previousOption)
+
+	} else {
+
+		switch option {
+
+		case 1:
+			line = 3
+		case 2:
+			line = 5
+		case 3:
+			line = 7
+		case 4:
+			line = 9
+		case 5:
+			line = 11
+		}
+
+		for i := range Sword {
+			column = 11
+			for _, char := range Sword[i] {
+				DisplayRune(column, line+i, char)
+				column += rwidth.RuneWidth(char)
+			}
+		}
 	}
 }
 
@@ -306,138 +365,198 @@ func displayCredits() {
 	time.Sleep(time.Second * 3)
 }
 
-func CharacterCreationDisplayName(err bool) {
-	if !err {
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//   Nom du personnage (max 20 caractères) :             .-.              \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     __|=|__            /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                    (_/`-`\\_)           \\/┃\\/")
-		fmt.Println("//┃\\\\                                                    //\\___/\\\\           //┃\\\\")
-		fmt.Println("\\\\┃//                                                    <>/   \\<>           \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     \\|_._|/            /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                      <_I_>             \\/┃\\/")
-		fmt.Println("//┃\\\\                                                       |||              //┃\\\\")
-		fmt.Println("\\\\┃//                                                      /_|_\\             \\\\┃//")
-		fmt.Println("/\\┃/\\                                                                        /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                   /    \\/┃\\/")
-		fmt.Println("//┃\\\\                                                               \\  /\\    //┃\\\\")
-		fmt.Println("\\\\┃//                                                                \\/¯¯\\   \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-
-	} else {
-
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\   Erreur : veuillez rentrer un nom valide !                            //┃\\\\")
-		fmt.Println("\\\\┃//   Nom du personnage (max 20 caractères) :             .-.              \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     __|=|__            /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                    (_/`-`\\_)           \\/┃\\/")
-		fmt.Println("//┃\\\\                                                    //\\___/\\\\           //┃\\\\")
-		fmt.Println("\\\\┃//                                                    <>/   \\<>           \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     \\|_._|/            /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                      <_I_>             \\/┃\\/")
-		fmt.Println("//┃\\\\                                                       |||              //┃\\\\")
-		fmt.Println("\\\\┃//                                                      /_|_\\             \\\\┃//")
-		fmt.Println("/\\┃/\\                                                                        /\\┃/\\")
-		fmt.Println("\\/┃\\/                                                                   /    \\/┃\\/")
-		fmt.Println("//┃\\\\                                                               \\  /\\    //┃\\\\")
-		fmt.Println("\\\\┃//                                                                \\/¯¯\\   \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-
+func CharCreationNameDisplay(err bool) {
+	column := 8
+	for _, char := range CharCreationName {
+		DisplayRune(column, 3, char)
+		column += rwidth.RuneWidth(char)
+	}
+	if err {
+		column = 8
+		for _, char := range CharCreationNameError {
+			DisplayRune(column, 2, char)
+			column += rwidth.RuneWidth(char)
+		}
 	}
 }
 
-func CharacterCreationDisplayRace(name, spaces string, pointingAt int) {
-	switch pointingAt {
+func CharCreationMenuMainDisplay(name string) {
+
+	DisplayText(13, 5, name)
+
+	var column int
+	var lines = []int{7, 9, 10, 11, 13}
+
+	for i := range CharCreationMenuText {
+
+		switch i {
+
+		case 0, 4:
+			column = 8
+
+		case 1, 2, 3:
+			column = 16
+
+		}
+		for _, char := range CharCreationMenuText[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func CharCreationMenuChangingDisplay(option, previousOption int) {
+
+	column := 7
+	var lines = []int{9, 10, 11}
+
+	DisplayText(column, lines[option-1], string(CharCreationMenuCursor)) //➸
+
+	if previousOption != 0 {
+		DisplayText(column, lines[previousOption-1], "      ")
+	}
+
+	var description [][]rune
+
+	switch option {
+
 	case 1:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//   Nom du personnage (max 20 caractères) :             .-.              \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     __|=|__            /\\┃/\\")
-		fmt.Println("\\/┃\\/       ", name, spaces, "                         (_/`-`\\_)           \\/┃\\/")
-		fmt.Println("//┃\\\\                                                    //\\___/\\\\           //┃\\\\")
-		fmt.Println("\\\\┃//   Choix de la race :                               <>/   \\<>           \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     \\|_._|/            /\\┃/\\")
-		fmt.Println("\\/┃\\/     ➢     Humain                                     <_I_>             \\/┃\\/")
-		fmt.Println("//┃\\\\           Elfe                                        |||              //┃\\\\")
-		fmt.Println("\\\\┃//           Nain                                       /_|_\\             \\\\┃//")
-		fmt.Println("/\\┃/\\                                                                        /\\┃/\\")
-		fmt.Println("\\/┃\\/   Détails :                                                       /    \\/┃\\/")
-		fmt.Println("//┃\\\\          Les humains sont équilibrés dans leurs statistiques  \\  /\\    //┃\\\\")
-		fmt.Println("\\\\┃//          et leurs compétences : 100 HP et 100 Mana             \\/¯¯\\   \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+		description = HumanDescription
 
 	case 2:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//   Nom du personnage (max 20 caractères) :             .-.              \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     __|=|__            /\\┃/\\")
-		fmt.Println("\\/┃\\/       ", name, spaces, "                         (_/`-`\\_)           \\/┃\\/")
-		fmt.Println("//┃\\\\                                                    //\\___/\\\\           //┃\\\\")
-		fmt.Println("\\\\┃//   Choix de la race :                               <>/   \\<>           \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     \\|_._|/            /\\┃/\\")
-		fmt.Println("\\/┃\\/           Humain                                     <_I_>             \\/┃\\/")
-		fmt.Println("//┃\\\\     ➢     Elfe                                        |||              //┃\\\\")
-		fmt.Println("\\\\┃//           Nain                                       /_|_\\             \\\\┃//")
-		fmt.Println("/\\┃/\\                                                                        /\\┃/\\")
-		fmt.Println("\\/┃\\/   Détails :                                                       /    \\/┃\\/")
-		fmt.Println("//┃\\\\          Les elfes se spécialisent dans la magie              \\  /\\    //┃\\\\")
-		fmt.Println("\\\\┃//          et la perception : 80 HP et 120 Mana                  \\/¯¯\\   \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+		description = ElfDescription
 
 	case 3:
-		ClearTerminal()
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-		fmt.Println(" /┃\\                                                                          /┃\\  ")
-		fmt.Println("//┃\\\\                                                                        //┃\\\\")
-		fmt.Println("\\\\┃//   Nom du personnage (max 20 caractères) :             .-.              \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     __|=|__            /\\┃/\\")
-		fmt.Println("\\/┃\\/       ", name, spaces, "                         (_/`-`\\_)           \\/┃\\/")
-		fmt.Println("//┃\\\\                                                    //\\___/\\\\           //┃\\\\")
-		fmt.Println("\\\\┃//   Choix de la race :                               <>/   \\<>           \\\\┃//")
-		fmt.Println("/\\┃/\\                                                     \\|_._|/            /\\┃/\\")
-		fmt.Println("\\/┃\\/           Humain                                     <_I_>             \\/┃\\/")
-		fmt.Println("//┃\\\\           Elfe                                        |||              //┃\\\\")
-		fmt.Println("\\\\┃//     ➢     Nain                                       /_|_\\             \\\\┃//")
-		fmt.Println("/\\┃/\\                                                                        /\\┃/\\")
-		fmt.Println("\\/┃\\/   Détails :                                                       /    \\/┃\\/")
-		fmt.Println("//┃\\\\          Les nains se spécialisent dans l'endurance           \\  /\\    //┃\\\\")
-		fmt.Println("\\\\┃//          et leur constitution: 120 HP et 80 Mana               \\/¯¯\\   \\\\┃//")
-		fmt.Println(" \\┃/                                                                          \\┃/  ")
-		fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+		description = DwarfDescription
+
+	}
+	line := 14
+	column = 16
+	for i := range description {
+		column = 16
+		for _, char := range description[i] {
+			DisplayRune(column, line+i, char)
+			column += rwidth.RuneWidth(char)
+		}
 	}
 }
 
-func asciiArtTesting() {
-	ClearTerminal()
-	fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
-	fmt.Println(" /┃\\                                                                          ◄┃\\")
-	fmt.Println("//┃\\\\                                                                         ◀┃\\\\")
-	fmt.Println("\\\\┃//                                                                         ◢┃//")
-	fmt.Println("/\\┃/\\                                                                         ◥┃/\\")
-	fmt.Println("\\/┃\\/                                                                         ◀┃\\/")
-	fmt.Println("//┃\\\\                                                                         ◄┃\\\\")
-	fmt.Println("\\\\┃//                                                                         ◀┃//")
-	fmt.Println("/\\┃/\\                                                                         ◢┃/\\")
-	fmt.Println("\\/┃\\/                                                                         ◥┃\\/")
-	fmt.Println("//┃\\\\                                                                         ◀┃\\\\")
-	fmt.Println("\\\\┃//                                                                         ◄┃//")
-	fmt.Println("/\\┃/\\                                                                         ◀┃/\\")
-	fmt.Println("\\/┃\\/                                                                         ◢┃\\/")
-	fmt.Println("//┃\\\\                                                                         ◥┃\\\\")
-	fmt.Println("\\\\┃//                                                                         ◀┃//")
-	fmt.Println(" \\┃/                                                                          ◄┃/")
-	fmt.Println("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+func CharMenu(char *char.Character) {
+	DisplayBlankMenu(CHAR_MENU)
+
 }
+
+// ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮
+//                                   │ ├────────┬───────────────────────┤
+// ├─────────────────┬───────────────┧ ╽
+// ├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯
+// ╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮
+//                  │├──────────────────────┼─────┼─────┼─────────┼─────┧
+//                  ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯
+//
+// │
+// ┃
+// ┃
+// ╿
+// │
+//
+// │
+// │
+// │
+// │
+//
+// ┃ ┃
+// ┃ ┃
+// ╿ ╿
+// │ │
+//
+// │
+// │
+// │
+// │
+// │
+//
+// ╽
+// ┃
+// ┃
+// ╿
+// │
+//
+// │┃
+// │┃
+// │╿
+// ││
+// ││
+//
+// │
+// │
+// │
+// │
+// │
+//
+// │
+// │
+// │
+// │
+// │
+//
+// │
+// │
+// │
+// │
+// │
+//
+// │
+// │
+// │
+// │
+// │
+//
+// ┃
+// ┃
+// ╿
+// │
+// │
+//
+// Niveau :
+// Attaque :
+// Défense :
+// Agilité :
+//
+// XP :
+// HP :
+// MP :
+// Or :
+//
+// Tête
+// Torse
+// Mains
+// Jambes
+// Pieds
+//
+// ⎯{==-
+//
+// Inventaire
+// Équipement
+// Retour
+// Quitter
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
+//  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
+//  \\┃// ┟─────────────────┬───────────────┧ ╽ Tête   │ Heaume du chasseur    ╽ \\┃//
+//  /\┃/\ ┃ Niveau :    100 │ XP : 24.785   ┃ ┃ Torse  │ Armure de fantassin   ┃ /\┃/\
+//  \/┃\/ ┃ Attaque :   150 │ HP : 350/400  ┃ ┃ Mains  │ Épée longue en mithril┃ \/┃\/
+//  //┃\\ ╿ Défense :   170 │ MP : 430/600  ╿ ╿ Jambes │ Jambières elfiques    ╿ //┃\\
+//  \\┃// │ Agilité :   275 │ Or : 12.570   │ │ Pieds  │ Chausses légères      │ \\┃//
+//  /\┃/\ ├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯ /\┃/\
+//  \/┃\/ ╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮ \/┃\/
+//  //┃\\ ⎯{==- Inventaire │┟──────────────────────┼─────┼─────┼─────────┼─────┧ //┃\\
+//  \\┃//      (Croissance)│┃ Coup de poing humain │ 240 │ 100 │ Agilité │ 105 ┃ \\┃//
+//  /\┃/\       Équipement │┃ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 ┃ /\┃/\
+//  \/┃\/                  │╿ Coup de poing humain │ 240 │ 100 │ Défense │ 105 ╿ \/┃\/
+//  //┃\\       Retour     ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ //┃\\
+//  \\┃//       Quitter    ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ \\┃//
+//   \┃/                   ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯  \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//
