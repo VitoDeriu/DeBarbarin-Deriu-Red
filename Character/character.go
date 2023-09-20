@@ -41,33 +41,6 @@ func CreateRaces() {
 	races = append(races, Dwarf)
 }
 
-func CreateSkills() {
-	elfPunch.name = "Coup de poing elfe"
-	elfPunch.attack = 10
-	elfPunch.defense = 0
-	elfPunch.statBuffed = "perception"
-	elfPunch.buff = 5
-	elfPunch.mpCost = 0
-
-	humanPunch.name = "Coup de poing humain"
-	humanPunch.attack = 10
-	humanPunch.defense = 0
-	humanPunch.statBuffed = "strength"
-	humanPunch.buff = 5
-	humanPunch.mpCost = 0
-
-	dwarfPunch.name = "Coup de poing nain"
-	dwarfPunch.attack = 10
-	dwarfPunch.defense = 0
-	dwarfPunch.statBuffed = "defense"
-	dwarfPunch.buff = 5
-	dwarfPunch.mpCost = 0
-
-	skills = append(skills, humanPunch)
-	skills = append(skills, elfPunch)
-	skills = append(skills, dwarfPunch)
-}
-
 func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateRaces()
 	CreateSkills()

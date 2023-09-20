@@ -45,7 +45,16 @@ func (char *Character) poisonPot() {
 	} else {
 		println("je n'ai pas de Potion de Poison")
 	}
+}
 
+func (char *Character) SpellBook(s SpellBook) {
+
+	for _, sk := range char.skills {
+		if sk == s.skill {
+			return
+		}
+	}
+	char.skills = append(char.skills, s.skill)
 }
 
 // fonctions pour l'ajout et le retrait d'item dans l'inventaire. Peut servir pour le marchant

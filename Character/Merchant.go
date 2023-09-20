@@ -16,10 +16,20 @@ func DisplayBoutique() {
 	}
 }
 
-func (char *Character) BuyItem(s Item) {
+func (char *Character) BuyPotion(s Potion) {
 
 	if Merchant.inventory[s.name] > 0 {
-		char.addInventory(s)
+		char.addPotion(s)
+		println("achat de 1 ", s.name) // il faut ajouter la perte de piece d'or
+	} else {
+		println("je n'ai plus de ", s.name, " frérot !")
+	}
+}
+
+func (char *Character) BuySpellBook(s SpellBook) {
+
+	if Merchant.inventory[s.name] > 0 {
+		char.addSpellBook(s)
 		println("achat de 1 ", s.name) // il faut ajouter la perte de piece d'or
 	} else {
 		println("je n'ai plus de ", s.name, " frérot !")
