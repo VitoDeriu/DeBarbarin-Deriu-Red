@@ -43,21 +43,21 @@ func CreateSkills() {
 	elfPunch.Name = "Coup de poing elfe"
 	elfPunch.Attack = 10
 	elfPunch.Defense = 0
-	elfPunch.StatBuffed = "perception"
+	elfPunch.StatBuffed = "Agilité"
 	elfPunch.Buff = 5
 	elfPunch.MpCost = 0
 
 	humanPunch.Name = "Coup de poing humain"
 	humanPunch.Attack = 10
 	humanPunch.Defense = 0
-	humanPunch.StatBuffed = "strength"
+	humanPunch.StatBuffed = "Attaque"
 	humanPunch.Buff = 5
 	humanPunch.MpCost = 0
 
 	dwarfPunch.Name = "Coup de poing nain"
 	dwarfPunch.Attack = 10
 	dwarfPunch.Defense = 0
-	dwarfPunch.StatBuffed = "defense"
+	dwarfPunch.StatBuffed = "Défense"
 	dwarfPunch.Buff = 5
 	dwarfPunch.MpCost = 0
 
