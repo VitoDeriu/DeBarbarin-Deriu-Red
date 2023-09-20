@@ -3,6 +3,7 @@ package menu
 import (
 	char "ProjetRed/Character"
 	"fmt"
+	"strconv"
 	"time"
 
 	rwidth "github.com/mattn/go-runewidth"
@@ -494,60 +495,49 @@ func DisplayCharMenuCursor(option, previousOption int) {
 	}
 }
 
-// func displayCharMenuStats(char *char.Character) {
-// 	var column int
-// 	var columns = []int{9, 32, 8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 26, 49, 55, 61, 71, 26, 49, 55, 61, // 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
-// 	var lines = []int{2, 2, 4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, // 13, 13, 13, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15}
-// 	var stats []string
-//
-// 	stats = append(stats, char.name)
-// 	stats = append(stats, char.class.name)
-// 	stats = append(stats, strconv.Itoa(char.level))
-// 	stats = append(stats, strconv.Itoa(char.attack))
-// 	stats = append(stats, strconv.Itoa(char.defense))
-// 	stats = append(stats, strconv.Itoa(char.agility))
-// 	stats = append(stats, strconv.Itoa(char.xp))
-// 	stats = append(stats, strconv.Itoa(char.hp)+"/"+strconv.Itoa(char.hpMax))
-// 	stats = append(stats, strconv.Itoa(char.mp)+"/"+strconv.Itoa(char.mpMax))
-// 	stats = append(stats, strconv.Itoa(char.gold))
-// 	stats = append(stats, "rien")
-// 	stats = append(stats, "rien")
-// 	stats = append(stats, "rien")
-// 	stats = append(stats, "rien")
-// 	stats = append(stats, "rien")
-//
-// 	for _, skill := range char.skills {
-// 		stats = append(stats, skill.name)
-// 		stats = append(stats, strconv.Itoa(skill.attack))
-// 		stats = append(stats, strconv.Itoa(skill.defense))
-// 		stats = append(stats, skill.statBuffed)
-// 		stats = append(stats, strconv.Itoa(skill.buff))
-// 	}
-//
-// 	for i, singleStat := range stats {
-// 		column = columns[i]
-// 		for _, char := range singleStat {
-// 			DisplayRune(column, lines[i], char)
-// 			column += rwidth.RuneWidth(char)
-// 		}
-// 	}
-// }
+func displayCharMenuStats(myChar *char.Character) {
+	var column int
+	var columns = []int{9, 32, 8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
+	var lines = []int{2, 2, 4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15}
+	var stats []string
+	stats = append(stats, myChar.Name)
+	stats = append(stats, myChar.Class.Name)
+	stats = append(stats, strconv.Itoa(myChar.Level))
+	stats = append(stats, strconv.Itoa(myChar.Attack))
+	stats = append(stats, strconv.Itoa(myChar.Defense))
+	stats = append(stats, strconv.Itoa(myChar.Agility))
+	stats = append(stats, strconv.Itoa(myChar.Xp))
+	stats = append(stats, strconv.Itoa(myChar.Hp)+"/"+strconv.Itoa(myChar.HpMax))
+	stats = append(stats, strconv.Itoa(myChar.Mp)+"/"+strconv.Itoa(myChar.MpMax))
+	stats = append(stats, strconv.Itoa(myChar.Gold))
+	stats = append(stats, "rien")
+	stats = append(stats, "rien")
+	stats = append(stats, "rien")
+	stats = append(stats, "rien")
+	stats = append(stats, "rien")
+	for _, skill := range myChar.Skills {
+		stats = append(stats, skill.Name)
+		stats = append(stats, strconv.Itoa(skill.Attack))
+		stats = append(stats, strconv.Itoa(skill.Defense))
+		stats = append(stats, skill.StatBuffed)
+		stats = append(stats, strconv.Itoa(skill.Buff))
+	}
+	for i, singleStat := range stats {
+		column = columns[i]
+		for _, char := range singleStat {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
 
-func CharMenu(char *char.Character) {
+func CharMenu(myChar *char.Character) {
 	DisplayBlankMenu(CHAR_MENU)
 	displayCharMenuGrid()
 	displayCharMenuText()
-	// displayCharMenuStats(char)
+	displayCharMenuStats(myChar)
 }
 
-// ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮
-//                                   │ ├────────┬───────────────────────┤
-// ├─────────────────┬───────────────┧ ╽
-// ├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯
-// ╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮
-//                  │├──────────────────────┼─────┼─────┼─────────┼─────┧
-//                  ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯
-//
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
 //  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
@@ -566,22 +556,3 @@ func CharMenu(char *char.Character) {
 //  \\┃//       Quitter    ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ \\┃//
 //   \┃/                   ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯  \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
-//
-// Niveau :
-// Attaque :
-// Défense :
-// Agilité :
-// XP :
-// HP :
-// MP :
-// Or :
-// Tête
-// Torse
-// Mains
-// Jambes
-// Pieds
-// Inventaire
-// Équipement
-// Retour
-// Quitter
-// ⎯{==-
