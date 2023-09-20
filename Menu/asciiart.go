@@ -26,7 +26,8 @@ var BottomBar,
 	CharCreationMenuTitleBar,
 	CharCreationName,
 	CharCreationNameError,
-	CharCreationMenuCursor []rune
+	CharCreationMenuCursor,
+	CharMenuCursor []rune
 
 const (
 	PRINCIPAL_MENU     = 0
@@ -92,20 +93,23 @@ func CreateDisplayVariables() {
 	DwarfDescription = append(DwarfDescription, []rune("Les nains se spécialisent dans l'endurance         "))
 	DwarfDescription = append(DwarfDescription, []rune("et leur constitution : 120 HP et 80 Mana "))
 
+	CharMenuText = append(CharMenuText, []rune("Niveau :"))
+	CharMenuText = append(CharMenuText, []rune("Attaque :"))
+	CharMenuText = append(CharMenuText, []rune("Défense :"))
+	CharMenuText = append(CharMenuText, []rune("Agilité :"))
+	CharMenuText = append(CharMenuText, []rune("XP :"))
+	CharMenuText = append(CharMenuText, []rune("HP :"))
+	CharMenuText = append(CharMenuText, []rune("MP :"))
+	CharMenuText = append(CharMenuText, []rune("Or :"))
+	CharMenuText = append(CharMenuText, []rune("Tête"))
+	CharMenuText = append(CharMenuText, []rune("Torse"))
+	CharMenuText = append(CharMenuText, []rune("Mains"))
+	CharMenuText = append(CharMenuText, []rune("Jambes"))
+	CharMenuText = append(CharMenuText, []rune("Pieds"))
 	CharMenuText = append(CharMenuText, []rune("Inventaire"))
 	CharMenuText = append(CharMenuText, []rune("Équipement"))
 	CharMenuText = append(CharMenuText, []rune("Retour"))
 	CharMenuText = append(CharMenuText, []rune("Quitter"))
-	CharMenuText = append(CharMenuText, []rune("Niveau :"))
-	CharMenuText = append(CharMenuText, []rune("Force :"))
-	CharMenuText = append(CharMenuText, []rune("Endurance :"))
-	CharMenuText = append(CharMenuText, []rune("Perception :"))
-	CharMenuText = append(CharMenuText, []rune("Expérience :"))
-	CharMenuText = append(CharMenuText, []rune("HP :"))
-	CharMenuText = append(CharMenuText, []rune("MP :"))
-	CharMenuText = append(CharMenuText, []rune("Or :"))
-	CharMenuText = append(CharMenuText, []rune("Équipement :"))
-	CharMenuText = append(CharMenuText, []rune("Compétences :"))
 
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│ ├────────┬───────────────────────┤"))
@@ -128,6 +132,8 @@ func CreateDisplayVariables() {
 	CharCreationNameError = []rune("Erreur : veuillez rentrer un nom valide !")
 
 	CharCreationMenuCursor = []rune("⎯{===-")
+
+	CharMenuCursor = []rune("⎯{==-")
 }
 
 func LoadingScreen() {
@@ -410,7 +416,7 @@ func CharCreationMenuChangingDisplay(option, previousOption int) {
 	column := 7
 	var lines = []int{9, 10, 11}
 
-	DisplayText(column, lines[option-1], string(CharCreationMenuCursor)) //➸
+	DisplayText(column, lines[option-1], string(CharCreationMenuCursor))
 
 	if previousOption != 0 {
 		DisplayText(column, lines[previousOption-1], "      ")
@@ -441,9 +447,97 @@ func CharCreationMenuChangingDisplay(option, previousOption int) {
 	}
 }
 
+func displayCharMenuGrid() {
+
+	var columns = []int{6, 40, 6, 6, 6, 23, 23}
+	var lines = []int{1, 2, 3, 8, 9, 10, 16}
+	var column int
+
+	for i := range CharMenuMainGrid {
+		column = columns[i]
+		for _, char := range CharMenuMainGrid[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+
+	columns = []int{6, 51, 75, 6, 6, 6, 6, 24, 24, 24, 24, 40, 40, 40, 40, 42, 42, 42, 42, 51, 51, 51, 51, 75, 75, 75, 75, 23, 23, 23, 23, 23, 24, 24, 24, 24, 24, 47, 47, 47, 47, 47, 53, 53, 53, 53, 53, 59, 59, 59, 59, 59, 69, 69, 69, 69, 69, 75, 75, 75, 75, 75}
+	lines = []int{2, 3, 3, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15}
+
+	for i, column := range columns {
+		DisplayRune(column, lines[i], '│')
+	}
+}
+
+func displayCharMenuText() {
+	var column int
+	var columns = []int{8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 12, 12, 12, 12}
+	var lines = []int{4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 10, 12, 14, 15}
+
+	for i := range CharMenuText {
+		column = columns[i]
+		for _, char := range CharMenuText[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func DisplayCharMenuCursor(option, previousOption int) {
+	column := 6
+	var lines = []int{10, 12, 14, 15}
+
+	DisplayText(column, lines[option-1], string(CharMenuCursor))
+
+	if previousOption != 0 {
+		DisplayText(column, lines[previousOption-1], "     ")
+	}
+}
+
+// func displayCharMenuStats(char *char.Character) {
+// 	var column int
+// 	var columns = []int{9, 32, 8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 26, 49, 55, 61, 71, 26, 49, 55, 61, // 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
+// 	var lines = []int{2, 2, 4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, // 13, 13, 13, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15}
+// 	var stats []string
+//
+// 	stats = append(stats, char.name)
+// 	stats = append(stats, char.class.name)
+// 	stats = append(stats, strconv.Itoa(char.level))
+// 	stats = append(stats, strconv.Itoa(char.attack))
+// 	stats = append(stats, strconv.Itoa(char.defense))
+// 	stats = append(stats, strconv.Itoa(char.agility))
+// 	stats = append(stats, strconv.Itoa(char.xp))
+// 	stats = append(stats, strconv.Itoa(char.hp)+"/"+strconv.Itoa(char.hpMax))
+// 	stats = append(stats, strconv.Itoa(char.mp)+"/"+strconv.Itoa(char.mpMax))
+// 	stats = append(stats, strconv.Itoa(char.gold))
+// 	stats = append(stats, "rien")
+// 	stats = append(stats, "rien")
+// 	stats = append(stats, "rien")
+// 	stats = append(stats, "rien")
+// 	stats = append(stats, "rien")
+//
+// 	for _, skill := range char.skills {
+// 		stats = append(stats, skill.name)
+// 		stats = append(stats, strconv.Itoa(skill.attack))
+// 		stats = append(stats, strconv.Itoa(skill.defense))
+// 		stats = append(stats, skill.statBuffed)
+// 		stats = append(stats, strconv.Itoa(skill.buff))
+// 	}
+//
+// 	for i, singleStat := range stats {
+// 		column = columns[i]
+// 		for _, char := range singleStat {
+// 			DisplayRune(column, lines[i], char)
+// 			column += rwidth.RuneWidth(char)
+// 		}
+// 	}
+// }
+
 func CharMenu(char *char.Character) {
 	DisplayBlankMenu(CHAR_MENU)
-
+	displayCharMenuGrid()
+	displayCharMenuText()
+	// displayCharMenuStats(char)
 }
 
 // ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮
@@ -454,93 +548,6 @@ func CharMenu(char *char.Character) {
 //                  │├──────────────────────┼─────┼─────┼─────────┼─────┧
 //                  ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯
 //
-// │
-// ┃
-// ┃
-// ╿
-// │
-//
-// │
-// │
-// │
-// │
-//
-// ┃ ┃
-// ┃ ┃
-// ╿ ╿
-// │ │
-//
-// │
-// │
-// │
-// │
-// │
-//
-// ╽
-// ┃
-// ┃
-// ╿
-// │
-//
-// │┃
-// │┃
-// │╿
-// ││
-// ││
-//
-// │
-// │
-// │
-// │
-// │
-//
-// │
-// │
-// │
-// │
-// │
-//
-// │
-// │
-// │
-// │
-// │
-//
-// │
-// │
-// │
-// │
-// │
-//
-// ┃
-// ┃
-// ╿
-// │
-// │
-//
-// Niveau :
-// Attaque :
-// Défense :
-// Agilité :
-//
-// XP :
-// HP :
-// MP :
-// Or :
-//
-// Tête
-// Torse
-// Mains
-// Jambes
-// Pieds
-//
-// ⎯{==-
-//
-// Inventaire
-// Équipement
-// Retour
-// Quitter
-
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
 //  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
@@ -560,3 +567,21 @@ func CharMenu(char *char.Character) {
 //   \┃/                   ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯  \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //
+// Niveau :
+// Attaque :
+// Défense :
+// Agilité :
+// XP :
+// HP :
+// MP :
+// Or :
+// Tête
+// Torse
+// Mains
+// Jambes
+// Pieds
+// Inventaire
+// Équipement
+// Retour
+// Quitter
+// ⎯{==-

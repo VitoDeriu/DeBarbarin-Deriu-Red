@@ -515,7 +515,70 @@ func CharacterCreationMenu() {
 			// CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
 		}
 	}
-	ClearTerminal()
+
+	term.Clear(term.ColorDefault, term.ColorDefault)
 	MainChar = char.CreateMainCharacter(name, selectedOption)
-	PrincipalMenu()
+
+	pointingAt = 1
+	selectedOption = 0
+	previousPointingAt = 1
+	options = 4
+
+	CharMenu(&MainChar)
+	DisplayCharMenuCursor(pointingAt, 0)
+	// CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
+
+	for selectedOption == 0 {
+
+		//Switch case expecting keyboard input
+		switch ev := term.PollEvent(); ev.Type {
+		case term.EventKey:
+			switch ev.Key {
+
+			//Arrow up
+			case term.KeyArrowUp:
+				if pointingAt > 1 {
+					pointingAt--
+				}
+
+			//Arrow down
+			case term.KeyArrowDown:
+				if pointingAt < options {
+					pointingAt++
+				}
+
+			//Enter
+			case term.KeyEnter:
+				selectedOption = pointingAt
+			}
+		case term.EventError:
+			panic(ev.Err)
+		}
+
+		//Change the display only if necessary.
+		if previousPointingAt != pointingAt {
+			DisplayCharMenuCursor(pointingAt, previousPointingAt)
+			previousPointingAt = pointingAt
+			// CharacterCreationDisplayRace(name, nameCharSpaces, pointingAt)
+		}
+	}
+
+	switch selectedOption {
+
+	case 1:
+		PrincipalMenu()
+
+	case 2:
+		PrincipalMenu()
+
+	case 3:
+		PrincipalMenu()
+
+	case 4:
+		ClearTerminal()
+		fmt.Println("Bye bye !")
+		time.Sleep(time.Second * 3)
+		ClearTerminal()
+		os.Exit(0)
+	}
 }
