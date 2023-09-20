@@ -21,6 +21,7 @@ func CreateRaces() {
 	Elf.Attack = 5
 	Elf.Defense = 7
 	Elf.Agility = 12
+	Elf.InnateSkill = elfPunch
 
 	Human.Name = "Humain"
 	Human.HpMax = 100
@@ -28,6 +29,7 @@ func CreateRaces() {
 	Human.Attack = 7
 	Human.Defense = 7
 	Human.Agility = 10
+	Human.InnateSkill = humanPunch
 
 	Dwarf.Name = "Nain"
 	Dwarf.HpMax = 120
@@ -35,6 +37,7 @@ func CreateRaces() {
 	Dwarf.Attack = 12
 	Dwarf.Defense = 7
 	Dwarf.Agility = 5
+	Dwarf.InnateSkill = dwarfPunch
 
 	races = append(races, Human)
 	races = append(races, Elf)
@@ -42,8 +45,8 @@ func CreateRaces() {
 }
 
 func CreateMainCharacter(name string, selectedRace int) Character {
-	CreateRaces()
 	CreateSkills()
+	CreateRaces()
 	var MainChar Character
 	MainChar.Name = name
 	MainChar.Class = races[selectedRace-1] // la bendo la bendo
@@ -63,7 +66,7 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	return MainChar
 }
 
-// fonction de mort et respawn. a faire checker a chaque dégat prit
+// fonction de mort et respawn. a faire checker a chaque dégat pris
 func (char *Character) Dead() {
 	if char.Hp <= 0 {
 		println("Vous avez succombé a vos blessures sale noob")
@@ -72,5 +75,4 @@ func (char *Character) Dead() {
 		char.Hp = char.HpMax / 2
 		println("PV : ", char.Hp)
 	}
-	return
 }

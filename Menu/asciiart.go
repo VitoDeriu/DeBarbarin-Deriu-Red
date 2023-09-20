@@ -497,7 +497,7 @@ func DisplayCharMenuCursor(option, previousOption int) {
 
 func displayCharMenuStats(myChar *char.Character) {
 	var column int
-	var columns = []int{9, 32, 8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
+	var columns = []int{9, 32, 20, 20, 20, 20, 31, 31, 31, 31, 53, 53, 53, 53, 53, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
 	var lines = []int{2, 2, 4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15}
 	var stats []string
 	stats = append(stats, myChar.Name)
