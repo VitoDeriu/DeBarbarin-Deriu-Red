@@ -14,6 +14,7 @@ import (
 
 var introductionStory [][]rune
 var MainChar char.Character
+var GameStatus int
 
 func ClearTerminal() {
 	cmd := exec.Command("cmd", "/c", "cls")
@@ -36,7 +37,7 @@ func PresentationCinematic() {
 		}
 	}
 	time.Sleep(time.Second * 3)
-	PrincipalMenu()
+	ClearTerminal()
 }
 
 func PrincipalMenu() {
@@ -106,7 +107,7 @@ func PrincipalMenu() {
 		LoadingScreen()
 		PrincipalMenu()
 
-	case 3:
+	case 3: // AFFICHER LE BONUS : Spielberg et ABBA ;)
 		ClearTerminal()
 		DisplayBlankMenu(PRINCIPAL_MENU)
 		DisplayMenuOptions(PRINCIPAL_MENU)
@@ -265,75 +266,79 @@ func CharacterCreationMenu() {
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
 	MainChar = char.CreateMainCharacter(name, selectedOption)
+	GameStatus = STROLL_CASTLE
 
 	//Run the beginning of the game (like the cinematic introduction and then send to the first location)
-	CharMenu(MainChar)
+	// PresentationCinematic()
+	Stroll(&MainChar, GameStatus)
 }
 
-func CharMenu(myChar char.Character) {
-	pointingAt := 1
-	selectedOption := 0
-	previousPointingAt := 1
-	options := 4
+func CharMenu(myChar *char.Character) {
+	for {
+		pointingAt := 1
+		selectedOption := 0
+		previousPointingAt := 1
+		options := 4
 
-	displayCharMenu(&MainChar)
-	DisplayCharMenuCursor(pointingAt, 0)
+		displayCharMenu(&MainChar)
+		DisplayCharMenuCursor(pointingAt, 0)
 
-	for selectedOption == 0 {
+		for selectedOption == 0 {
 
-		//Switch case expecting keyboard input
-		switch ev := term.PollEvent(); ev.Type {
-		case term.EventKey:
-			switch ev.Key {
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
 
-			//Arrow up
-			case term.KeyArrowUp:
-				if pointingAt > 1 {
-					pointingAt--
+				//Arrow up
+				case term.KeyArrowUp:
+					if pointingAt > 1 {
+						pointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if pointingAt < options {
+						pointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedOption = pointingAt
 				}
-
-			//Arrow down
-			case term.KeyArrowDown:
-				if pointingAt < options {
-					pointingAt++
-				}
-
-			//Enter
-			case term.KeyEnter:
-				selectedOption = pointingAt
+			case term.EventError:
+				panic(ev.Err)
 			}
-		case term.EventError:
-			panic(ev.Err)
+
+			//Change the display only if necessary.
+			if previousPointingAt != pointingAt {
+				DisplayCharMenuCursor(pointingAt, previousPointingAt)
+				previousPointingAt = pointingAt
+			}
 		}
 
-		//Change the display only if necessary.
-		if previousPointingAt != pointingAt {
-			DisplayCharMenuCursor(pointingAt, previousPointingAt)
-			previousPointingAt = pointingAt
+		switch selectedOption {
+
+		case 1: //Display the inventory
+			CharInventory(myChar)
+
+		case 2: //Need to implement that display (Equipment managing menu)
+			PrincipalMenu()
+
+		case 3: //return to where you called the function
+			return
+
+		case 4: //Exiting the program... bye!
+			ClearTerminal()
+			fmt.Println("Bye bye !")
+			time.Sleep(time.Second * 3)
+			ClearTerminal()
+			os.Exit(0)
 		}
-	}
-
-	switch selectedOption {
-
-	case 1: //Display the inventory
-		CharInventory(myChar)
-
-	case 2: //Need to implement that display (Equipment managing menu)
-		PrincipalMenu()
-
-	case 3: //return to where you called the function
-		return
-
-	case 4: //Exiting the program... bye!
-		ClearTerminal()
-		fmt.Println("Bye bye !")
-		time.Sleep(time.Second * 3)
-		ClearTerminal()
-		os.Exit(0)
 	}
 }
 
-func CharInventory(myChar char.Character) {
+func CharInventory(myChar *char.Character) {
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
 
@@ -342,7 +347,8 @@ func CharInventory(myChar char.Character) {
 	previousPointingAt := 1
 	var options int
 	for {
-		items := displayCharInventory(myChar, &options)
+		items := displayCharInventory(*myChar, &options)
+		displayCharInventoryItemDescription(items[pointingAt-1])
 		displayCharInventoryItemsCursor(pointingAt, 0)
 
 		for selectedOption == 0 {
@@ -370,6 +376,7 @@ func CharInventory(myChar char.Character) {
 
 				//Escape
 				case term.KeyEsc:
+					term.Clear(term.ColorDefault, term.ColorDefault)
 					return
 				}
 			case term.EventError:
@@ -438,17 +445,172 @@ func CharInventory(myChar char.Character) {
 				myChar.TakePotionSoin() //Change to an universal function for potions (one that checks automatically which potion it is and then, what to do with it and do it)
 			case "Livre de sort":
 				for _, spellBook := range char.AllSpellBook {
-					if items[pointingAt] == spellBook.Name {
+					if items[pointingAt-1] == spellBook.Name {
 						myChar.SpellBook(spellBook)
+						term.Clear(term.ColorDefault, term.ColorDefault)
+						return
 					}
 				}
 			}
 		case 2:
-			//Remove the item from the inventory (all of it)
+			switch retreiveItemType(items[pointingAt-1]) {
+			case "Équipement": // Create a function that remove equipments
+				/* for _, equipment := range char.AllEquipment {
+					if items[pointingAt-1] == potion.Name {
+						myChar.RemoveEquipment(equipment)
+					}
+				} */
+			case "Potion":
+				for _, potion := range char.AllPotion {
+					if items[pointingAt-1] == potion.Name {
+						myChar.RemovePotion(potion)
+					}
+				}
+			case "Livre de sort":
+				for _, spellBook := range char.AllSpellBook {
+					if items[pointingAt-1] == spellBook.Name {
+						myChar.RemoveSpellBook(spellBook)
+					}
+				}
+			}
 		case 3:
 			selectedOption = 0
 			displayCharInventoryActionCursor(0, actionPointingAt)
-			// break returnToInventory
 		}
 	}
+}
+
+func Stroll(myChar *char.Character, nbMenu int) {
+	term.Clear(term.ColorDefault, term.ColorDefault)
+
+	var options,
+		pointingAt,
+		selectedOption,
+		previousPointingAt int
+
+	for {
+		options = 3
+		pointingAt = 2
+		selectedOption = 0
+		previousPointingAt = 2
+
+		term.Clear(term.ColorDefault, term.ColorDefault)
+		displayStrollMenu(myChar, nbMenu)
+		displayStrollCursor(pointingAt, 0)
+	fromCharMenu:
+		for selectedOption == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow left
+				case term.KeyArrowLeft:
+					if pointingAt > 1 {
+						pointingAt--
+					}
+
+				//Arrow right
+				case term.KeyArrowRight:
+					if pointingAt < options {
+						pointingAt++
+					}
+
+				//Space
+				case term.KeySpace:
+					selectedOption = 0
+					term.Clear(term.ColorDefault, term.ColorDefault)
+					CharMenu(myChar)
+					term.Clear(term.ColorDefault, term.ColorDefault)
+					displayStrollMenu(myChar, nbMenu)
+					displayStrollCursor(pointingAt, 0)
+					break fromCharMenu
+
+				//Enter
+				case term.KeyEnter:
+					selectedOption = pointingAt
+
+				//Escape
+				case term.KeyEsc:
+					term.Clear(term.ColorDefault, term.ColorDefault)
+					return
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousPointingAt != pointingAt {
+				displayStrollCursor(pointingAt, previousPointingAt)
+				previousPointingAt = pointingAt
+			}
+		}
+
+		switch nbMenu {
+
+		case STROLL_CASTLE:
+			switch selectedOption {
+
+			case 1:
+				nbMenu = STROLL_BARRACKS
+			case 2:
+				nbMenu = STROLL_CASTLE
+			case 3:
+				nbMenu = STROLL_CITY
+			}
+		case STROLL_BARRACKS:
+			switch selectedOption {
+
+			case 1:
+				// Tournoi ou entrainement
+			case 2:
+				nbMenu = STROLL_CASTLE
+			case 3:
+				// Tournoi ou entrainement
+			}
+		case STROLL_CITY:
+			switch selectedOption {
+
+			case 1:
+				nbMenu = STROLL_OUTSIDE
+			case 2:
+				nbMenu = STROLL_CASTLE
+			case 3:
+				nbMenu = STROLL_MARKET
+			}
+		case STROLL_OUTSIDE:
+			switch selectedOption {
+
+			case 1:
+				nbMenu = STROLL_ARENA
+			case 2:
+				nbMenu = STROLL_CITY
+			case 3:
+				nbMenu = STROLL_MISSIONS
+			}
+		case STROLL_MARKET:
+			switch selectedOption {
+
+			case 1:
+				nbMenu = STROLL_MERCHANT
+			case 2:
+				nbMenu = STROLL_CITY
+			case 3:
+				// Go to the blacksmith
+			}
+		case STROLL_MERCHANT:
+			switch selectedOption {
+
+			case 1:
+				// Buy items from the merchant
+			case 2:
+				nbMenu = STROLL_MARKET
+			case 3:
+				// Sell items from the merchant
+			}
+		}
+
+	}
+
 }

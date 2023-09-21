@@ -21,13 +21,22 @@ var MenuLateralBar,
 	CharMenuText,
 	CharMenuMainGrid,
 	CharInventoryGrid,
-	CharInventoryText [][]rune
+	CharInventoryText,
+	StrollGrid,
+	StrollCursor [][]rune
 
 var BottomBar,
 	CharMenuTitleBar,
 	PrincipalMenuTitleBar,
 	CharCreationMenuTitleBar,
 	CharInventoryTitleBar,
+	StrollCastleTitleBar,
+	StrollBarracksTitleBar,
+	StrollCityTitleBar,
+	StrollOutsideTitleBar,
+	StrollMarketTitleBar,
+	StrollArenaTitleBar,
+	StrollMerchantTitleBar,
 	CharCreationName,
 	CharCreationNameError,
 	CharCreationMenuCursor,
@@ -39,6 +48,15 @@ const (
 	CHAR_CREATION_MENU = 1
 	CHAR_MENU          = 2
 	CHAR_INVENTORY     = 3
+	STROLL_CASTLE      = 4
+	STROLL_CITY        = 5
+	STROLL_BARRACKS    = 6
+	STROLL_OUTSIDE     = 7
+	STROLL_MARKET      = 8
+	STROLL_ARENA       = 9
+	STROLL_MERCHANT    = 10
+	STROLL_BLACKSMITH  = 11
+	STROLL_MISSIONS    = 12
 )
 
 func CreateDisplayVariables() {
@@ -141,6 +159,16 @@ func CreateDisplayVariables() {
 	CharInventoryText = append(CharInventoryText, []rune("Annuler"))
 	CharInventoryText = append(CharInventoryText, []rune("Description :"))
 
+	StrollGrid = append(StrollGrid, []rune("─────────────────────────────────────────┴──────────────┴───────────────"))
+	StrollGrid = append(StrollGrid, []rune("      ╭────────────╮                                 ╭────────────╮     "))
+	StrollGrid = append(StrollGrid, []rune("      ╰─────┬──────╯                                 ╰─────┬──────╯     "))
+	StrollGrid = append(StrollGrid, []rune("────────────┴──────────────────────────────────────────────┴────────────"))
+	StrollGrid = append(StrollGrid, []rune("                             ╭───────────╮             ╭────────────────"))
+
+	StrollCursor = append(StrollCursor, []rune(" ₀"))
+	StrollCursor = append(StrollCursor, []rune("─╁─"))
+	StrollCursor = append(StrollCursor, []rune(" Λ"))
+
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
@@ -150,6 +178,20 @@ func CreateDisplayVariables() {
 	CharCreationMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharInventoryTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Inventaire ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollCastleTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Château ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollBarracksTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Caserne ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollCityTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Ville ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollOutsideTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Dehors ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollMarketTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marché ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollMerchantTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marchant ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	StrollArenaTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Arène ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharCreationName = []rune("Nom du personnage (max 20 caractères) :")
 
@@ -228,6 +270,33 @@ func displayTopBar(menuNb int) {
 	case CHAR_INVENTORY:
 		CurrentTopBar = CharInventoryTitleBar
 
+	case STROLL_CASTLE:
+		CurrentTopBar = StrollCastleTitleBar
+
+	case STROLL_BARRACKS:
+		CurrentTopBar = StrollBarracksTitleBar
+
+	case STROLL_CITY:
+		CurrentTopBar = StrollCityTitleBar
+
+	case STROLL_MARKET:
+		CurrentTopBar = StrollMarketTitleBar
+
+	case STROLL_OUTSIDE:
+		CurrentTopBar = StrollOutsideTitleBar
+
+	case STROLL_MERCHANT:
+		CurrentTopBar = StrollMerchantTitleBar
+
+	case STROLL_BLACKSMITH:
+		// CurrentTopBar = StrollMerchantTitleBar
+
+	case STROLL_ARENA:
+		CurrentTopBar = StrollArenaTitleBar
+
+	case STROLL_MISSIONS:
+		//CurrentTopBar = StrollMissionsTitleBar
+
 	}
 	column := 0
 	for _, char := range CurrentTopBar {
@@ -289,7 +358,7 @@ func DisplayBlankMenu(menuNb int) {
 	displayTopBar(menuNb)
 	displayMenuBars()
 	displayBottomBar()
-	if menuNb == CHAR_MENU || menuNb == PRINCIPAL_MENU {
+	if menuNb == CHAR_CREATION_MENU || menuNb == PRINCIPAL_MENU {
 		displayLogo()
 	}
 	if menuNb == CHAR_CREATION_MENU {
@@ -641,6 +710,8 @@ func displayCharInventoryItemsCursor(option, previousOption int) {
 
 func displayCharInventoryItemDescription(item string) {
 
+	DisplayText(29, 15, "                                                ")
+
 	var description string
 
 	switch retreiveItemType(item) {
@@ -659,7 +730,7 @@ func displayCharInventoryItemDescription(item string) {
 	case "Livre de sort":
 		for _, singleItem := range char.AllSpellBook {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est un livre de sort.       " // Add Description field in the SpellBook struct!!!
+				description = singleItem.Name + " est un livre de sort.  " // Add Description field in the SpellBook struct!!!
 			}
 		}
 	default:
@@ -702,6 +773,93 @@ func retreiveItemType(s string) string {
 	return "Inconnu" // Dommage, cet item n'est par répertorié dans les slices présentes dans la fonction... :´(
 }
 
+func displayStrollGrid() {
+	column := 5
+	var lines = []int{2, 8, 10, 11, 15}
+	for i := range StrollGrid {
+		column = 5
+		for _, char := range StrollGrid[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayStrollText(myChar *char.Character, nbMenu int) {
+
+	var text = []string{myChar.Name, myChar.Class.Name, "│ HP :", strconv.Itoa(myChar.Hp) + "/" + strconv.Itoa(myChar.HpMax), "│  Or :", strconv.Itoa(myChar.Gold), "│ Space :  Menu   "}
+
+	switch nbMenu {
+	case STROLL_CASTLE:
+		text = append(text, "│  Caserne   │")
+		text = append(text, "│   Ville    │")
+		text = append(text, "│  Château  │")
+	case STROLL_BARRACKS:
+		text = append(text, "│Entrainement│")
+		text = append(text, "│  Tournoi   │")
+		text = append(text, "│  Château  │")
+	case STROLL_CITY:
+		text = append(text, "│   Dehors   │")
+		text = append(text, "│   Marché   │")
+		text = append(text, "│  Château  │")
+	case STROLL_OUTSIDE:
+		text = append(text, "│   Arène    │")
+		text = append(text, "│  Mission   │")
+		text = append(text, "│   Ville   │")
+	case STROLL_MARKET:
+		text = append(text, "│  Marchant  │")
+		text = append(text, "│  Forgeron  │")
+		text = append(text, "│   Ville   │")
+	case STROLL_ARENA:
+		// Go to the Arena menu!
+	case STROLL_MERCHANT:
+		text = append(text, "│  Acheter   │")
+		text = append(text, "│   Vendre   │")
+		text = append(text, "│   Ville   │")
+	case STROLL_BLACKSMITH:
+		// Go to the Blacksmith menu!
+	}
+
+	var columns = []int{7, 31, 46, 53, 61, 69, 60, 11, 58, 34}
+	var lines = []int{1, 1, 1, 1, 1, 1, 16, 9, 9, 16}
+	var column int
+
+	for i, str := range text {
+		column = columns[i]
+		for _, char := range str {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayStrollCursor(pointingAt, previousPointingAt int) {
+
+	var columns = []int{16, 39, 63}
+	var column int
+	line := 12
+
+	for i := range StrollCursor {
+		column = columns[pointingAt-1]
+		for _, char := range StrollCursor[i] {
+			DisplayRune(column, line+i, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+
+	if previousPointingAt != 0 {
+		for i := 0; i < 3; i++ {
+			DisplayText(columns[previousPointingAt-1], line+i, "   ")
+		}
+	}
+}
+
+func displayStrollMenu(myChar *char.Character, nbMenu int) {
+	DisplayBlankMenu(nbMenu)
+	displayStrollGrid()
+	displayStrollText(myChar, nbMenu)
+}
+
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
 //  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
@@ -732,8 +890,8 @@ func retreiveItemType(s string) string {
 //  /\┃/\            Potion de soin                Potion              10        /\┃/\
 //  \/┃\/            Potion de poison              Potion              24        \/┃\/
 //  //┃\\            Boule de feu                  Livre de sort       1         //┃\\
-//  \\┃//            Peau de mammouth              Matériau            35        \\┃//
-//  /\┃/\            Morceau de mithril            Matériau            7         /\┃/\
+//  \\┃//            Peau de mammouth              Ressource           35        \\┃//
+//  /\┃/\            Morceau de mithril            Ressource           7         /\┃/\
 //  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
 //  //┃\\       Utiliser   │  Description :                                      //┃\\
 //  \\┃// ⎯{==- Jeter      │     Le heaume du chasseur donne 35 pts de défense   \\┃//
@@ -748,13 +906,13 @@ func retreiveItemType(s string) string {
 //  \/┃\/                                                                        \/┃\/
 //  //┃\\                                                                        //┃\\
 //  \\┃//                                                                        \\┃//
-//  /\┃/\                                                                        /\┃/\
-//  \/┃\/                                                                        \/┃\/
-//  //┃\\                                                                        //┃\\
-//  \\┃//                                                                        \\┃//
-//  /\┃/\                                                                        /\┃/\
-//  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
-//  //┃\\       Caserne    │  Description :                                      //┃\\
-//  \\┃// ⎯{==- Ville      │     Le heaume du chasseur donne 35 pts de défense   \\┃//
-//   \┃/        Menu       │     et 15 pts d'attaque.                             \┃/
+//  /\┃/\      ╭────────────╮                                 ╭────────────╮     /\┃/\
+//  \/┃\/      │   Ville    │                                 │Entrainement│     \/┃\/
+//  //┃\\      ╰─────┬──────╯                                 ╰─────┬──────╯     //┃\\
+//  \\┃//────────────┴──────────────────────────────────────────────┴────────────\\┃//
+//  /\┃/\                                                           ₀            /\┃/\
+//  \/┃\/                                                          ─╁─           \/┃\/
+//  //┃\\                                                           Λ            //┃\\
+//  \\┃//                             ╭───────────╮             ╭────────────────\\┃//
+//   \┃/                              │  Château  │             │ Space :  Menu   \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
