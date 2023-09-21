@@ -266,12 +266,17 @@ func CharacterCreationMenu() {
 	term.Clear(term.ColorDefault, term.ColorDefault)
 	MainChar = char.CreateMainCharacter(name, selectedOption)
 
-	pointingAt = 1
-	selectedOption = 0
-	previousPointingAt = 1
-	options = 4
+	//Run the beginning of the game (like the cinematic introduction and then send to the first location)
+	CharMenu(MainChar)
+}
 
-	CharMenu(&MainChar)
+func CharMenu(myChar char.Character) {
+	pointingAt := 1
+	selectedOption := 0
+	previousPointingAt := 1
+	options := 4
+
+	displayCharMenu(&MainChar)
 	DisplayCharMenuCursor(pointingAt, 0)
 
 	for selectedOption == 0 {
@@ -310,20 +315,140 @@ func CharacterCreationMenu() {
 
 	switch selectedOption {
 
-	case 1:
+	case 1: //Display the inventory
+		CharInventory(myChar)
+
+	case 2: //Need to implement that display (Equipment managing menu)
 		PrincipalMenu()
 
-	case 2:
-		PrincipalMenu()
+	case 3: //return to where you called the function
+		return
 
-	case 3:
-		PrincipalMenu()
-
-	case 4:
+	case 4: //Exiting the program... bye!
 		ClearTerminal()
 		fmt.Println("Bye bye !")
 		time.Sleep(time.Second * 3)
 		ClearTerminal()
 		os.Exit(0)
+	}
+}
+
+func CharInventory(myChar char.Character) {
+
+	term.Clear(term.ColorDefault, term.ColorDefault)
+
+	pointingAt := 1
+	selectedOption := 0
+	previousPointingAt := 1
+	var options int
+	for {
+		items := displayCharInventory(myChar, &options)
+		displayCharInventoryItemsCursor(pointingAt, 0)
+
+		for selectedOption == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if pointingAt > 1 {
+						pointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if pointingAt < options {
+						pointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedOption = pointingAt
+
+				//Escape
+				case term.KeyEsc:
+					return
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousPointingAt != pointingAt {
+				displayCharInventoryItemsCursor(pointingAt, previousPointingAt)
+				displayCharInventoryItemDescription(items[pointingAt-1])
+				previousPointingAt = pointingAt
+			}
+		}
+
+		actionPointingAt := 1
+		selectedAction := 0
+		previousActionPointingAt := 1
+		actionOptions := 3
+
+		displayCharInventoryActionCursor(actionPointingAt, 0)
+
+		for selectedAction == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if actionPointingAt > 1 {
+						actionPointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if actionPointingAt < actionOptions {
+						actionPointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedAction = actionPointingAt
+
+				//Escape
+				case term.KeyEsc:
+					return
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousActionPointingAt != actionPointingAt {
+				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt)
+				previousActionPointingAt = actionPointingAt
+			}
+		}
+		// returnToInventory:
+		switch selectedAction {
+		case 1:
+			switch retreiveItemType(items[pointingAt-1]) {
+			case "Équipement":
+				//Equip the item!
+			case "Potion":
+				myChar.TakePotionSoin() //Change to an universal function for potions (one that checks automatically which potion it is and then, what to do with it and do it)
+			case "Livre de sort":
+				for _, spellBook := range char.AllSpellBook {
+					if items[pointingAt] == spellBook.Name {
+						myChar.SpellBook(spellBook)
+					}
+				}
+			}
+		case 2:
+			//Remove the item from the inventory (all of it)
+		case 3:
+			selectedOption = 0
+			displayCharInventoryActionCursor(0, actionPointingAt)
+			// break returnToInventory
+		}
 	}
 }

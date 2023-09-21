@@ -8,6 +8,7 @@ package character // initialisation de tous les items
 
 var PotionDeSoin Potion
 var PotionDePoison Potion
+var TrainingSword Equipement
 var SpellBookFireBall SpellBook
 var FireBall Skill
 
@@ -16,6 +17,12 @@ var AllEquipement []Equipement
 var AllSpellBook []SpellBook
 
 func CreateItems() {
+
+	//création des équipements
+	TrainingSword.Name = "Épée d'entrainement"
+	TrainingSword.Force = 5
+
+	AllEquipement = append(AllEquipement, TrainingSword)
 
 	//création des potions
 	PotionDeSoin.Name = "Potion de soin"
@@ -31,7 +38,7 @@ func CreateItems() {
 	AllPotion = append(AllPotion, PotionDePoison)
 
 	//Créations des SpellBook
-	SpellBookFireBall.Name = "Livre de sort : Boule de feu"
+	SpellBookFireBall.Name = "Grimoire boule de feu"
 	SpellBookFireBall.Skill = FireBall
 	SpellBookFireBall.Price = 100
 

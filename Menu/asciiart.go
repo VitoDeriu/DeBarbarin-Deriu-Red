@@ -19,21 +19,26 @@ var MenuLateralBar,
 	HumanDescription,
 	DwarfDescription,
 	CharMenuText,
-	CharMenuMainGrid [][]rune
+	CharMenuMainGrid,
+	CharInventoryGrid,
+	CharInventoryText [][]rune
 
 var BottomBar,
 	CharMenuTitleBar,
 	PrincipalMenuTitleBar,
 	CharCreationMenuTitleBar,
+	CharInventoryTitleBar,
 	CharCreationName,
 	CharCreationNameError,
 	CharCreationMenuCursor,
-	CharMenuCursor []rune
+	CharMenuCursor,
+	CharInventoryItemsCursor []rune
 
 const (
 	PRINCIPAL_MENU     = 0
 	CHAR_CREATION_MENU = 1
 	CHAR_MENU          = 2
+	CHAR_INVENTORY     = 3
 )
 
 func CreateDisplayVariables() {
@@ -120,6 +125,22 @@ func CreateDisplayVariables() {
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│├──────────────────────┼─────┼─────┼─────────┼─────┤"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰┴──────────────────────┴─────┴─────┴─────────┴─────╯"))
 
+	CharInventoryGrid = append(CharInventoryGrid, []rune("─────────┴──────────────────────────────────────────────────────────────"))
+	CharInventoryGrid = append(CharInventoryGrid, []rune("──────────────────┬─────────────────────────────────────────────────────"))
+	CharInventoryGrid = append(CharInventoryGrid, []rune("│"))
+	CharInventoryGrid = append(CharInventoryGrid, []rune("│"))
+	CharInventoryGrid = append(CharInventoryGrid, []rune("│"))
+	CharInventoryGrid = append(CharInventoryGrid, []rune("│"))
+
+	CharInventoryText = append(CharInventoryText, []rune("╳  Esc"))
+	CharInventoryText = append(CharInventoryText, []rune("Nom"))
+	CharInventoryText = append(CharInventoryText, []rune("Type"))
+	CharInventoryText = append(CharInventoryText, []rune("Quantité"))
+	CharInventoryText = append(CharInventoryText, []rune("Utiliser"))
+	CharInventoryText = append(CharInventoryText, []rune("Jeter"))
+	CharInventoryText = append(CharInventoryText, []rune("Annuler"))
+	CharInventoryText = append(CharInventoryText, []rune("Description :"))
+
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
@@ -128,6 +149,8 @@ func CreateDisplayVariables() {
 
 	CharCreationMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
+	CharInventoryTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Inventaire ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
 	CharCreationName = []rune("Nom du personnage (max 20 caractères) :")
 
 	CharCreationNameError = []rune("Erreur : veuillez rentrer un nom valide !")
@@ -135,6 +158,8 @@ func CreateDisplayVariables() {
 	CharCreationMenuCursor = []rune("⎯{===-")
 
 	CharMenuCursor = []rune("⎯{==-")
+
+	CharInventoryItemsCursor = []rune("⎯{====-")
 }
 
 func LoadingScreen() {
@@ -200,6 +225,9 @@ func displayTopBar(menuNb int) {
 	case CHAR_MENU:
 		CurrentTopBar = CharMenuTitleBar
 
+	case CHAR_INVENTORY:
+		CurrentTopBar = CharInventoryTitleBar
+
 	}
 	column := 0
 	for _, char := range CurrentTopBar {
@@ -261,7 +289,7 @@ func DisplayBlankMenu(menuNb int) {
 	displayTopBar(menuNb)
 	displayMenuBars()
 	displayBottomBar()
-	if menuNb != CHAR_MENU {
+	if menuNb == CHAR_MENU || menuNb == PRINCIPAL_MENU {
 		displayLogo()
 	}
 	if menuNb == CHAR_CREATION_MENU {
@@ -531,11 +559,147 @@ func displayCharMenuStats(myChar *char.Character) {
 	}
 }
 
-func CharMenu(myChar *char.Character) {
+func displayCharMenu(myChar *char.Character) {
 	DisplayBlankMenu(CHAR_MENU)
 	displayCharMenuGrid()
 	displayCharMenuText()
 	displayCharMenuStats(myChar)
+}
+
+func displayCharInventoryGrid() {
+	var columns = []int{5, 5, 14, 23, 23, 23}
+	var lines = []int{2, 13, 1, 14, 15, 16}
+	var column int
+
+	for i := range CharInventoryGrid {
+		column = columns[i]
+		for _, char := range CharInventoryGrid[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayCharInventoryText() {
+	var columns = []int{6, 24, 49, 64, 12, 12, 12, 26}
+	var lines = []int{1, 1, 1, 1, 14, 15, 16, 14}
+	var column int
+
+	for i := range CharInventoryText {
+		column = columns[i]
+		for _, char := range CharInventoryText[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayCharInventoryItems(myChar *char.Character, itemOptions *int) []string {
+
+	if len(myChar.Inventory) == 0 {
+		DisplayText(17, 4, "Votre inventaire est vide !")
+		time.Sleep(time.Second * 2)
+		return nil
+	}
+
+	var inventory []string
+	for item := range myChar.Inventory {
+		inventory = append(inventory, item)
+	}
+
+	*itemOptions = len(inventory)
+
+	line := 3
+	for index, item := range inventory {
+		if index == 10 {
+			break
+		}
+		DisplayText(17, line+index, item)
+		DisplayText(47, line+index, retreiveItemType(item))
+		DisplayText(67, line+index, strconv.Itoa(myChar.Inventory[item]))
+	}
+	return inventory
+}
+
+func displayCharInventory(myChar char.Character, itemOptions *int) []string {
+	DisplayBlankMenu(CHAR_INVENTORY)
+	displayCharInventoryGrid()
+	displayCharInventoryText()
+	return displayCharInventoryItems(&myChar, itemOptions)
+}
+
+func displayCharInventoryItemsCursor(option, previousOption int) {
+	column := 7
+	var lines = []int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
+
+	DisplayText(column, lines[option-1], string(CharInventoryItemsCursor))
+
+	if previousOption != 0 {
+		DisplayText(column, lines[previousOption-1], "       ")
+	}
+}
+
+func displayCharInventoryItemDescription(item string) {
+
+	var description string
+
+	switch retreiveItemType(item) {
+	case "Équipement":
+		for _, singleItem := range char.AllEquipement {
+			if item == singleItem.Name {
+				description = singleItem.Name + " est un équipement.       " // Add Description field in the Equipment struct!!!
+			}
+		}
+	case "Potion":
+		for _, singleItem := range char.AllPotion {
+			if item == singleItem.Name {
+				description = singleItem.Name + " est une potion.       " // Add Description field in the Potion struct!!!
+			}
+		}
+	case "Livre de sort":
+		for _, singleItem := range char.AllSpellBook {
+			if item == singleItem.Name {
+				description = singleItem.Name + " est un livre de sort.       " // Add Description field in the SpellBook struct!!!
+			}
+		}
+	default:
+		description = "Item inconnu"
+	}
+
+	DisplayText(29, 15, description)
+}
+
+func displayCharInventoryActionCursor(option, previousOption int) {
+	column := 6
+	var lines = []int{14, 15, 16}
+	if option != 0 {
+		DisplayText(column, lines[option-1], string(CharMenuCursor))
+	}
+
+	if previousOption != 0 {
+		DisplayText(column, lines[previousOption-1], "     ")
+	}
+}
+
+// Rajouter tous les types d'item dans la fonction afin de prendre en compte toutes les possibilités !
+func retreiveItemType(s string) string {
+
+	for _, name := range char.AllEquipement {
+		if s == name.Name {
+			return "Équipement"
+		}
+	}
+	for _, name := range char.AllPotion {
+		if s == name.Name {
+			return "Potion"
+		}
+	}
+	for _, name := range char.AllSpellBook {
+		if s == name.Name {
+			return "Livre de sort"
+		}
+	}
+	return "Inconnu" // Dommage, cet item n'est par répertorié dans les slices présentes dans la fonction... :´(
 }
 
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
@@ -558,20 +722,39 @@ func CharMenu(myChar *char.Character) {
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Inventaire ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
-//   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
-//  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
-//  \\┃// ┟─────────────────┬───────────────┧ ╽ Tête   │ Heaume du chasseur    ╽ \\┃//
-//  /\┃/\ ┃ Niveau :    100 │ XP : 24.785   ┃ ┃ Torse  │ Armure de fantassin   ┃ /\┃/\
-//  \/┃\/ ┃ Attaque :   150 │ HP : 350/400  ┃ ┃ Mains  │ Épée longue en mithril┃ \/┃\/
-//  //┃\\ ╿ Défense :   170 │ MP : 430/600  ╿ ╿ Jambes │ Jambières elfiques    ╿ //┃\\
-//  \\┃// │ Agilité :   275 │ Or : 12.570   │ │ Pieds  │ Chausses légères      │ \\┃//
-//  /\┃/\ ├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯ /\┃/\
-//  \/┃\/ ╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮ \/┃\/
-//  //┃\\ ⎯{==- Inventaire │┟──────────────────────┼─────┼─────┼─────────┼─────┧ //┃\\
-//  \\┃//      (Croissance)│┃ Coup de poing humain │ 240 │ 100 │ Agilité │ 105 ┃ \\┃//
-//  /\┃/\       Équipement │┃ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 ┃ /\┃/\
-//  \/┃\/                  │╿ Coup de poing humain │ 240 │ 100 │ Défense │ 105 ╿ \/┃\/
-//  //┃\\       Retour     ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ //┃\\
-//  \\┃//       Quitter    ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ \\┃//
-//   \┃/                   ╰┴──────────────────────┴─────┴─────┴─────────┴─────╯  \┃/
+//   /┃\  ╳  Esc  │         Nom                      Type           Quantité      /┃\
+//  //┃\\─────────┴──────────────────────────────────────────────────────────────//┃\\
+//  \\┃//  ⎯{====-   Heaume du chasseur            Équipement          2         \\┃//
+//  /\┃/\            Armure de fantassin           Équipement          1         /\┃/\
+//  \/┃\/            Épée longue en mithril        Équipement          1         \/┃\/
+//  //┃\\            Jambières elfiques            Équipement          1         //┃\\
+//  \\┃//            Chausses légères              Équipement          2         \\┃//
+//  /\┃/\            Potion de soin                Potion              10        /\┃/\
+//  \/┃\/            Potion de poison              Potion              24        \/┃\/
+//  //┃\\            Boule de feu                  Livre de sort       1         //┃\\
+//  \\┃//            Peau de mammouth              Matériau            35        \\┃//
+//  /\┃/\            Morceau de mithril            Matériau            7         /\┃/\
+//  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
+//  //┃\\       Utiliser   │  Description :                                      //┃\\
+//  \\┃// ⎯{==- Jeter      │     Le heaume du chasseur donne 35 pts de défense   \\┃//
+//   \┃/        Annuler    │     et 15 pts d'attaque.                             \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Château ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\   MonPseudoEstTropLong    Humain         │ HP : 350/400 │  Or : 12.570   /┃\
+//  //┃\\─────────────────────────────────────────┴──────────────┴───────────────//┃\\
+//  \\┃//                                                                        \\┃//
+//  /\┃/\                                                                        /\┃/\
+//  \/┃\/                                                                        \/┃\/
+//  //┃\\                                                                        //┃\\
+//  \\┃//                                                                        \\┃//
+//  /\┃/\                                                                        /\┃/\
+//  \/┃\/                                                                        \/┃\/
+//  //┃\\                                                                        //┃\\
+//  \\┃//                                                                        \\┃//
+//  /\┃/\                                                                        /\┃/\
+//  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
+//  //┃\\       Caserne    │  Description :                                      //┃\\
+//  \\┃// ⎯{==- Ville      │     Le heaume du chasseur donne 35 pts de défense   \\┃//
+//   \┃/        Menu       │     et 15 pts d'attaque.                             \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪

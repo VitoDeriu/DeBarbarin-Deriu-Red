@@ -47,6 +47,7 @@ func CreateRaces() {
 func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateSkills()
 	CreateRaces()
+	CreateItems()
 	var MainChar Character
 	MainChar.Name = name
 	MainChar.Class = Races[selectedRace-1] // la bendo la bendo
@@ -61,7 +62,7 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	MainChar.Defense = Races[selectedRace-1].Defense
 	MainChar.Agility = Races[selectedRace-1].Agility
 	MainChar.Skills = append(MainChar.Skills, Races[selectedRace-1].InnateSkill)
-	MainChar.Inventory = map[string]int{"épée d'entrainement": 1, "potion de vie": 1}
+	MainChar.Inventory = map[string]int{TrainingSword.Name: 1, PotionDeSoin.Name: 1, SpellBookFireBall.Name: 1}
 	MainChar.Gold = 10
 	return MainChar
 }
