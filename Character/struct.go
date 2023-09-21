@@ -44,15 +44,17 @@ type Skill struct {
 
 type Potion struct {
 	Name         string
-	GainHp       int
-	LossHp       int
+	StatBuffed   string
+	StatDebuffed string
+	Buff         int
+	Debuff       int
 	EffectOnTime int //durée de l'effet en seconde
 	Price        int
 }
 
 type Equipement struct {
 	Name    string
-	Slot    string // "Tete" , "Torse", "Mains", "Jambe", "Pieds"
+	Slot    string // "Tete" , "Torse", "Mains", "Jambes", "Pieds"
 	Recipe  map[Ressource]int
 	Defense int
 	Agility int

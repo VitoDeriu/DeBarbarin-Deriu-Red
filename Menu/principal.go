@@ -320,9 +320,9 @@ func CharMenu(myChar *char.Character) {
 		switch selectedOption {
 
 		case 1: //Display the inventory
-			CharInventory(myChar)
+			Inventory(myChar, false)
 
-		case 2: //Need to implement that display (Equipment managing menu)
+		case 2: //Need to implement that display (Equipment managing menu)!!
 			PrincipalMenu()
 
 		case 3: //return to where you called the function
@@ -338,7 +338,7 @@ func CharMenu(myChar *char.Character) {
 	}
 }
 
-func CharInventory(myChar *char.Character) {
+func Inventory(myChar *char.Character, isMerchant bool) {
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
 
@@ -347,7 +347,18 @@ func CharInventory(myChar *char.Character) {
 	previousPointingAt := 1
 	var options int
 	for {
-		items := displayCharInventory(*myChar, &options)
+		ClearTerminal()
+		term.Clear(term.ColorDefault, term.ColorDefault)
+		items := displayInventory(*myChar, &options, isMerchant)
+		if pointingAt > len(items) {
+			pointingAt = len(items) - 1
+		}
+		if len(items) == 0 {
+			time.Sleep(time.Second * 1)
+			ClearTerminal()
+			term.Clear(term.ColorDefault, term.ColorDefault)
+			return
+		}
 		displayCharInventoryItemDescription(items[pointingAt-1])
 		displayCharInventoryItemsCursor(pointingAt, 0)
 
@@ -394,9 +405,15 @@ func CharInventory(myChar *char.Character) {
 		actionPointingAt := 1
 		selectedAction := 0
 		previousActionPointingAt := 1
-		actionOptions := 3
+		var actionOptions int
 
-		displayCharInventoryActionCursor(actionPointingAt, 0)
+		if !isMerchant {
+			actionOptions = 3
+		} else {
+			actionOptions = 2
+		}
+
+		displayCharInventoryActionCursor(actionPointingAt, 0, isMerchant)
 
 		for selectedAction == 0 {
 
@@ -431,52 +448,119 @@ func CharInventory(myChar *char.Character) {
 
 			//Change the display only if necessary.
 			if previousActionPointingAt != actionPointingAt {
-				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt)
+				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt, isMerchant)
 				previousActionPointingAt = actionPointingAt
 			}
 		}
-		// returnToInventory:
-		switch selectedAction {
-		case 1:
-			switch retreiveItemType(items[pointingAt-1]) {
-			case "Équipement":
-				//Equip the item!
-			case "Potion":
-				myChar.TakePotionSoin() //Change to an universal function for potions (one that checks automatically which potion it is and then, what to do with it and do it)
-			case "Livre de sort":
-				for _, spellBook := range char.AllSpellBook {
-					if items[pointingAt-1] == spellBook.Name {
-						myChar.SpellBook(spellBook)
-						term.Clear(term.ColorDefault, term.ColorDefault)
-						return
+
+		if !isMerchant {
+			switch selectedAction {
+
+			//Use the item!
+			case 1:
+				switch retreiveItemType(items[pointingAt-1]) {
+
+				case "Équipement":
+					//Equip the item!
+
+				case "Potion":
+					for _, potion := range char.AllPotion {
+						if items[pointingAt-1] == potion.Name {
+							myChar.TakePotion(potion)
+							time.Sleep(time.Second * 2)
+							ClearTerminal()
+							term.Clear(term.ColorDefault, term.ColorDefault)
+							return
+						}
+					}
+
+				case "Livre de sort":
+					for _, spellBook := range char.AllSpellBook {
+						if items[pointingAt-1] == spellBook.Name {
+							myChar.SpellBook(spellBook)
+							term.Clear(term.ColorDefault, term.ColorDefault)
+							return
+						}
 					}
 				}
+
+			//Throw away the item!
+			case 2:
+
+				switch retreiveItemType(items[pointingAt-1]) {
+
+				case "Équipement":
+					for _, equipement := range char.AllEquipement {
+						if items[pointingAt-1] == equipement.Name {
+							myChar.RemoveEquipement(equipement)
+						}
+					}
+
+				case "Potion":
+					for _, potion := range char.AllPotion {
+						if items[pointingAt-1] == potion.Name {
+							myChar.RemovePotion(potion)
+						}
+					}
+
+				case "Livre de sort":
+					for _, spellBook := range char.AllSpellBook {
+						if items[pointingAt-1] == spellBook.Name {
+							myChar.RemoveSpellBook(spellBook)
+						}
+					}
+				}
+
+			//Return to item selection
+			case 3:
+				selectedOption = 0
+				displayCharInventoryActionCursor(0, actionPointingAt, isMerchant)
 			}
-		case 2:
-			switch retreiveItemType(items[pointingAt-1]) {
-			case "Équipement": // Create a function that remove equipments
-				/* for _, equipment := range char.AllEquipment {
-					if items[pointingAt-1] == potion.Name {
-						myChar.RemoveEquipment(equipment)
+
+		} else {
+			//If it is the Merchant
+			switch selectedAction {
+
+			//Buy the item
+			case 1:
+				switch retreiveItemType(items[pointingAt-1]) {
+
+				case "Équipement":
+					for _, equipement := range char.AllEquipement {
+						if items[pointingAt-1] == equipement.Name {
+							MainChar.BuyEquipement(equipement)
+						}
 					}
-				} */
-			case "Potion":
-				for _, potion := range char.AllPotion {
-					if items[pointingAt-1] == potion.Name {
-						myChar.RemovePotion(potion)
+
+				case "Potion":
+					for _, potion := range char.AllPotion {
+						if items[pointingAt-1] == potion.Name {
+							MainChar.BuyPotion(potion)
+						}
+					}
+
+				case "Livre de sort":
+					for _, spellBook := range char.AllSpellBook {
+						if items[pointingAt-1] == spellBook.Name {
+							MainChar.BuySpellBook(spellBook)
+						}
+					}
+
+				case "Ressource":
+					for _, ressource := range char.AllRessources {
+						if items[pointingAt-1] == ressource.Name {
+							MainChar.BuyRessource(ressource)
+						}
 					}
 				}
-			case "Livre de sort":
-				for _, spellBook := range char.AllSpellBook {
-					if items[pointingAt-1] == spellBook.Name {
-						myChar.RemoveSpellBook(spellBook)
-					}
-				}
+
+			//return to item selection
+			case 2:
+				selectedOption = 0
+				displayCharInventoryActionCursor(0, actionPointingAt, isMerchant)
 			}
-		case 3:
-			selectedOption = 0
-			displayCharInventoryActionCursor(0, actionPointingAt)
 		}
+
 	}
 }
 
@@ -603,7 +687,7 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			switch selectedOption {
 
 			case 1:
-				// Buy items from the merchant
+				Inventory(&char.Merchant, true)
 			case 2:
 				nbMenu = STROLL_MARKET
 			case 3:

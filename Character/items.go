@@ -51,18 +51,15 @@ func CreateItems() {
 
 	ChapeauDelAventurier.Name = "Chapeau de l'aventurier"
 	ChapeauDelAventurier.Slot = "Tete"
-	ChapeauDelAventurier.Recipe[PlumeDeCorbeau] = 1
-	ChapeauDelAventurier.Recipe[CuirDeSanglier] = 1
+	ChapeauDelAventurier.Recipe = map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1}
 
 	TuniqueDelAventurier.Name = "Tunique de l'aventurier"
 	TuniqueDelAventurier.Slot = "Torse"
-	TuniqueDelAventurier.Recipe[FourrureDeLoup] = 2
-	TuniqueDelAventurier.Recipe[PeauDeTroll] = 1
+	TuniqueDelAventurier.Recipe = map[Ressource]int{FourrureDeLoup: 2, PeauDeTroll: 1}
 
-	BotteDelAventurier.Name = "Botte de l'aventurier"
+	BotteDelAventurier.Name = "Bottes de l'aventurier"
 	BotteDelAventurier.Slot = "Pieds"
-	BotteDelAventurier.Recipe[FourrureDeLoup] = 1
-	BotteDelAventurier.Recipe[CuirDeSanglier] = 1
+	BotteDelAventurier.Recipe = map[Ressource]int{FourrureDeLoup: 1, CuirDeSanglier: 1}
 
 	AllEquipement = append(AllEquipement, TrainingSword)
 	AllEquipement = append(AllEquipement, ChapeauDelAventurier)
@@ -71,11 +68,14 @@ func CreateItems() {
 
 	//création des potions
 	PotionDeSoin.Name = "Potion de soin"
-	PotionDeSoin.GainHp = 20
+	PotionDeSoin.StatBuffed = "Hp"
+	PotionDeSoin.Buff = 20
+	PotionDeSoin.EffectOnTime = 0
 	PotionDeSoin.Price = 3
 
 	PotionDePoison.Name = "Potion de poison"
-	PotionDePoison.LossHp = 10
+	PotionDePoison.StatDebuffed = "Hp"
+	PotionDePoison.Debuff = 10
 	PotionDePoison.EffectOnTime = 3
 	PotionDePoison.Price = 6
 

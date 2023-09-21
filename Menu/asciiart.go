@@ -22,6 +22,7 @@ var MenuLateralBar,
 	CharMenuMainGrid,
 	CharInventoryGrid,
 	CharInventoryText,
+	MerchantInventoryText,
 	StrollGrid,
 	StrollCursor [][]rune
 
@@ -159,6 +160,14 @@ func CreateDisplayVariables() {
 	CharInventoryText = append(CharInventoryText, []rune("Annuler"))
 	CharInventoryText = append(CharInventoryText, []rune("Description :"))
 
+	MerchantInventoryText = append(MerchantInventoryText, []rune("╳  Esc"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Nom"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Prix"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Quantité"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Acheter"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Annuler"))
+	MerchantInventoryText = append(MerchantInventoryText, []rune("Description :"))
+
 	StrollGrid = append(StrollGrid, []rune("─────────────────────────────────────────┴──────────────┴───────────────"))
 	StrollGrid = append(StrollGrid, []rune("      ╭────────────╮                                 ╭────────────╮     "))
 	StrollGrid = append(StrollGrid, []rune("      ╰─────┬──────╯                                 ╰─────┬──────╯     "))
@@ -189,7 +198,7 @@ func CreateDisplayVariables() {
 
 	StrollMarketTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marché ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
-	StrollMerchantTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marchant ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+	StrollMerchantTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marchand ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	StrollArenaTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Arène ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
@@ -649,21 +658,33 @@ func displayCharInventoryGrid() {
 	}
 }
 
-func displayCharInventoryText() {
-	var columns = []int{6, 24, 49, 64, 12, 12, 12, 26}
-	var lines = []int{1, 1, 1, 1, 14, 15, 16, 14}
-	var column int
+func displayCharInventoryText(isMerchant bool) {
 
-	for i := range CharInventoryText {
+	var columns []int
+	var lines []int
+	var column int
+	var inventoryText [][]rune
+
+	if !isMerchant {
+		inventoryText = CharInventoryText
+		columns = []int{6, 24, 49, 64, 12, 12, 12, 26}
+		lines = []int{1, 1, 1, 1, 14, 15, 16, 14}
+	} else {
+		inventoryText = MerchantInventoryText
+		columns = []int{6, 24, 49, 64, 12, 12, 26}
+		lines = []int{1, 1, 1, 1, 14, 15, 14}
+	}
+
+	for i := range inventoryText {
 		column = columns[i]
-		for _, char := range CharInventoryText[i] {
+		for _, char := range inventoryText[i] {
 			DisplayRune(column, lines[i], char)
 			column += rwidth.RuneWidth(char)
 		}
 	}
 }
 
-func displayCharInventoryItems(myChar *char.Character, itemOptions *int) []string {
+func displayInventoryItems(myChar *char.Character, itemOptions *int, isMerchant bool) []string {
 
 	if len(myChar.Inventory) == 0 {
 		DisplayText(17, 4, "Votre inventaire est vide !")
@@ -684,17 +705,47 @@ func displayCharInventoryItems(myChar *char.Character, itemOptions *int) []strin
 			break
 		}
 		DisplayText(17, line+index, item)
-		DisplayText(47, line+index, retreiveItemType(item))
+		if !isMerchant {
+			DisplayText(47, line+index, retreiveItemType(item))
+		} else {
+			switch retreiveItemType(item) {
+			case "Potion":
+				for _, potion := range char.AllPotion {
+					if item == potion.Name {
+						DisplayText(49, line+index, strconv.Itoa(potion.Price))
+					}
+				}
+			case "Livre de sort":
+				for _, spellBook := range char.AllSpellBook {
+					if item == spellBook.Name {
+						DisplayText(49, line+index, strconv.Itoa(spellBook.Price))
+					}
+				}
+			case "Equipement":
+				for _, equipement := range char.AllEquipement {
+					if item == equipement.Name {
+						DisplayText(49, line+index, strconv.Itoa(equipement.Price))
+					}
+				}
+			case "Ressource":
+				for _, ressource := range char.AllRessources {
+					if item == ressource.Name {
+						DisplayText(49, line+index, strconv.Itoa(ressource.Price))
+					}
+				}
+			}
+
+		}
 		DisplayText(67, line+index, strconv.Itoa(myChar.Inventory[item]))
 	}
 	return inventory
 }
 
-func displayCharInventory(myChar char.Character, itemOptions *int) []string {
+func displayInventory(myChar char.Character, itemOptions *int, isMerchant bool) []string {
 	DisplayBlankMenu(CHAR_INVENTORY)
 	displayCharInventoryGrid()
-	displayCharInventoryText()
-	return displayCharInventoryItems(&myChar, itemOptions)
+	displayCharInventoryText(isMerchant)
+	return displayInventoryItems(&myChar, itemOptions, isMerchant)
 }
 
 func displayCharInventoryItemsCursor(option, previousOption int) {
@@ -711,6 +762,7 @@ func displayCharInventoryItemsCursor(option, previousOption int) {
 func displayCharInventoryItemDescription(item string) {
 
 	DisplayText(29, 15, "                                                ")
+	DisplayText(29, 16, "                                                ")
 
 	var description string
 
@@ -740,9 +792,14 @@ func displayCharInventoryItemDescription(item string) {
 	DisplayText(29, 15, description)
 }
 
-func displayCharInventoryActionCursor(option, previousOption int) {
+func displayCharInventoryActionCursor(option, previousOption int, isMerchant bool) {
 	column := 6
-	var lines = []int{14, 15, 16}
+	var lines []int
+	if !isMerchant {
+		lines = []int{14, 15, 16}
+	} else {
+		lines = []int{14, 15}
+	}
 	if option != 0 {
 		DisplayText(column, lines[option-1], string(CharMenuCursor))
 	}
@@ -807,7 +864,7 @@ func displayStrollText(myChar *char.Character, nbMenu int) {
 		text = append(text, "│  Mission   │")
 		text = append(text, "│   Ville   │")
 	case STROLL_MARKET:
-		text = append(text, "│  Marchant  │")
+		text = append(text, "│  Marchand  │")
 		text = append(text, "│  Forgeron  │")
 		text = append(text, "│   Ville   │")
 	case STROLL_ARENA:
@@ -815,7 +872,7 @@ func displayStrollText(myChar *char.Character, nbMenu int) {
 	case STROLL_MERCHANT:
 		text = append(text, "│  Acheter   │")
 		text = append(text, "│   Vendre   │")
-		text = append(text, "│   Ville   │")
+		text = append(text, "│  Marché   │")
 	case STROLL_BLACKSMITH:
 		// Go to the Blacksmith menu!
 	}
@@ -915,4 +972,23 @@ func displayStrollMenu(myChar *char.Character, nbMenu int) {
 //  //┃\\                                                           Λ            //┃\\
 //  \\┃//                             ╭───────────╮             ╭────────────────\\┃//
 //   \┃/                              │  Château  │             │ Space :  Menu   \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marchand ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\  ╳  Esc  │         Nom                      Prix           Quantité      /┃\
+//  //┃\\─────────┴──────────────────────────────────────────────────────────────//┃\\
+//  \\┃//  ⎯{====-   Heaume du chasseur              1.300             2         \\┃//
+//  /\┃/\            Armure de fantassin             130               1         /\┃/\
+//  \/┃\/            Épée longue en mithril          25.480            1         \/┃\/
+//  //┃\\            Jambières elfiques              3.510             1         //┃\\
+//  \\┃//            Chausses légères                60                2         \\┃//
+//  /\┃/\            Potion de soin                  20                10        /\┃/\
+//  \/┃\/            Potion de poison                15                24        \/┃\/
+//  //┃\\            Grimoire boule de feu           315               1         //┃\\
+//  \\┃//            Peau de mammouth                35                35        \\┃//
+//  /\┃/\            Morceau de mithril              1.200             7         /\┃/\
+//  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
+//  //┃\\ ⎯{==- Acheter    │  Description :                                      //┃\\
+//  \\┃//       Annuler    │     Le heaume du chasseur donne 35 pts de défense   \\┃//
+//   \┃/                   │     et 15 pts d'attaque.                             \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪

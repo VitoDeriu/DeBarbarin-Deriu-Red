@@ -1,6 +1,7 @@
 package character
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -43,6 +44,7 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateSkills()
 	CreateRaces()
 	CreateItems()
+	InitialiseMerchant()
 	var MainChar Character
 	MainChar.Name = name
 	MainChar.Class = Races[selectedRace-1] // la bendo la bendo
@@ -57,18 +59,18 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	MainChar.Defense = Races[selectedRace-1].Defense
 	MainChar.Agility = Races[selectedRace-1].Agility
 	MainChar.Skills = append(MainChar.Skills, Races[selectedRace-1].InnateSkill)
-	MainChar.Inventory = map[string]int{TrainingSword.Name: 1, PotionDeSoin.Name: 1, SpellBookFireBall.Name: 1}
-	MainChar.Gold = 10
+	MainChar.Inventory = map[string]int{TrainingSword.Name: 1, PotionDeSoin.Name: 1, SpellBookFireBall.Name: 1, PotionDePoison.Name: 2}
+	MainChar.Gold = 100
 	return MainChar
 }
 
 // fonction de mort et respawn. a faire checker a chaque dégat pris
 func (char *Character) Dead() {
 	if char.Hp <= 0 {
-		println("Vous avez succombé a vos blessures sale noob")
+		fmt.Println("Vous avez succombé a vos blessures sale noob")
 		time.Sleep(1 * time.Second)
-		println("Aller, go respawn !")
+		fmt.Println("Aller, go respawn !")
 		char.Hp = char.HpMax / 2
-		println("PV : ", char.Hp)
+		fmt.Println("HP : ", char.Hp)
 	}
 }
