@@ -5,7 +5,8 @@ import (
 	"time"
 )
 
-// fonction d'utilisation de la potion, a modifier en focntion générale pour tous les items suivant leur typeItem
+// fonction d'utilisation de la potion, a modifier en fonction générale pour tous les items suivant leur typeItem
+// du coup ne pas modifier ca sert a rien
 
 func (char *Character) TakePotionSoin() {
 
@@ -30,7 +31,7 @@ func (char *Character) TakePotionSoin() {
 	}
 }
 
-//fonction pour la popo de poison
+//fonction pour l'utilisation de la popo de poison
 
 func (char *Character) poisonPot() {
 
@@ -49,6 +50,7 @@ func (char *Character) poisonPot() {
 	}
 }
 
+// fonction pour l'apprentissage des sort via les spellbooks
 func (char *Character) SpellBook(s SpellBook) {
 
 	for _, sk := range char.Skills {
@@ -57,96 +59,5 @@ func (char *Character) SpellBook(s SpellBook) {
 		}
 	}
 	char.Skills = append(char.Skills, s.Skill)
-}
-
-// fonctions pour l'ajout et le retrait d'item dans l'inventaire. Peut servir pour le marchant
-
-//func (char *Character) addInventory(s Item) { // pour ajouter un item a l'inventaire quand on achete ou qu'on loot
-//	for key := range char.inventory {
-//		if key == s.name {
-//			char.inventory[key]++ //si l'item est déjà présent dans l'inventaire on ajoute 1
-//			return
-//		}
-//	}
-//	char.inventory[s.name] = 1 // si l'item n'est pas dans l'inventaire on le crée
-//	fmt.Println("ajout de 1 ", s.name, ".")
-//}
-
-//func (char *Character) removeInventory(s Item) { //pour supprimer un item de l'inventaire
-//	for key := range char.inventory {
-//		if key == s.name {
-//			char.inventory[key]--
-//			if char.inventory[key] <= 0 {
-//				delete(char.inventory, key) // si non on delete l'item de l'inventaire
-//			}
-//			fmt.Println("retrait de 1", s.name, ".")
-//			return
-//		}
-//	}
-//	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
-//}
-
-func (char *Character) FullInventory() bool {
-	if len(char.Inventory) >= 10 {
-		println("inventaire plein.. deso")
-		return false
-	}
-	return true
-}
-
-// Add et Remove In	ventory pour les Potions
-func (char *Character) AddPotion(s Potion) {
-	if char.FullInventory() {
-		for key := range char.Inventory {
-			if key == s.Name {
-				char.Inventory[key]++
-				return
-			}
-		}
-		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
-	}
-}
-
-func (char *Character) RemovePotion(s Potion) {
-
-	for key := range char.Inventory {
-		if key == s.Name {
-			char.Inventory[key]--
-			if char.Inventory[key] <= 0 {
-				delete(char.Inventory, key)
-			}
-			fmt.Println("retrait de 1", s.Name, ".")
-			return
-		}
-	}
-	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
-}
-
-// Add et Remove pour les SpellBooks
-func (char *Character) AddSpellBook(s SpellBook) {
-	if char.FullInventory() {
-		for key := range char.Inventory {
-			if key == s.Name {
-				char.Inventory[key]++
-				return
-			}
-		}
-		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
-	}
-}
-
-func (char *Character) RemoveSpellBook(s SpellBook) {
-	for key := range char.Inventory {
-		if key == s.Name {
-			char.Inventory[key]--
-			if char.Inventory[key] <= 0 {
-				delete(char.Inventory, key)
-			}
-			fmt.Println("retrait de 1", s.Name, ".")
-			return
-		}
-	}
-	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
+	char.RemoveSpellBook(s)
 }

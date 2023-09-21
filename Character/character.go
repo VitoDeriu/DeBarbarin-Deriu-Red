@@ -9,11 +9,6 @@ var Human Race
 var Dwarf Race
 var Races []Race
 
-var ElfPunch Skill
-var HumanPunch Skill
-var DwarfPunch Skill
-var Skills []Skill
-
 func CreateRaces() {
 	Elf.Name = "Elfe"
 	Elf.HpMax = 80

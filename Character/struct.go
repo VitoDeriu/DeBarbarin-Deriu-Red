@@ -18,6 +18,7 @@ type Character struct {
 	Skills     []Skill
 	Inventory  map[string]int
 	Gold       int
+	Equipement []Equipement
 }
 
 type Race struct {
@@ -50,16 +51,22 @@ type Potion struct {
 }
 
 type Equipement struct {
-	Name       string
-	Shield     int
-	Perception int
-	Force      int
-	MpMax      int
-	Price      int
+	Name    string
+	Slot    string // "Tete" , "Torse", "Mains", "Jambe", "Pieds"
+	Recipe  map[Ressource]int
+	Defense int
+	Agility int
+	Attack  int
+	Price   int
 }
 
 type SpellBook struct {
 	Name  string
 	Skill Skill
+	Price int
+}
+
+type Ressource struct {
+	Name  string
 	Price int
 }

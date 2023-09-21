@@ -1,4 +1,6 @@
-package character // initialisation de tous les items
+package character
+
+// initialisation de tous les items et leur caractéristiques
 
 /*type Item struct {
 	name     string
@@ -6,41 +8,102 @@ package character // initialisation de tous les items
 	price    int
 }*/
 
+//Déclaration des Equipements
+var TrainingSword Equipement
+var ChapeauDelAventurier Equipement
+var TuniqueDelAventurier Equipement
+var BotteDelAventurier Equipement
+
+var AllEquipement []Equipement
+
+//Déclaration des Potions
 var PotionDeSoin Potion
 var PotionDePoison Potion
-var TrainingSword Equipement
-var SpellBookFireBall SpellBook
-var FireBall Skill
 
 var AllPotion []Potion
-var AllEquipement []Equipement
+
+//Déclaration des Ressources
+var FourrureDeLoup Ressource
+var PeauDeTroll Ressource
+var CuirDeSanglier Ressource
+var PlumeDeCorbeau Ressource
+
+var AllRessources []Ressource
+
+//Déclarations des SpellBooks
+var SpellBookFireBall SpellBook
+
 var AllSpellBook []SpellBook
+
+//Déclaration des Skills
+var FireBall Skill
+var ElfPunch Skill
+var HumanPunch Skill
+var DwarfPunch Skill
+
+var Skills []Skill
 
 func CreateItems() {
 
 	//création des équipements
 	TrainingSword.Name = "Épée d'entrainement"
-	TrainingSword.Force = 5
+	TrainingSword.Attack = 5
+
+	ChapeauDelAventurier.Name = "Chapeau de l'aventurier"
+	ChapeauDelAventurier.Slot = "Tete"
+	ChapeauDelAventurier.Recipe[PlumeDeCorbeau] = 1
+	ChapeauDelAventurier.Recipe[CuirDeSanglier] = 1
+
+	TuniqueDelAventurier.Name = "Tunique de l'aventurier"
+	TuniqueDelAventurier.Slot = "Torse"
+	TuniqueDelAventurier.Recipe[FourrureDeLoup] = 2
+	TuniqueDelAventurier.Recipe[PeauDeTroll] = 1
+
+	BotteDelAventurier.Name = "Botte de l'aventurier"
+	BotteDelAventurier.Slot = "Pieds"
+	BotteDelAventurier.Recipe[FourrureDeLoup] = 1
+	BotteDelAventurier.Recipe[CuirDeSanglier] = 1
 
 	AllEquipement = append(AllEquipement, TrainingSword)
+	AllEquipement = append(AllEquipement, ChapeauDelAventurier)
+	AllEquipement = append(AllEquipement, TuniqueDelAventurier)
+	AllEquipement = append(AllEquipement, BotteDelAventurier)
 
 	//création des potions
 	PotionDeSoin.Name = "Potion de soin"
 	PotionDeSoin.GainHp = 20
-	PotionDeSoin.Price = 0
+	PotionDeSoin.Price = 3
 
 	PotionDePoison.Name = "Potion de poison"
 	PotionDePoison.LossHp = 10
 	PotionDePoison.EffectOnTime = 3
-	PotionDePoison.Price = 30
+	PotionDePoison.Price = 6
 
 	AllPotion = append(AllPotion, PotionDeSoin)
 	AllPotion = append(AllPotion, PotionDePoison)
 
+	//Création des Ressources
+	FourrureDeLoup.Name = "Fourrure de loup"
+	FourrureDeLoup.Price = 4
+
+	PeauDeTroll.Name = "Peau de troll"
+	PeauDeTroll.Price = 7
+
+	CuirDeSanglier.Name = "Cuir de sanglier"
+	CuirDeSanglier.Price = 3
+
+	PlumeDeCorbeau.Name = "Plume de corbeau"
+	PlumeDeCorbeau.Price = 1
+
+	AllRessources = append(AllRessources, FourrureDeLoup)
+	AllRessources = append(AllRessources, PeauDeTroll)
+	AllRessources = append(AllRessources, CuirDeSanglier)
+	AllRessources = append(AllRessources, PlumeDeCorbeau)
+
 	//Créations des SpellBook
 	SpellBookFireBall.Name = "Grimoire boule de feu"
 	SpellBookFireBall.Skill = FireBall
-	SpellBookFireBall.Price = 100
+	SpellBookFireBall.Price = 25
 
 	AllSpellBook = append(AllSpellBook, SpellBookFireBall)
 
