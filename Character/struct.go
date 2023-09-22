@@ -56,6 +56,8 @@ type Equipement struct {
 	Name    string
 	Slot    string // "Tete" , "Torse", "Mains", "Jambes", "Pieds"
 	Recipe  map[Ressource]int
+	HpMax   int
+	MpMax   int
 	Defense int
 	Agility int
 	Attack  int

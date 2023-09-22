@@ -52,6 +52,7 @@ func CreateItems() {
 	ChapeauDelAventurier.Name = "Chapeau de l'aventurier"
 	ChapeauDelAventurier.Slot = "Tete"
 	ChapeauDelAventurier.Recipe = map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1}
+	ChapeauDelAventurier.HpMax = 10
 
 	TuniqueDelAventurier.Name = "Tunique de l'aventurier"
 	TuniqueDelAventurier.Slot = "Torse"
