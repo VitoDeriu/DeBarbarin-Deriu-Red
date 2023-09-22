@@ -1,5 +1,13 @@
 package character
 
+var BlacksmithEquipments []Equipement
+
+func InitBlacksmith() {
+	BlacksmithEquipments = append(BlacksmithEquipments, ChapeauDelAventurier)
+	BlacksmithEquipments = append(BlacksmithEquipments, TuniqueDelAventurier)
+	BlacksmithEquipments = append(BlacksmithEquipments, BotteDelAventurier)
+}
+
 func DisplayForge() {
 	println("Salam mon reuf ! voici ce que je pourrais te fabriquer moyenant moula et ressource :")
 

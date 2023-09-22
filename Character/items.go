@@ -1,5 +1,10 @@
 package character
 
+import (
+	"fmt"
+	"time"
+)
+
 // initialisation de tous les items et leur caractéristiques
 
 /*type Item struct {
@@ -8,7 +13,7 @@ package character
 	price    int
 }*/
 
-//Déclaration des Equipements
+// Déclaration des Equipements
 var TrainingSword Equipement
 var ChapeauDelAventurier Equipement
 var TuniqueDelAventurier Equipement
@@ -16,13 +21,13 @@ var BotteDelAventurier Equipement
 
 var AllEquipement []Equipement
 
-//Déclaration des Potions
+// Déclaration des Potions
 var PotionDeSoin Potion
 var PotionDePoison Potion
 
 var AllPotion []Potion
 
-//Déclaration des Ressources
+// Déclaration des Ressources
 var FourrureDeLoup Ressource
 var PeauDeTroll Ressource
 var CuirDeSanglier Ressource
@@ -30,12 +35,12 @@ var PlumeDeCorbeau Ressource
 
 var AllRessources []Ressource
 
-//Déclarations des SpellBooks
+// Déclarations des SpellBooks
 var SpellBookFireBall SpellBook
 
 var AllSpellBook []SpellBook
 
-//Déclaration des Skills
+// Déclaration des Skills
 var FireBall Skill
 var ElfPunch Skill
 var HumanPunch Skill
@@ -51,7 +56,11 @@ func CreateItems() {
 
 	ChapeauDelAventurier.Name = "Chapeau de l'aventurier"
 	ChapeauDelAventurier.Slot = "Tete"
+	// ChapeauDelAventurier.Recipe[PlumeDeCorbeau] = 1
+	// ChapeauDelAventurier.Recipe[CuirDeSanglier] = 1
 	ChapeauDelAventurier.Recipe = map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1}
+	fmt.Printf("%#v", ChapeauDelAventurier.Recipe)
+	time.Sleep(time.Second * 5)
 	ChapeauDelAventurier.HpMax = 10
 
 	TuniqueDelAventurier.Name = "Tunique de l'aventurier"

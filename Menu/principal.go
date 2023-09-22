@@ -359,7 +359,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 		if pointingAt > len(items) {
 			pointingAt = len(items)
 		}
-		displayCharInventoryItemDescription(items[pointingAt-1])
+		displayItemDescription(items[pointingAt-1])
 		displayCharInventoryItemsCursor(pointingAt, 0)
 
 		for selectedOption == 0 {
@@ -397,7 +397,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 			//Change the display only if necessary.
 			if previousPointingAt != pointingAt {
 				displayCharInventoryItemsCursor(pointingAt, previousPointingAt)
-				displayCharInventoryItemDescription(items[pointingAt-1])
+				displayItemDescription(items[pointingAt-1])
 				previousPointingAt = pointingAt
 			}
 		}
@@ -697,7 +697,7 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			case 2:
 				nbMenu = STROLL_CITY
 			case 3:
-				// Go to the blacksmith
+				BlacksmithMenu(myChar)
 			}
 		case STROLL_MERCHANT:
 			switch selectedOption {
@@ -713,4 +713,131 @@ func Stroll(myChar *char.Character, nbMenu int) {
 
 	}
 
+}
+
+func BlacksmithMenu(myChar *char.Character) {
+	term.Clear(term.ColorDefault, term.ColorDefault)
+
+	pointingAt := 1
+	selectedOption := 0
+	previousPointingAt := 1
+	options := len(char.BlacksmithEquipments)
+	for {
+		ClearTerminal()
+		term.Clear(term.ColorDefault, term.ColorDefault)
+		displayBlacksmithMenu()
+		displayItemDescription(char.BlacksmithEquipments[pointingAt-1].Name)
+		displayBlacksmithRecipe(pointingAt)
+		displayCharInventoryItemsCursor(pointingAt, 0)
+
+		for selectedOption == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if pointingAt > 1 {
+						pointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if pointingAt < options {
+						pointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedOption = pointingAt
+
+				//Escape
+				case term.KeyEsc:
+					term.Clear(term.ColorDefault, term.ColorDefault)
+					return
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousPointingAt != pointingAt {
+				displayCharInventoryItemsCursor(pointingAt, previousPointingAt)
+				displayBlacksmithRecipe(pointingAt)
+				displayItemDescription(char.BlacksmithEquipments[pointingAt-1].Name)
+				previousPointingAt = pointingAt
+			}
+		}
+
+		actionPointingAt := 1
+		selectedAction := 0
+		previousActionPointingAt := 1
+		actionOptions := 2
+
+		displayCharInventoryActionCursor(actionPointingAt, 0, STROLL_BLACKSMITH)
+
+		for selectedAction == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if actionPointingAt > 1 {
+						actionPointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if actionPointingAt < actionOptions {
+						actionPointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedAction = actionPointingAt
+
+				//Escape
+				case term.KeyEsc:
+					return
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousActionPointingAt != actionPointingAt {
+				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt, STROLL_BLACKSMITH)
+				previousActionPointingAt = actionPointingAt
+			}
+		}
+
+		switch selectedAction {
+
+		//Craft the item!
+		case 1:
+			switch char.BlacksmithEquipments[pointingAt-1].Name {
+			case "Chapeau de l'aventurier":
+				myChar.CraftChapeauDelAventurier()
+
+			case "Tunique de l'aventurier":
+				myChar.CraftTuniqueDelAventurier()
+
+			case "Bottes de l'aventurier":
+				myChar.CraftBotteDelAventurier()
+			}
+			selectedOption = 0
+			displayCharInventoryActionCursor(0, actionPointingAt, STROLL_BLACKSMITH)
+
+		//Return to item selection
+		case 2:
+			selectedOption = 0
+			displayCharInventoryActionCursor(0, actionPointingAt, STROLL_BLACKSMITH)
+		}
+
+	}
 }

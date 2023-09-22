@@ -45,6 +45,7 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	CreateRaces()
 	CreateItems()
 	InitialiseMerchant()
+	InitBlacksmith()
 	var MainChar Character
 	MainChar.Name = name
 	MainChar.Class = Races[selectedRace-1] // la bendo la bendo

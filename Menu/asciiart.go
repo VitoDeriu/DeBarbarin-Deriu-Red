@@ -24,6 +24,7 @@ var MenuLateralBar,
 	CharInventoryText,
 	MerchantInventoryText,
 	SellMerchantInventoryText,
+	BlacksmithMenuText,
 	StrollGrid,
 	StrollCursor [][]rune
 
@@ -39,6 +40,7 @@ var BottomBar,
 	StrollMarketTitleBar,
 	StrollArenaTitleBar,
 	StrollMerchantTitleBar,
+	BlacksmithMenuTitleBar,
 	CharCreationName,
 	CharCreationNameError,
 	CharCreationMenuCursor,
@@ -179,6 +181,23 @@ func CreateDisplayVariables() {
 	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Annuler"))
 	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Description :"))
 
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune(" ╳  Esc  │         Nom                         Ressources nécessaires"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("─────────┴─────────────────────────────────┬────────────────────────────"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("──────────────────┬────────────────────────┴────────────────────────────"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("Fabriquer  │  Description :"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("Annuler    │"))
+	BlacksmithMenuText = append(BlacksmithMenuText, []rune("│"))
+
 	StrollGrid = append(StrollGrid, []rune("─────────────────────────────────────────┴──────────────┴───────────────"))
 	StrollGrid = append(StrollGrid, []rune("      ╭────────────╮                                 ╭────────────╮     "))
 	StrollGrid = append(StrollGrid, []rune("      ╰─────┬──────╯                                 ╰─────┬──────╯     "))
@@ -212,6 +231,8 @@ func CreateDisplayVariables() {
 	StrollMerchantTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Marchand ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	StrollArenaTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Arène ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	BlacksmithMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Forgeron ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharCreationName = []rune("Nom du personnage (max 20 caractères) :")
 
@@ -309,7 +330,7 @@ func displayTopBar(menuNb int) {
 		CurrentTopBar = StrollMerchantTitleBar
 
 	case STROLL_BLACKSMITH:
-		// CurrentTopBar = StrollMerchantTitleBar
+		CurrentTopBar = BlacksmithMenuTitleBar
 
 	case STROLL_ARENA:
 		CurrentTopBar = StrollArenaTitleBar
@@ -775,7 +796,7 @@ func displayCharInventoryItemsCursor(option, previousOption int) {
 	}
 }
 
-func displayCharInventoryItemDescription(item string) {
+func displayItemDescription(item string) {
 
 	DisplayText(29, 15, "                                                ")
 	DisplayText(29, 16, "                                                ")
@@ -786,7 +807,7 @@ func displayCharInventoryItemDescription(item string) {
 	case "Équipement":
 		for _, singleItem := range char.AllEquipement {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est un équipement.       " // Add Description field in the Equipment struct!!!
+				description = singleItem.Name + " est un équipement.  " // Add Description field in the Equipment struct!!!
 			}
 		}
 	case "Potion":
@@ -944,6 +965,52 @@ func displayStrollMenu(myChar *char.Character, nbMenu int) {
 	displayStrollText(myChar, nbMenu)
 }
 
+func displayBlacksmithBasicMenu() {
+	var columns = []int{5, 5, 48, 48, 48, 48, 48, 48, 48, 48, 48, 48, 5, 12, 12, 23}
+	var column int
+	line := 1
+
+	for i := range BlacksmithMenuText {
+		column = columns[i]
+		for _, char := range BlacksmithMenuText[i] {
+			DisplayRune(column, line+i, char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayBlacksmithEquipment() {
+	column := 17
+	line := 3
+
+	for i, equipment := range char.BlacksmithEquipments {
+		DisplayText(column, line+i, equipment.Name)
+	}
+}
+
+func displayBlacksmithRecipe(pointingAt int) {
+	column := 50
+	line := 4
+
+	for i := 0; i < 9; i++ {
+		DisplayText(column, line+i, "                           ")
+	}
+	DisplayText(column, line, "10   Pièces d'or")
+	line += 2
+	i := 0
+	for ressource, nb := range char.BlacksmithEquipments[pointingAt-1].Recipe {
+		DisplayText(column, line+i, strconv.Itoa(nb))
+		DisplayText(column+5, line+i, ressource.Name)
+		i += 2
+	}
+}
+
+func displayBlacksmithMenu() {
+	DisplayBlankMenu(STROLL_BLACKSMITH)
+	displayBlacksmithBasicMenu()
+	displayBlacksmithEquipment()
+}
+
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
 //  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
@@ -1016,6 +1083,25 @@ func displayStrollMenu(myChar *char.Character, nbMenu int) {
 //  /\┃/\            Morceau de mithril              1.200             7         /\┃/\
 //  \/┃\/──────────────────┬─────────────────────────────────────────────────────\/┃\/
 //  //┃\\ ⎯{==- Acheter    │  Description :                                      //┃\\
+//  \\┃//       Annuler    │     Le heaume du chasseur donne 35 pts de défense   \\┃//
+//   \┃/                   │     et 15 pts d'attaque.                             \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Forgeron ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\  ╳  Esc  │         Nom                         Ressources nécessaires    /┃\
+//  //┃\\─────────┴─────────────────────────────────┬────────────────────────────//┃\\
+//  \\┃//  ⎯{====-   Épée longue en mithril         │                            \\┃//
+//  /\┃/\            Armure de fantassin            │ 12.550 Pièces d'or         /\┃/\
+//  \/┃\/            Heaume du chasseur             │                            \/┃\/
+//  //┃\\            Jambières elfiques             │ 12     Morceau de mithril  //┃\\
+//  \\┃//            Chausses légères               │                            \\┃//
+//  /\┃/\            Chapeau de l'aventurier        │ 1      Écaille de Dragon   /\┃/\
+//  \/┃\/            Bottes de l'aventurier         │                            \/┃\/
+//  //┃\\            Épée d'entrainement            │ 5      Morceau d'argent    //┃\\
+//  \\┃//            Tunique de l'aventurier        │                            \\┃//
+//  /\┃/\            Tunique de mage                │ 1      Ruby                /\┃/\
+//  \/┃\/──────────────────┬────────────────────────┴────────────────────────────\/┃\/
+//  //┃\\ ⎯{==- Fabriquer  │  Description :                                      //┃\\
 //  \\┃//       Annuler    │     Le heaume du chasseur donne 35 pts de défense   \\┃//
 //   \┃/                   │     et 15 pts d'attaque.                             \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
