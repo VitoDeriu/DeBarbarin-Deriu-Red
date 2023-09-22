@@ -23,6 +23,7 @@ var MenuLateralBar,
 	CharInventoryGrid,
 	CharInventoryText,
 	MerchantInventoryText,
+	SellMerchantInventoryText,
 	StrollGrid,
 	StrollCursor [][]rune
 
@@ -58,6 +59,8 @@ const (
 	STROLL_MERCHANT    = 10
 	STROLL_BLACKSMITH  = 11
 	STROLL_MISSIONS    = 12
+	BUY_MERCHANT       = 13
+	SELL_MERCHANT      = 14
 )
 
 func CreateDisplayVariables() {
@@ -167,6 +170,14 @@ func CreateDisplayVariables() {
 	MerchantInventoryText = append(MerchantInventoryText, []rune("Acheter"))
 	MerchantInventoryText = append(MerchantInventoryText, []rune("Annuler"))
 	MerchantInventoryText = append(MerchantInventoryText, []rune("Description :"))
+
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("╳  Esc"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Nom"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Prix"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Quantité"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Vendre"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Annuler"))
+	SellMerchantInventoryText = append(SellMerchantInventoryText, []rune("Description :"))
 
 	StrollGrid = append(StrollGrid, []rune("─────────────────────────────────────────┴──────────────┴───────────────"))
 	StrollGrid = append(StrollGrid, []rune("      ╭────────────╮                                 ╭────────────╮     "))
@@ -294,7 +305,7 @@ func displayTopBar(menuNb int) {
 	case STROLL_OUTSIDE:
 		CurrentTopBar = StrollOutsideTitleBar
 
-	case STROLL_MERCHANT:
+	case STROLL_MERCHANT, BUY_MERCHANT, SELL_MERCHANT:
 		CurrentTopBar = StrollMerchantTitleBar
 
 	case STROLL_BLACKSMITH:
@@ -658,19 +669,24 @@ func displayCharInventoryGrid() {
 	}
 }
 
-func displayCharInventoryText(isMerchant bool) {
+func displayCharInventoryText(whichMenu int) {
 
 	var columns []int
 	var lines []int
 	var column int
 	var inventoryText [][]rune
 
-	if !isMerchant {
+	switch whichMenu {
+	case CHAR_INVENTORY:
 		inventoryText = CharInventoryText
 		columns = []int{6, 24, 49, 64, 12, 12, 12, 26}
 		lines = []int{1, 1, 1, 1, 14, 15, 16, 14}
-	} else {
+	case BUY_MERCHANT:
 		inventoryText = MerchantInventoryText
+		columns = []int{6, 24, 49, 64, 12, 12, 26}
+		lines = []int{1, 1, 1, 1, 14, 15, 14}
+	case SELL_MERCHANT:
+		inventoryText = SellMerchantInventoryText
 		columns = []int{6, 24, 49, 64, 12, 12, 26}
 		lines = []int{1, 1, 1, 1, 14, 15, 14}
 	}
@@ -684,7 +700,7 @@ func displayCharInventoryText(isMerchant bool) {
 	}
 }
 
-func displayInventoryItems(myChar *char.Character, itemOptions *int, isMerchant bool) []string {
+func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu int) []string {
 
 	if len(myChar.Inventory) == 0 {
 		DisplayText(17, 4, "Votre inventaire est vide !")
@@ -705,7 +721,7 @@ func displayInventoryItems(myChar *char.Character, itemOptions *int, isMerchant 
 			break
 		}
 		DisplayText(17, line+index, item)
-		if !isMerchant {
+		if whichMenu == CHAR_INVENTORY {
 			DisplayText(47, line+index, retreiveItemType(item))
 		} else {
 			switch retreiveItemType(item) {
@@ -741,11 +757,11 @@ func displayInventoryItems(myChar *char.Character, itemOptions *int, isMerchant 
 	return inventory
 }
 
-func displayInventory(myChar char.Character, itemOptions *int, isMerchant bool) []string {
-	DisplayBlankMenu(CHAR_INVENTORY)
+func displayInventory(myChar char.Character, itemOptions *int, whichMenu int) []string {
+	DisplayBlankMenu(whichMenu)
 	displayCharInventoryGrid()
-	displayCharInventoryText(isMerchant)
-	return displayInventoryItems(&myChar, itemOptions, isMerchant)
+	displayCharInventoryText(whichMenu)
+	return displayInventoryItems(&myChar, itemOptions, whichMenu)
 }
 
 func displayCharInventoryItemsCursor(option, previousOption int) {
@@ -785,6 +801,12 @@ func displayCharInventoryItemDescription(item string) {
 				description = singleItem.Name + " est un livre de sort.  " // Add Description field in the SpellBook struct!!!
 			}
 		}
+	case "Ressource":
+		for _, singleItem := range char.AllRessources {
+			if item == singleItem.Name {
+				description = singleItem.Name + " est une ressource.  " // Add Description field in the Ressource struct!!!
+			}
+		}
 	default:
 		description = "Item inconnu"
 	}
@@ -792,10 +814,10 @@ func displayCharInventoryItemDescription(item string) {
 	DisplayText(29, 15, description)
 }
 
-func displayCharInventoryActionCursor(option, previousOption int, isMerchant bool) {
+func displayCharInventoryActionCursor(option, previousOption, whichMenu int) {
 	column := 6
 	var lines []int
-	if !isMerchant {
+	if whichMenu == CHAR_INVENTORY {
 		lines = []int{14, 15, 16}
 	} else {
 		lines = []int{14, 15}
@@ -825,6 +847,11 @@ func retreiveItemType(s string) string {
 	for _, name := range char.AllSpellBook {
 		if s == name.Name {
 			return "Livre de sort"
+		}
+	}
+	for _, name := range char.AllRessources {
+		if s == name.Name {
+			return "Ressource"
 		}
 	}
 	return "Inconnu" // Dommage, cet item n'est par répertorié dans les slices présentes dans la fonction... :´(

@@ -320,7 +320,7 @@ func CharMenu(myChar *char.Character) {
 		switch selectedOption {
 
 		case 1: //Display the inventory
-			Inventory(myChar, false)
+			Inventory(myChar, CHAR_INVENTORY)
 
 		case 2: //Need to implement that display (Equipment managing menu)!!
 			PrincipalMenu()
@@ -338,7 +338,7 @@ func CharMenu(myChar *char.Character) {
 	}
 }
 
-func Inventory(myChar *char.Character, isMerchant bool) {
+func Inventory(myChar *char.Character, whichMenu int) {
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
 
@@ -349,15 +349,15 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 	for {
 		ClearTerminal()
 		term.Clear(term.ColorDefault, term.ColorDefault)
-		items := displayInventory(*myChar, &options, isMerchant)
-		if pointingAt > len(items) {
-			pointingAt = len(items) - 1
-		}
+		items := displayInventory(*myChar, &options, whichMenu)
 		if len(items) == 0 {
 			time.Sleep(time.Second * 1)
 			ClearTerminal()
 			term.Clear(term.ColorDefault, term.ColorDefault)
 			return
+		}
+		if pointingAt > len(items) {
+			pointingAt = len(items)
 		}
 		displayCharInventoryItemDescription(items[pointingAt-1])
 		displayCharInventoryItemsCursor(pointingAt, 0)
@@ -407,13 +407,13 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 		previousActionPointingAt := 1
 		var actionOptions int
 
-		if !isMerchant {
+		if whichMenu == CHAR_INVENTORY {
 			actionOptions = 3
 		} else {
 			actionOptions = 2
 		}
 
-		displayCharInventoryActionCursor(actionPointingAt, 0, isMerchant)
+		displayCharInventoryActionCursor(actionPointingAt, 0, whichMenu)
 
 		for selectedAction == 0 {
 
@@ -448,12 +448,12 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 
 			//Change the display only if necessary.
 			if previousActionPointingAt != actionPointingAt {
-				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt, isMerchant)
+				displayCharInventoryActionCursor(actionPointingAt, previousActionPointingAt, whichMenu)
 				previousActionPointingAt = actionPointingAt
 			}
 		}
 
-		if !isMerchant {
+		if whichMenu == CHAR_INVENTORY {
 			switch selectedAction {
 
 			//Use the item!
@@ -514,7 +514,7 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 			//Return to item selection
 			case 3:
 				selectedOption = 0
-				displayCharInventoryActionCursor(0, actionPointingAt, isMerchant)
+				displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 			}
 
 		} else {
@@ -528,28 +528,44 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 				case "Équipement":
 					for _, equipement := range char.AllEquipement {
 						if items[pointingAt-1] == equipement.Name {
-							MainChar.BuyEquipement(equipement)
+							if whichMenu == BUY_MERCHANT {
+								MainChar.BuyEquipement(&char.Merchant, equipement)
+							} else {
+								char.Merchant.BuyEquipement(&MainChar, equipement)
+							}
 						}
 					}
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
 						if items[pointingAt-1] == potion.Name {
-							MainChar.BuyPotion(potion)
+							if whichMenu == BUY_MERCHANT {
+								MainChar.BuyPotion(&char.Merchant, potion)
+							} else {
+								char.Merchant.BuyPotion(&MainChar, potion)
+							}
 						}
 					}
 
 				case "Livre de sort":
 					for _, spellBook := range char.AllSpellBook {
 						if items[pointingAt-1] == spellBook.Name {
-							MainChar.BuySpellBook(spellBook)
+							if whichMenu == BUY_MERCHANT {
+								MainChar.BuySpellBook(&char.Merchant, spellBook)
+							} else {
+								char.Merchant.BuySpellBook(&MainChar, spellBook)
+							}
 						}
 					}
 
 				case "Ressource":
 					for _, ressource := range char.AllRessources {
 						if items[pointingAt-1] == ressource.Name {
-							MainChar.BuyRessource(ressource)
+							if whichMenu == BUY_MERCHANT {
+								MainChar.BuyRessource(&char.Merchant, ressource)
+							} else {
+								char.Merchant.BuyRessource(&MainChar, ressource)
+							}
 						}
 					}
 				}
@@ -557,7 +573,7 @@ func Inventory(myChar *char.Character, isMerchant bool) {
 			//return to item selection
 			case 2:
 				selectedOption = 0
-				displayCharInventoryActionCursor(0, actionPointingAt, isMerchant)
+				displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 			}
 		}
 
@@ -687,11 +703,11 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			switch selectedOption {
 
 			case 1:
-				Inventory(&char.Merchant, true)
+				Inventory(&char.Merchant, BUY_MERCHANT)
 			case 2:
 				nbMenu = STROLL_MARKET
 			case 3:
-				// Sell items from the merchant
+				Inventory(&MainChar, SELL_MERCHANT)
 			}
 		}
 

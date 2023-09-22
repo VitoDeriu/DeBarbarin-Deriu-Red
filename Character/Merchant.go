@@ -10,6 +10,7 @@ func InitialiseMerchant() {
 
 	Merchant.Name = "Marchand"
 	Merchant.Inventory = map[string]int{"Potion de soin": 3, "Potion de poison": 3, "Grimoire boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5}
+	Merchant.Gold = 99999
 }
 
 func DisplayBoutique() {
@@ -18,13 +19,15 @@ func DisplayBoutique() {
 	}
 }
 
-func (char *Character) BuyPotion(s Potion) {
+func (buyer *Character) BuyPotion(seller *Character, s Potion) {
 
-	if Merchant.Inventory[s.Name] > 0 {
-		if char.CheckGold(s.Price) {
-			char.AddPotion(s)
-			char.Gold -= s.Price
-			println("achat de 1 ", s.Name)
+	if seller.Inventory[s.Name] > 0 {
+		if buyer.CheckGold(s.Price) || buyer == &Merchant {
+			buyer.AddPotion(s)
+			buyer.Gold -= s.Price
+			seller.Gold += s.Price
+			seller.RemovePotion(s)
+			// println("achat de 1 ", s.Name)
 		} else {
 			return
 		}
@@ -33,13 +36,15 @@ func (char *Character) BuyPotion(s Potion) {
 	}
 }
 
-func (char *Character) BuySpellBook(s SpellBook) {
+func (buyer *Character) BuySpellBook(seller *Character, s SpellBook) {
 
-	if Merchant.Inventory[s.Name] > 0 {
-		if char.CheckGold(s.Price) {
-			char.AddSpellBook(s)
-			char.Gold -= s.Price
-			println("achat de 1 ", s.Name)
+	if seller.Inventory[s.Name] > 0 {
+		if buyer.CheckGold(s.Price) || buyer == &Merchant {
+			buyer.AddSpellBook(s)
+			buyer.Gold -= s.Price
+			seller.Gold += s.Price
+			seller.RemoveSpellBook(s)
+			// println("achat de 1 ", s.Name)
 		} else {
 			return
 		}
@@ -48,13 +53,15 @@ func (char *Character) BuySpellBook(s SpellBook) {
 	}
 }
 
-func (char *Character) BuyEquipement(s Equipement) {
+func (buyer *Character) BuyEquipement(seller *Character, s Equipement) {
 
-	if Merchant.Inventory[s.Name] > 0 {
-		if char.CheckGold(s.Price) {
-			char.AddEquipement(s)
-			char.Gold -= s.Price
-			println("achat de 1 ", s.Name)
+	if seller.Inventory[s.Name] > 0 {
+		if buyer.CheckGold(s.Price) || buyer == &Merchant {
+			buyer.AddEquipement(s)
+			buyer.Gold -= s.Price
+			seller.Gold += s.Price
+			seller.RemoveEquipement(s)
+			// println("achat de 1 ", s.Name)
 		} else {
 			return
 		}
@@ -63,13 +70,15 @@ func (char *Character) BuyEquipement(s Equipement) {
 	}
 }
 
-func (char *Character) BuyRessource(s Ressource) {
+func (buyer *Character) BuyRessource(seller *Character, s Ressource) {
 
-	if Merchant.Inventory[s.Name] > 0 {
-		if char.CheckGold(s.Price) {
-			char.AddRessource(s)
-			char.Gold -= s.Price
-			println("achat de 1 ", s.Name)
+	if seller.Inventory[s.Name] > 0 {
+		if buyer.CheckGold(s.Price) || buyer == &Merchant {
+			buyer.AddRessource(s)
+			buyer.Gold -= s.Price
+			seller.Gold += s.Price
+			seller.RemoveRessource(s)
+			// println("achat de 1 ", s.Name)
 		} else {
 			return
 		}
