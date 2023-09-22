@@ -161,3 +161,15 @@ func (char *Character) RemoveRessource(s Ressource) {
 	}
 	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
 }
+
+func (char *Character) Equiper(e Equipement) {
+
+	//déplacer visuellement lequipement dans le display
+	//si ya qqch dedans il faut add a linventaire
+	//char = char.HpMax - Equipement.HpMax
+	//
+	//checker si y a rien a l emplacement
+	//removeInventory
+	//char = char.HpMax + Equipement.HpMax
+
+}
