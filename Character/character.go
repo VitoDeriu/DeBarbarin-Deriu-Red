@@ -5,47 +5,40 @@ import (
 	"time"
 )
 
-var Elf Race
-var Human Race
-var Dwarf Race
-var Races []Race
-
-func CreateRaces() {
-	Elf.Name = "Elfe"
-	Elf.HpMax = 80
-	Elf.MpMax = 120
-	Elf.Attack = 5
-	Elf.Defense = 7
-	Elf.Agility = 12
-	Elf.InnateSkill = ElfPunch
-
-	Human.Name = "Humain"
-	Human.HpMax = 100
-	Human.MpMax = 100
-	Human.Attack = 7
-	Human.Defense = 7
-	Human.Agility = 10
-	Human.InnateSkill = HumanPunch
-
-	Dwarf.Name = "Nain"
-	Dwarf.HpMax = 120
-	Dwarf.MpMax = 80
-	Dwarf.Attack = 12
-	Dwarf.Defense = 7
-	Dwarf.Agility = 5
-	Dwarf.InnateSkill = DwarfPunch
-
-	Races = append(Races, Human)
-	Races = append(Races, Elf)
-	Races = append(Races, Dwarf)
+var Elf = Race{
+	Name:        "Elfe",
+	HpMax:       80,
+	MpMax:       120,
+	Attack:      5,
+	Defense:     7,
+	Agility:     12,
+	InnateSkill: ElfPunch,
+}
+var Human = Race{
+	Name:        "Humain",
+	HpMax:       100,
+	MpMax:       100,
+	Attack:      7,
+	Defense:     7,
+	Agility:     10,
+	InnateSkill: HumanPunch,
+}
+var Dwarf = Race{
+	Name:        "Nain",
+	HpMax:       120,
+	MpMax:       80,
+	Attack:      12,
+	Defense:     7,
+	Agility:     5,
+	InnateSkill: DwarfPunch,
+}
+var Races = []Race{
+	Human,
+	Elf,
+	Dwarf,
 }
 
 func CreateMainCharacter(name string, selectedRace int) Character {
-	CreateSkills()
-	CreateRaces()
-	CreateItems()
-	InitialiseMerchant()
-	InitBlacksmith()
 	var MainChar Character
 	MainChar.Name = name
 	MainChar.Class = Races[selectedRace-1] // la bendo la bendo

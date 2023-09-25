@@ -21,6 +21,21 @@ type Character struct {
 	Equipement []Equipement
 }
 
+type Enemy struct {
+	Name       string
+	Race       string
+	Level      int
+	Hp         int
+	HpMax      int
+	Attack     int
+	Defense    int
+	Agility    int
+	Skills     []Skill
+	Loot       map[string]int
+	Gold       int
+	Equipement []Equipement
+}
+
 type Race struct {
 	Name        string
 	HpMax       int

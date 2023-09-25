@@ -3,6 +3,7 @@ package menu
 import (
 	char "ProjetRed/Character"
 	"fmt"
+	"math/rand"
 	"os"
 	"os/exec"
 	"time"
@@ -22,9 +23,9 @@ func ClearTerminal() {
 	cmd.Run()
 }
 
-func PresentationCinematic() {
+func PresentationCinematic(name string) {
 	ClearTerminal()
-	messageIntro()
+	messageIntro(name)
 	fmt.Println()
 	for i := 0; i < len(introductionStory); i++ {
 		for j := 1; j <= len(introductionStory[i]); j++ {
@@ -88,8 +89,6 @@ func PrincipalMenu() {
 
 		//Change the display only if necessary.
 		if previousPointingAt != pointingAt {
-			// DisplayBlankMenu(PRINCIPAL_MENU)
-			// DisplayMenuOptions(PRINCIPAL_MENU)
 			DisplayPrincipalCursor(pointingAt, previousPointingAt)
 			previousPointingAt = pointingAt
 		}
@@ -109,8 +108,9 @@ func PrincipalMenu() {
 
 	case 3: // AFFICHER LE BONUS : Spielberg et ABBA ;)
 		ClearTerminal()
-		DisplayBlankMenu(PRINCIPAL_MENU)
-		DisplayMenuOptions(PRINCIPAL_MENU)
+		DisplayBlankMenu(BONUS_MENU)
+		DisplayText(23, 5, "La réponse à la question bonus est :")
+		DisplayText(30, 10, "Spielberg,  ABBA et Queen")
 		time.Sleep(time.Second * 3)
 		PrincipalMenu()
 
@@ -129,13 +129,13 @@ func PrincipalMenu() {
 }
 
 func DisplayRune(column, line int, char rune) {
-	term.SetCell(column, line, char, term.ColorDefault, term.ColorDefault)
+	term.SetCell(column, line, char, term.ColorCyan, term.ColorDefault)
 	term.Flush()
 }
 
 func DisplayText(column, line int, text string) {
 	for _, char := range text {
-		term.SetCell(column, line, char, term.ColorDefault, term.ColorDefault)
+		term.SetCell(column, line, char, term.ColorCyan, term.ColorDefault)
 		column += rwidth.RuneWidth(char)
 	}
 	term.Flush()
@@ -269,7 +269,7 @@ func CharacterCreationMenu() {
 	GameStatus = STROLL_CASTLE
 
 	//Run the beginning of the game (like the cinematic introduction and then send to the first location)
-	// PresentationCinematic()
+	// PresentationCinematic(MainChar.Name)
 	Stroll(&MainChar, GameStatus)
 }
 
@@ -663,11 +663,11 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			switch selectedOption {
 
 			case 1:
-				// Tournoi ou entrainement
+				Combat(myChar, TRAINING)
 			case 2:
 				nbMenu = STROLL_CASTLE
 			case 3:
-				// Tournoi ou entrainement
+				Combat(myChar, TOURNAMENT)
 			}
 		case STROLL_CITY:
 			switch selectedOption {
@@ -683,11 +683,11 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			switch selectedOption {
 
 			case 1:
-				nbMenu = STROLL_ARENA
+				Combat(myChar, STROLL_ARENA)
 			case 2:
 				nbMenu = STROLL_CITY
 			case 3:
-				nbMenu = STROLL_MISSIONS
+				Combat(myChar, STROLL_MISSIONS)
 			}
 		case STROLL_MARKET:
 			switch selectedOption {
@@ -837,6 +837,173 @@ func BlacksmithMenu(myChar *char.Character) {
 		case 2:
 			selectedOption = 0
 			displayCharInventoryActionCursor(0, actionPointingAt, STROLL_BLACKSMITH)
+		}
+
+	}
+}
+
+func Combat(myChar *char.Character, combatType int) {
+
+	enemy := char.Enemies[rand.Intn(len(char.Enemies))]
+	pointingAt := 1
+	selectedOption := 0
+	previousPointingAt := 1
+	options := 4
+	var myCharPotions []string
+
+	for {
+		ClearTerminal()
+		term.Clear(term.ColorDefault, term.ColorDefault)
+		DisplayCombatMenu(myChar, &enemy, combatType)
+		displayCombatActionTypeCursor(pointingAt, 0)
+
+		switch pointingAt {
+		case 1:
+			displayCombatSkills(myChar)
+		case 3:
+			myCharPotions = displayCombatPotions(myChar)
+		default:
+			clearDisplayCombatOptions()
+		}
+
+		for selectedOption == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if pointingAt > 1 {
+						pointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if pointingAt < options {
+						pointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedOption = pointingAt
+
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousPointingAt != pointingAt {
+				displayCombatActionTypeCursor(pointingAt, previousPointingAt)
+				switch pointingAt {
+				case 1:
+					displayCombatSkills(myChar)
+				case 3:
+					myCharPotions = displayCombatPotions(myChar)
+				default:
+					clearDisplayCombatOptions()
+				}
+				previousPointingAt = pointingAt
+			}
+		}
+
+		actionPointingAt := 1
+		selectedAction := 0
+		previousActionPointingAt := 1
+		var actionOptions int
+
+		switch selectedOption {
+		case 1:
+			actionOptions = len(myChar.Skills)
+
+		//Absolute defense!
+		case 2:
+			selectedAction = 1
+
+		case 3:
+			actionOptions = len(myCharPotions)
+
+		case 4:
+			return
+
+		}
+
+		displayCombatSpecificCursor(actionPointingAt, 0)
+
+		for selectedAction == 0 {
+
+			//Switch case expecting keyboard input
+			switch ev := term.PollEvent(); ev.Type {
+			case term.EventKey:
+				switch ev.Key {
+
+				//Arrow up
+				case term.KeyArrowUp:
+					if actionPointingAt > 1 {
+						actionPointingAt--
+					}
+
+				//Arrow down
+				case term.KeyArrowDown:
+					if actionPointingAt < actionOptions {
+						actionPointingAt++
+					}
+
+				//Enter
+				case term.KeyEnter:
+					selectedAction = actionPointingAt
+
+				//Escape
+				case term.KeyEsc:
+					selectedOption = 2
+					selectedAction = 1
+				}
+			case term.EventError:
+				panic(ev.Err)
+			}
+
+			//Change the display only if necessary.
+			if previousActionPointingAt != actionPointingAt {
+				displayCombatSpecificCursor(actionPointingAt, previousActionPointingAt)
+				previousActionPointingAt = actionPointingAt
+			}
+		}
+
+		switch selectedOption {
+
+		//Use the skill!
+		case 1:
+			if myChar.Mp >= myChar.Skills[selectedAction-1].MpCost {
+				myChar.Mp -= myChar.Skills[selectedAction-1].MpCost
+				enemy.Hp -= myChar.Attack + myChar.Skills[selectedAction-1].Attack
+				if enemy.Hp <= 0 {
+					myChar.Xp += enemy.Level * (enemy.HpMax / 4)
+					if rand.Intn(10) >= 5 && enemy.Loot != nil {
+						var loot string
+						for item := range enemy.Loot {
+							loot = item
+							break
+						}
+						if myChar.Inventory[loot] == 0 && myChar.FullInventory() {
+							myChar.Inventory[loot] = 1
+						} else {
+							myChar.Inventory[loot] += 1
+						}
+					}
+					return
+				}
+			}
+			selectedOption = 0
+
+		//Return to the first menu
+		case 2:
+			selectedOption = 0
+
+		//Drink a potion!
+		case 3:
+			myChar.TakePotion(char.FindPotion(myCharPotions[selectedAction-1]))
 		}
 
 	}

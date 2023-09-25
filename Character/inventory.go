@@ -1,6 +1,8 @@
 package character
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // Fichier pour les fonctions de gestion d'inventaire, Add et Remove ainsi que les différents check pour les achats et vente.
 
@@ -31,7 +33,7 @@ import "fmt"
 //	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
 //}
 
-//pour checker si on a assez d'argent dans l'inventaire, a utiliser a chaque fonction Buy...
+// pour checker si on a assez d'argent dans l'inventaire, a utiliser a chaque fonction Buy...
 func (char *Character) CheckGold(price int) bool {
 	if price > char.Gold {
 		println("t'as pas assez de moneyyy")
@@ -172,4 +174,14 @@ func (char *Character) Equiper(e Equipement) {
 	//removeInventory
 	//char = char.HpMax + Equipement.HpMax
 
+}
+
+func FindPotion(s string) Potion {
+	for _, potion := range AllPotion {
+		if s == potion.Name {
+			return potion
+		}
+	}
+	var nothing Potion
+	return nothing
 }

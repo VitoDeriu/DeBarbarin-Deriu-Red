@@ -26,11 +26,13 @@ var MenuLateralBar,
 	SellMerchantInventoryText,
 	BlacksmithMenuText,
 	StrollGrid,
-	StrollCursor [][]rune
+	StrollCursor,
+	CombatGrid [][]rune
 
 var BottomBar,
 	CharMenuTitleBar,
 	PrincipalMenuTitleBar,
+	BonusTitleBar,
 	CharCreationMenuTitleBar,
 	CharInventoryTitleBar,
 	StrollCastleTitleBar,
@@ -41,6 +43,7 @@ var BottomBar,
 	StrollArenaTitleBar,
 	StrollMerchantTitleBar,
 	BlacksmithMenuTitleBar,
+	CombatTitleBar,
 	CharCreationName,
 	CharCreationNameError,
 	CharCreationMenuCursor,
@@ -48,6 +51,7 @@ var BottomBar,
 	CharInventoryItemsCursor []rune
 
 const (
+	BONUS_MENU         = -1
 	PRINCIPAL_MENU     = 0
 	CHAR_CREATION_MENU = 1
 	CHAR_MENU          = 2
@@ -63,6 +67,9 @@ const (
 	STROLL_MISSIONS    = 12
 	BUY_MERCHANT       = 13
 	SELL_MERCHANT      = 14
+	COMBAT             = 15
+	TOURNAMENT         = 16
+	TRAINING           = 17
 )
 
 func CreateDisplayVariables() {
@@ -204,15 +211,39 @@ func CreateDisplayVariables() {
 	StrollGrid = append(StrollGrid, []rune("────────────┴──────────────────────────────────────────────┴────────────"))
 	StrollGrid = append(StrollGrid, []rune("                             ╭───────────╮             ╭────────────────"))
 
-	StrollCursor = append(StrollCursor, []rune(" ₀"))
-	StrollCursor = append(StrollCursor, []rune("─╁─"))
-	StrollCursor = append(StrollCursor, []rune(" Λ"))
+	StrollCursor = append(StrollCursor, []rune(" O "))
+	StrollCursor = append(StrollCursor, []rune("/|\\"))
+	StrollCursor = append(StrollCursor, []rune("/‾\\"))
+
+	CombatGrid = append(CombatGrid, []rune("────────────────────────────────────────────────────────────────────────"))
+	CombatGrid = append(CombatGrid, []rune("                                                      O"))
+	CombatGrid = append(CombatGrid, []rune("──────────────────╮                                  /|\\"))
+	CombatGrid = append(CombatGrid, []rune(" Niveau"))
+	CombatGrid = append(CombatGrid, []rune("│                                  /‾\\"))
+	CombatGrid = append(CombatGrid, []rune(" HP :"))
+	CombatGrid = append(CombatGrid, []rune("│"))
+	CombatGrid = append(CombatGrid, []rune(" MP :"))
+	CombatGrid = append(CombatGrid, []rune("│"))
+	CombatGrid = append(CombatGrid, []rune(" Attaque :"))
+	CombatGrid = append(CombatGrid, []rune("│     O"))
+	CombatGrid = append(CombatGrid, []rune(" Défense :"))
+	CombatGrid = append(CombatGrid, []rune("│    /|\\"))
+	CombatGrid = append(CombatGrid, []rune(" Agilité :"))
+	CombatGrid = append(CombatGrid, []rune("│    /‾\\"))
+	CombatGrid = append(CombatGrid, []rune("──────────────────┼─────────────────────────────────────────────────────"))
+	CombatGrid = append(CombatGrid, []rune("Attaquer   │"))
+	CombatGrid = append(CombatGrid, []rune("Défendre   │"))
+	CombatGrid = append(CombatGrid, []rune("Potion     │"))
+	CombatGrid = append(CombatGrid, []rune("           │"))
+	CombatGrid = append(CombatGrid, []rune("Fuir       │"))
 
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	PrincipalMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu principal ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	BonusTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Bonus ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharCreationMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Création du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
@@ -233,6 +264,8 @@ func CreateDisplayVariables() {
 	StrollArenaTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Arène ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	BlacksmithMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Forgeron ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
+
+	CombatTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Combat ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharCreationName = []rune("Nom du personnage (max 20 caractères) :")
 
@@ -302,6 +335,9 @@ func displayTopBar(menuNb int) {
 	case PRINCIPAL_MENU:
 		CurrentTopBar = PrincipalMenuTitleBar
 
+	case BONUS_MENU:
+		CurrentTopBar = BonusTitleBar
+
 	case CHAR_CREATION_MENU:
 		CurrentTopBar = CharCreationMenuTitleBar
 
@@ -338,6 +374,8 @@ func displayTopBar(menuNb int) {
 	case STROLL_MISSIONS:
 		//CurrentTopBar = StrollMissionsTitleBar
 
+	case COMBAT, TOURNAMENT, TRAINING:
+		CurrentTopBar = CombatTitleBar
 	}
 	column := 0
 	for _, char := range CurrentTopBar {
@@ -1011,6 +1049,116 @@ func displayBlacksmithMenu() {
 	displayBlacksmithEquipment()
 }
 
+func displayCombatGrid() {
+	columns := []int{5, 5, 5, 5, 23, 5, 23, 5, 23, 5, 23, 5, 23, 5, 23, 5, 12, 12, 12, 12, 12}
+	lines := []int{2, 3, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9, 10, 10, 11, 12, 13, 14, 15, 16}
+	var column int
+
+	for i := range CombatGrid {
+		column = columns[i]
+		for _, char := range CombatGrid[i] {
+			DisplayRune(column, lines[i], char)
+			column += rwidth.RuneWidth(char)
+		}
+	}
+}
+
+func displayCombatStats(myChar *char.Character, otherChar *char.Enemy) {
+	var StatsToDisplay []string
+	StatsToDisplay = append(StatsToDisplay, otherChar.Name)
+	StatsToDisplay = append(StatsToDisplay, otherChar.Race)
+	StatsToDisplay = append(StatsToDisplay, "Niveau :")
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(otherChar.Level))
+	StatsToDisplay = append(StatsToDisplay, "HP :")
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(otherChar.Hp)+"/"+strconv.Itoa(otherChar.HpMax))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Level))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Hp)+"/"+strconv.Itoa(myChar.HpMax))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Mp)+"/"+strconv.Itoa(myChar.MpMax))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Attack))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Defense))
+	StatsToDisplay = append(StatsToDisplay, strconv.Itoa(myChar.Agility))
+
+	columns := []int{6, 28, 45, 53, 62, 67, 18, 15, 15, 18, 18, 18}
+	lines := []int{1, 1, 1, 1, 1, 1, 5, 6, 7, 8, 9, 10}
+	var column int
+
+	for i, str := range StatsToDisplay {
+		column = columns[i]
+		DisplayText(column, lines[i], str)
+	}
+}
+
+func displayCombatSkills(myChar *char.Character) {
+	line := 12
+	for i, skill := range myChar.Skills {
+		DisplayText(31, line+i, skill.Name)
+		DisplayText(57, line+i, skill.StatBuffed)
+		DisplayText(68, line+i, strconv.Itoa(skill.MpCost))
+		DisplayText(73, line+i, "MP")
+	}
+}
+
+func displayCombatPotions(myChar *char.Character) []string {
+	line := 12
+	var myPotions []string
+	for item := range myChar.Inventory {
+		if retreiveItemType(item) == "Potion" {
+			myPotions = append(myPotions, item)
+		}
+	}
+	for i, potion := range myPotions {
+		currentPotion := char.FindPotion(potion)
+		DisplayText(31, line+i, currentPotion.Name)
+		if currentPotion.Buff != 0 {
+			DisplayText(49, line+i, "+"+strconv.Itoa(currentPotion.Buff))
+			DisplayText(53, line+i, currentPotion.StatBuffed)
+		}
+		if currentPotion.Debuff != 0 {
+			DisplayText(62, line+i, "-"+strconv.Itoa(currentPotion.Debuff))
+			DisplayText(66, line+i, currentPotion.StatDebuffed)
+		}
+		DisplayText(74, line+i, strconv.Itoa(myChar.Inventory[potion]))
+	}
+	return myPotions
+}
+
+func clearDisplayCombatOptions() {
+	for i := 12; i < 17; i++ {
+		DisplayText(24, i, "                                                     ")
+	}
+}
+
+func displayCombatActionTypeCursor(option, previousOption int) {
+	column := 6
+	lines := []int{12, 13, 14, 16}
+
+	if option != 0 {
+		DisplayText(column, lines[option-1], string(CharMenuCursor))
+	}
+
+	if previousOption != 0 {
+		DisplayText(column, lines[previousOption-1], "     ")
+	}
+}
+
+func displayCombatSpecificCursor(option, previousOption int) {
+	column := 25
+	line := 12
+	if option != 0 {
+		DisplayText(column, line+option-1, string(CharMenuCursor))
+	}
+
+	if previousOption != 0 {
+		DisplayText(column, line+previousOption-1, "     ")
+	}
+}
+
+func DisplayCombatMenu(myChar *char.Character, enemy *char.Enemy, combatType int) {
+	DisplayBlankMenu(combatType)
+	displayCombatGrid()
+	displayCombatStats(myChar, enemy)
+}
+
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
 //   /┃\  ╭─────────────────────────────────╮ ╭───────── Équipement : ─────────╮  /┃\
 //  //┃\\ │  MonPseudoEstTropLong   Humain  │ ├────────┬───────────────────────┤ //┃\\
@@ -1104,4 +1252,42 @@ func displayBlacksmithMenu() {
 //  //┃\\ ⎯{==- Fabriquer  │  Description :                                      //┃\\
 //  \\┃//       Annuler    │     Le heaume du chasseur donne 35 pts de défense   \\┃//
 //   \┃/                   │     et 15 pts d'attaque.                             \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Combat ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\  NomEnnemiACombattre   NomRace          Niveau  100      HP   480/850    /┃\
+//  //┃\\────────────────────────────────────────────────────────────────────────//┃\\
+//  \\┃//                                                      O                 \\┃//
+//  /\┃/\──────────────────╮                                  /|\                /\┃/\
+//  \/┃\/ Niveau      100  │                                  /‾\                \/┃\/
+//  //┃\\ HP :     350/400 │                                                     //┃\\
+//  \\┃// MP :     430/600 │                                                     \\┃//
+//  /\┃/\ Attaque :   150  │     O                                               /\┃/\
+//  \/┃\/ Défense :   170  │    /|\                                              \/┃\/
+//  //┃\\ Agilité :   275  │    /‾\                                              //┃\\
+//  \\┃//──────────────────┼─────────────────────────────────────────────────────\\┃//
+//  /\┃/\ ⎯{==- Attaquer   │ ⎯{==- Coup de poing humain      Agilité    105  MP  /\┃/\
+//  \/┃\/       Défendre   │       Coup de poing humain      Attaque    105  MP  \/┃\/
+//  //┃\\       Potion     │       Coup de poing humain      Défense    105  MP  //┃\\
+//  \\┃//                  │       Coup de poing humain      Attaque    105  MP  \\┃//
+//   \┃/        Fuir       │       Coup de poing humain      Attaque    105  MP   \┃/
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+
+//    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Combat ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪
+//   /┃\  NomEnnemiACombattre   NomRace          Niveau  100      HP   480/850    /┃\
+//  //┃\\────────────────────────────────────────────────────────────────────────//┃\\
+//  \\┃//                                                      O                 \\┃//
+//  /\┃/\──────────────────╮                                  /|\                /\┃/\
+//  \/┃\/ Niveau      100  │                                  /‾\                \/┃\/
+//  //┃\\ HP :     350/400 │                                                     //┃\\
+//  \\┃// MP :     430/600 │                                                     \\┃//
+//  /\┃/\ Attaque :   150  │     O                                               /\┃/\
+//  \/┃\/ Défense :   170  │    /|\                                              \/┃\/
+//  //┃\\ Agilité :   275  │    /‾\                                              //┃\\
+//  \\┃//──────────────────┼─────────────────────────────────────────────────────\\┃//
+//  /\┃/\       Attaquer   │ ⎯{==- Potion de soin    +20 HP                   10 /\┃/\
+//  \/┃\/       Défendre   │       Potion de poison               -20 HP      24 \/┃\/
+//  //┃\\ ⎯{==- Potion     │       Potion de défense +50 Défense  -15 Agilité 5  //┃\\
+//  \\┃//                  │       Potion de mana    +20 MP                   3  \\┃//
+//   \┃/        Fuir       │       Potion Berserker  +50 Attaque  -30 HP      2   \┃/
 //    ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪

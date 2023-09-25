@@ -1,22 +1,11 @@
 package character
 
-import "fmt"
-
 //Fichier pour le Marchand, on y retrouve des fonctions d'achat. en relation avec le fichier inventory.
 
-var Merchant Character
-
-func InitialiseMerchant() {
-
-	Merchant.Name = "Marchand"
-	Merchant.Inventory = map[string]int{"Potion de soin": 3, "Potion de poison": 3, "Grimoire boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5}
-	Merchant.Gold = 99999
-}
-
-func DisplayBoutique() {
-	for item, nb := range Merchant.Inventory {
-		fmt.Println(item, " : ", nb)
-	}
+var Merchant = Character{
+	Name:      "Marchand",
+	Inventory: map[string]int{"Potion de soin": 3, "Potion de poison": 3, "Grimoire boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5},
+	Gold:      10000,
 }
 
 func (buyer *Character) BuyPotion(seller *Character, s Potion) {

@@ -1,10 +1,10 @@
 package menu
 
-func messageIntro() {
+func messageIntro(name string) {
 	introductionStory = append(introductionStory, []rune("\tIl était une fois...\n"))
 	introductionStory = append(introductionStory, []rune("\tDans une contrée lointaine et magique\n"))
 	introductionStory = append(introductionStory, []rune("\n"))
-	introductionStory = append(introductionStory, []rune("\tUn prince\n"))
+	introductionStory = append(introductionStory, []rune("\tUn prince nommé "+name+"\n"))
 	introductionStory = append(introductionStory, []rune("\n"))
 	introductionStory = append(introductionStory, []rune("\tSon père le roi était strict et impartial\n"))
 	introductionStory = append(introductionStory, []rune("\n"))

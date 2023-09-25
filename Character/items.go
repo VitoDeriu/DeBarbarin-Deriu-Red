@@ -1,10 +1,5 @@
 package character
 
-import (
-	"fmt"
-	"time"
-)
-
 // initialisation de tous les items et leur caractéristiques
 
 /*type Item struct {
@@ -13,141 +8,161 @@ import (
 	price    int
 }*/
 
-// Déclaration des Equipements
-var TrainingSword Equipement
-var ChapeauDelAventurier Equipement
-var TuniqueDelAventurier Equipement
-var BotteDelAventurier Equipement
-
-var AllEquipement []Equipement
-
-// Déclaration des Potions
-var PotionDeSoin Potion
-var PotionDePoison Potion
-
-var AllPotion []Potion
-
 // Déclaration des Ressources
-var FourrureDeLoup Ressource
-var PeauDeTroll Ressource
-var CuirDeSanglier Ressource
-var PlumeDeCorbeau Ressource
-
-var AllRessources []Ressource
-
-// Déclarations des SpellBooks
-var SpellBookFireBall SpellBook
-
-var AllSpellBook []SpellBook
-
-// Déclaration des Skills
-var FireBall Skill
-var ElfPunch Skill
-var HumanPunch Skill
-var DwarfPunch Skill
-
-var Skills []Skill
-
-func CreateItems() {
-
-	//création des équipements
-	TrainingSword.Name = "Épée d'entrainement"
-	TrainingSword.Attack = 5
-
-	ChapeauDelAventurier.Name = "Chapeau de l'aventurier"
-	ChapeauDelAventurier.Slot = "Tete"
-	// ChapeauDelAventurier.Recipe[PlumeDeCorbeau] = 1
-	// ChapeauDelAventurier.Recipe[CuirDeSanglier] = 1
-	ChapeauDelAventurier.Recipe = map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1}
-	fmt.Printf("%#v", ChapeauDelAventurier.Recipe)
-	time.Sleep(time.Second * 5)
-	ChapeauDelAventurier.HpMax = 10
-
-	TuniqueDelAventurier.Name = "Tunique de l'aventurier"
-	TuniqueDelAventurier.Slot = "Torse"
-	TuniqueDelAventurier.Recipe = map[Ressource]int{FourrureDeLoup: 2, PeauDeTroll: 1}
-
-	BotteDelAventurier.Name = "Bottes de l'aventurier"
-	BotteDelAventurier.Slot = "Pieds"
-	BotteDelAventurier.Recipe = map[Ressource]int{FourrureDeLoup: 1, CuirDeSanglier: 1}
-
-	AllEquipement = append(AllEquipement, TrainingSword)
-	AllEquipement = append(AllEquipement, ChapeauDelAventurier)
-	AllEquipement = append(AllEquipement, TuniqueDelAventurier)
-	AllEquipement = append(AllEquipement, BotteDelAventurier)
-
-	//création des potions
-	PotionDeSoin.Name = "Potion de soin"
-	PotionDeSoin.StatBuffed = "Hp"
-	PotionDeSoin.Buff = 20
-	PotionDeSoin.EffectOnTime = 0
-	PotionDeSoin.Price = 3
-
-	PotionDePoison.Name = "Potion de poison"
-	PotionDePoison.StatDebuffed = "Hp"
-	PotionDePoison.Debuff = 10
-	PotionDePoison.EffectOnTime = 3
-	PotionDePoison.Price = 6
-
-	AllPotion = append(AllPotion, PotionDeSoin)
-	AllPotion = append(AllPotion, PotionDePoison)
-
-	//Création des Ressources
-	FourrureDeLoup.Name = "Fourrure de loup"
-	FourrureDeLoup.Price = 4
-
-	PeauDeTroll.Name = "Peau de troll"
-	PeauDeTroll.Price = 7
-
-	CuirDeSanglier.Name = "Cuir de sanglier"
-	CuirDeSanglier.Price = 3
-
-	PlumeDeCorbeau.Name = "Plume de corbeau"
-	PlumeDeCorbeau.Price = 1
-
-	AllRessources = append(AllRessources, FourrureDeLoup)
-	AllRessources = append(AllRessources, PeauDeTroll)
-	AllRessources = append(AllRessources, CuirDeSanglier)
-	AllRessources = append(AllRessources, PlumeDeCorbeau)
-
-	//Créations des SpellBook
-	SpellBookFireBall.Name = "Grimoire boule de feu"
-	SpellBookFireBall.Skill = FireBall
-	SpellBookFireBall.Price = 25
-
-	AllSpellBook = append(AllSpellBook, SpellBookFireBall)
-
+var FourrureDeLoup = Ressource{
+	Name:  "Fourrure de loup",
+	Price: 4,
+}
+var PeauDeTroll = Ressource{
+	Name:  "Peau de troll",
+	Price: 7,
+}
+var CuirDeSanglier = Ressource{
+	Name:  "Cuir de sanglier",
+	Price: 3,
+}
+var PlumeDeCorbeau = Ressource{
+	Name:  "Plume de corbeau",
+	Price: 1,
 }
 
-func CreateSkills() {
-	ElfPunch.Name = "Coup de poing elfe"
-	ElfPunch.Attack = 10
-	ElfPunch.Defense = 0
-	ElfPunch.StatBuffed = "Agilité"
-	ElfPunch.Buff = 5
-	ElfPunch.MpCost = 0
+var AllRessources = []Ressource{
+	FourrureDeLoup,
+	PeauDeTroll,
+	CuirDeSanglier,
+	PlumeDeCorbeau,
+}
 
-	HumanPunch.Name = "Coup de poing humain"
-	HumanPunch.Attack = 10
-	HumanPunch.Defense = 0
-	HumanPunch.StatBuffed = "Attaque"
-	HumanPunch.Buff = 5
-	HumanPunch.MpCost = 0
+// Déclaration des Equipements
+var TrainingSword = Equipement{
+	Name:   "Épée d'entrainement",
+	Slot:   "Mains",
+	Attack: 5,
+}
+var ChapeauDelAventurier = Equipement{
+	Name:   "Chapeau de l'aventurier",
+	Slot:   "Tete",
+	Recipe: map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1},
+	HpMax:  10,
+}
+var TuniqueDelAventurier = Equipement{
+	Name:   "Tunique de l'aventurier",
+	Slot:   "Torse",
+	Recipe: map[Ressource]int{FourrureDeLoup: 2, PeauDeTroll: 1},
+}
+var BotteDelAventurier = Equipement{
+	Name:   "Bottes de l'aventurier",
+	Slot:   "Pieds",
+	Recipe: map[Ressource]int{FourrureDeLoup: 1, CuirDeSanglier: 1},
+}
 
-	DwarfPunch.Name = "Coup de poing nain"
-	DwarfPunch.Attack = 10
-	DwarfPunch.Defense = 0
-	DwarfPunch.StatBuffed = "Défense"
-	DwarfPunch.Buff = 5
-	DwarfPunch.MpCost = 0
+var AllEquipement = []Equipement{
+	TrainingSword,
+	ChapeauDelAventurier,
+	TuniqueDelAventurier,
+	BotteDelAventurier,
+}
 
-	FireBall.Name = "Boule de feu"
-	FireBall.Attack = 20
-	FireBall.MpCost = 10
+// Déclaration des Potions
+var PotionDeSoin = Potion{
+	Name:         "Potion de soin",
+	StatBuffed:   "Hp",
+	Buff:         20,
+	EffectOnTime: 0,
+	Price:        3,
+}
+var PotionDePoison = Potion{
+	Name:         "Potion de poison",
+	StatDebuffed: "Hp",
+	Debuff:       10,
+	EffectOnTime: 3,
+	Price:        6,
+}
 
-	Skills = append(Skills, HumanPunch)
-	Skills = append(Skills, ElfPunch)
-	Skills = append(Skills, DwarfPunch)
-	Skills = append(Skills, FireBall)
+var AllPotion = []Potion{
+	PotionDePoison,
+	PotionDeSoin,
+}
 
+// Déclarations des SpellBooks
+var SpellBookFireBall = SpellBook{
+	Name:  "Grimoire: boule de feu",
+	Skill: FireBall,
+	Price: 25,
+}
+var SpellBookSwordSlash = SpellBook{
+	Name:  "Manuel: coup d'épée",
+	Skill: SwordSlash,
+	Price: 20,
+}
+var SpellBookSwordGuard = SpellBook{
+	Name:  "Manuel: guarde d'épée",
+	Skill: SwordGuard,
+	Price: 15,
+}
+
+var AllSpellBook = []SpellBook{
+	SpellBookFireBall,
+	SpellBookSwordSlash,
+	SpellBookSwordGuard,
+}
+
+// Déclaration des Skills
+var FireBall = Skill{
+	Name:       "Boule de feu",
+	Attack:     20,
+	StatBuffed: "Attaque",
+	MpCost:     10,
+}
+var ElfPunch = Skill{
+	Name:       "Coup de poing elfe",
+	Attack:     10,
+	Defense:    0,
+	StatBuffed: "Agilité",
+	Buff:       5,
+	MpCost:     0,
+}
+var HumanPunch = Skill{
+	Name:       "Coup de poing humain",
+	Attack:     10,
+	Defense:    0,
+	StatBuffed: "Attaque",
+	Buff:       5,
+	MpCost:     0,
+}
+var DwarfPunch = Skill{
+	Name:       "Coup de poing nain",
+	Attack:     10,
+	Defense:    0,
+	StatBuffed: "Défense",
+	Buff:       5,
+	MpCost:     0,
+}
+var SlimeShot = Skill{
+	Name:       "Coup de Slime",
+	Attack:     2,
+	StatBuffed: "Attaque",
+	MpCost:     0,
+}
+var SwordSlash = Skill{
+	Name:       "Coup d'épée",
+	Attack:     15,
+	StatBuffed: "Attaque",
+	MpCost:     0,
+}
+var SwordGuard = Skill{
+	Name:       "Blocage à l'épée",
+	Defense:    20,
+	StatBuffed: "Défense",
+	MpCost:     0,
+}
+
+var Skills = []Skill{
+	FireBall,
+	ElfPunch,
+	HumanPunch,
+	DwarfPunch,
+	SlimeShot,
+	SwordSlash,
+	SwordGuard,
 }
