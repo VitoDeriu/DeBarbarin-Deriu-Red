@@ -152,7 +152,7 @@ func CreateDisplayVariables() {
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│ ├────────┬───────────────────────┤"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┬───────────────┤ │"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯"))
-	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┬─ MP ╮"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│├──────────────────────┼─────┼─────┼─────────┼─────┤"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰┴──────────────────────┴─────┴─────┴─────────┴─────╯"))
 
@@ -379,7 +379,7 @@ func displayTopBar(menuNb int) {
 	}
 	column := 0
 	for _, char := range CurrentTopBar {
-		DisplayRune(column, 0, char)
+		DisplayRune(column, 0, char, CYAN)
 		column += rwidth.RuneWidth(char)
 	}
 }
@@ -388,14 +388,14 @@ func displayMenuBars() {
 	for i := range MenuLateralBar {
 		column := 0
 		for _, char := range MenuLateralBar[i] {
-			DisplayRune(column, i+1, char)
+			DisplayRune(column, i+1, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
 	for i := range MenuLateralBar {
 		column := 77
 		for _, char := range MenuLateralBar[i] {
-			DisplayRune(column, i+1, char)
+			DisplayRune(column, i+1, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -404,7 +404,7 @@ func displayMenuBars() {
 func displayBottomBar() {
 	column := 0
 	for _, char := range BottomBar {
-		DisplayRune(column, 17, char)
+		DisplayRune(column, 17, char, CYAN)
 		column += rwidth.RuneWidth(char)
 	}
 }
@@ -415,7 +415,7 @@ func displayLogo() {
 	for i := range LogoLittle {
 		column = 69
 		for _, char := range LogoLittle[i] {
-			DisplayRune(column, line+i, char)
+			DisplayRune(column, line+i, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -427,7 +427,7 @@ func displaySoldier() {
 	for i := range SoldierArt {
 		column = 57
 		for _, char := range SoldierArt[i] {
-			DisplayRune(column, line+i, char)
+			DisplayRune(column, line+i, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -456,7 +456,7 @@ func DisplayMenuOptions(menuNb int) {
 	for i := range menuOptions {
 		column = 36
 		for _, char := range menuOptions[i] {
-			DisplayRune(column, line+(2*i), char)
+			DisplayRune(column, line+(2*i), char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -490,7 +490,7 @@ func DisplayPrincipalCursor(option, previousOption int) {
 		for i := range cursor {
 			column = 11
 			for _, char := range cursor[i] {
-				DisplayRune(column, line+i, char)
+				DisplayRune(column, line+i, char, CYAN)
 				column += rwidth.RuneWidth(char)
 			}
 		}
@@ -518,7 +518,7 @@ func DisplayPrincipalCursor(option, previousOption int) {
 		for i := range Sword {
 			column = 11
 			for _, char := range Sword[i] {
-				DisplayRune(column, line+i, char)
+				DisplayRune(column, line+i, char, CYAN)
 				column += rwidth.RuneWidth(char)
 			}
 		}
@@ -551,13 +551,13 @@ func displayCredits() {
 func CharCreationNameDisplay(err bool) {
 	column := 8
 	for _, char := range CharCreationName {
-		DisplayRune(column, 3, char)
+		DisplayRune(column, 3, char, CYAN)
 		column += rwidth.RuneWidth(char)
 	}
 	if err {
 		column = 8
 		for _, char := range CharCreationNameError {
-			DisplayRune(column, 2, char)
+			DisplayRune(column, 2, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -565,7 +565,7 @@ func CharCreationNameDisplay(err bool) {
 
 func CharCreationMenuMainDisplay(name string) {
 
-	DisplayText(13, 5, name)
+	DisplayText(13, 5, name, CYAN)
 
 	var column int
 	var lines = []int{7, 9, 10, 11, 13}
@@ -582,7 +582,7 @@ func CharCreationMenuMainDisplay(name string) {
 
 		}
 		for _, char := range CharCreationMenuText[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -593,10 +593,10 @@ func CharCreationMenuChangingDisplay(option, previousOption int) {
 	column := 7
 	var lines = []int{9, 10, 11}
 
-	DisplayText(column, lines[option-1], string(CharCreationMenuCursor))
+	DisplayText(column, lines[option-1], string(CharCreationMenuCursor), CYAN)
 
 	if previousOption != 0 {
-		DisplayText(column, lines[previousOption-1], "      ")
+		DisplayText(column, lines[previousOption-1], "      ", CYAN)
 	}
 
 	var description [][]rune
@@ -618,7 +618,7 @@ func CharCreationMenuChangingDisplay(option, previousOption int) {
 	for i := range description {
 		column = 16
 		for _, char := range description[i] {
-			DisplayRune(column, line+i, char)
+			DisplayRune(column, line+i, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -633,7 +633,7 @@ func displayCharMenuGrid() {
 	for i := range CharMenuMainGrid {
 		column = columns[i]
 		for _, char := range CharMenuMainGrid[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -642,7 +642,7 @@ func displayCharMenuGrid() {
 	lines = []int{2, 3, 3, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 4, 5, 6, 7, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15, 11, 12, 13, 14, 15}
 
 	for i, column := range columns {
-		DisplayRune(column, lines[i], '│')
+		DisplayRune(column, lines[i], '│', CYAN)
 	}
 }
 
@@ -654,7 +654,7 @@ func displayCharMenuText() {
 	for i := range CharMenuText {
 		column = columns[i]
 		for _, char := range CharMenuText[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -664,10 +664,10 @@ func DisplayCharMenuCursor(option, previousOption int) {
 	column := 6
 	var lines = []int{10, 12, 14, 15}
 
-	DisplayText(column, lines[option-1], string(CharMenuCursor))
+	DisplayText(column, lines[option-1], string(CharMenuCursor), CYAN)
 
 	if previousOption != 0 {
-		DisplayText(column, lines[previousOption-1], "     ")
+		DisplayText(column, lines[previousOption-1], "     ", CYAN)
 	}
 }
 
@@ -695,13 +695,13 @@ func displayCharMenuStats(myChar *char.Character) {
 		stats = append(stats, skill.Name)
 		stats = append(stats, strconv.Itoa(skill.Attack))
 		stats = append(stats, strconv.Itoa(skill.Defense))
-		stats = append(stats, skill.StatBuffed)
-		stats = append(stats, strconv.Itoa(skill.Buff))
+		stats = append(stats, skill.Kind)
+		stats = append(stats, strconv.Itoa(skill.MpCost))
 	}
 	for i, singleStat := range stats {
 		column = columns[i]
 		for _, char := range singleStat {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -722,7 +722,7 @@ func displayCharInventoryGrid() {
 	for i := range CharInventoryGrid {
 		column = columns[i]
 		for _, char := range CharInventoryGrid[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -753,7 +753,7 @@ func displayCharInventoryText(whichMenu int) {
 	for i := range inventoryText {
 		column = columns[i]
 		for _, char := range inventoryText[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -762,7 +762,7 @@ func displayCharInventoryText(whichMenu int) {
 func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu int) []string {
 
 	if len(myChar.Inventory) == 0 {
-		DisplayText(17, 4, "Votre inventaire est vide !")
+		DisplayText(17, 4, "Votre inventaire est vide !", CYAN)
 		time.Sleep(time.Second * 2)
 		return nil
 	}
@@ -779,39 +779,39 @@ func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu i
 		if index == 10 {
 			break
 		}
-		DisplayText(17, line+index, item)
+		DisplayText(17, line+index, item, CYAN)
 		if whichMenu == CHAR_INVENTORY {
-			DisplayText(47, line+index, retreiveItemType(item))
+			DisplayText(47, line+index, retreiveItemType(item), CYAN)
 		} else {
 			switch retreiveItemType(item) {
 			case "Potion":
 				for _, potion := range char.AllPotion {
 					if item == potion.Name {
-						DisplayText(49, line+index, strconv.Itoa(potion.Price))
+						DisplayText(49, line+index, strconv.Itoa(potion.Price), CYAN)
 					}
 				}
 			case "Livre de sort":
 				for _, spellBook := range char.AllSpellBook {
 					if item == spellBook.Name {
-						DisplayText(49, line+index, strconv.Itoa(spellBook.Price))
+						DisplayText(49, line+index, strconv.Itoa(spellBook.Price), CYAN)
 					}
 				}
 			case "Equipement":
 				for _, equipement := range char.AllEquipement {
 					if item == equipement.Name {
-						DisplayText(49, line+index, strconv.Itoa(equipement.Price))
+						DisplayText(49, line+index, strconv.Itoa(equipement.Price), CYAN)
 					}
 				}
 			case "Ressource":
 				for _, ressource := range char.AllRessources {
 					if item == ressource.Name {
-						DisplayText(49, line+index, strconv.Itoa(ressource.Price))
+						DisplayText(49, line+index, strconv.Itoa(ressource.Price), CYAN)
 					}
 				}
 			}
 
 		}
-		DisplayText(67, line+index, strconv.Itoa(myChar.Inventory[item]))
+		DisplayText(67, line+index, strconv.Itoa(myChar.Inventory[item]), CYAN)
 	}
 	return inventory
 }
@@ -827,17 +827,17 @@ func displayCharInventoryItemsCursor(option, previousOption int) {
 	column := 7
 	var lines = []int{3, 4, 5, 6, 7, 8, 9, 10, 11, 12}
 
-	DisplayText(column, lines[option-1], string(CharInventoryItemsCursor))
+	DisplayText(column, lines[option-1], string(CharInventoryItemsCursor), CYAN)
 
 	if previousOption != 0 {
-		DisplayText(column, lines[previousOption-1], "       ")
+		DisplayText(column, lines[previousOption-1], "       ", CYAN)
 	}
 }
 
 func displayItemDescription(item string) {
 
-	DisplayText(29, 15, "                                                ")
-	DisplayText(29, 16, "                                                ")
+	DisplayText(29, 15, "                                                ", CYAN)
+	DisplayText(29, 16, "                                                ", CYAN)
 
 	var description string
 
@@ -870,7 +870,7 @@ func displayItemDescription(item string) {
 		description = "Item inconnu"
 	}
 
-	DisplayText(29, 15, description)
+	DisplayText(29, 15, description, CYAN)
 }
 
 func displayCharInventoryActionCursor(option, previousOption, whichMenu int) {
@@ -882,11 +882,11 @@ func displayCharInventoryActionCursor(option, previousOption, whichMenu int) {
 		lines = []int{14, 15}
 	}
 	if option != 0 {
-		DisplayText(column, lines[option-1], string(CharMenuCursor))
+		DisplayText(column, lines[option-1], string(CharMenuCursor), CYAN)
 	}
 
 	if previousOption != 0 {
-		DisplayText(column, lines[previousOption-1], "     ")
+		DisplayText(column, lines[previousOption-1], "     ", CYAN)
 	}
 }
 
@@ -922,7 +922,7 @@ func displayStrollGrid() {
 	for i := range StrollGrid {
 		column = 5
 		for _, char := range StrollGrid[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -970,7 +970,7 @@ func displayStrollText(myChar *char.Character, nbMenu int) {
 	for i, str := range text {
 		column = columns[i]
 		for _, char := range str {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -985,14 +985,14 @@ func displayStrollCursor(pointingAt, previousPointingAt int) {
 	for i := range StrollCursor {
 		column = columns[pointingAt-1]
 		for _, char := range StrollCursor[i] {
-			DisplayRune(column, line+i, char)
+			DisplayRune(column, line+i, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
 
 	if previousPointingAt != 0 {
 		for i := 0; i < 3; i++ {
-			DisplayText(columns[previousPointingAt-1], line+i, "   ")
+			DisplayText(columns[previousPointingAt-1], line+i, "   ", CYAN)
 		}
 	}
 }
@@ -1011,7 +1011,7 @@ func displayBlacksmithBasicMenu() {
 	for i := range BlacksmithMenuText {
 		column = columns[i]
 		for _, char := range BlacksmithMenuText[i] {
-			DisplayRune(column, line+i, char)
+			DisplayRune(column, line+i, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -1022,7 +1022,7 @@ func displayBlacksmithEquipment() {
 	line := 3
 
 	for i, equipment := range char.BlacksmithEquipments {
-		DisplayText(column, line+i, equipment.Name)
+		DisplayText(column, line+i, equipment.Name, CYAN)
 	}
 }
 
@@ -1031,14 +1031,14 @@ func displayBlacksmithRecipe(pointingAt int) {
 	line := 4
 
 	for i := 0; i < 9; i++ {
-		DisplayText(column, line+i, "                           ")
+		DisplayText(column, line+i, "                           ", CYAN)
 	}
-	DisplayText(column, line, "10   Pièces d'or")
+	DisplayText(column, line, "10   Pièces d'or", CYAN)
 	line += 2
 	i := 0
 	for ressource, nb := range char.BlacksmithEquipments[pointingAt-1].Recipe {
-		DisplayText(column, line+i, strconv.Itoa(nb))
-		DisplayText(column+5, line+i, ressource.Name)
+		DisplayText(column, line+i, strconv.Itoa(nb), CYAN)
+		DisplayText(column+5, line+i, ressource.Name, CYAN)
 		i += 2
 	}
 }
@@ -1057,7 +1057,7 @@ func displayCombatGrid() {
 	for i := range CombatGrid {
 		column = columns[i]
 		for _, char := range CombatGrid[i] {
-			DisplayRune(column, lines[i], char)
+			DisplayRune(column, lines[i], char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -1084,17 +1084,17 @@ func displayCombatStats(myChar *char.Character, otherChar *char.Enemy) {
 
 	for i, str := range StatsToDisplay {
 		column = columns[i]
-		DisplayText(column, lines[i], str)
+		DisplayText(column, lines[i], str, CYAN)
 	}
 }
 
 func displayCombatSkills(myChar *char.Character) {
 	line := 12
 	for i, skill := range myChar.Skills {
-		DisplayText(31, line+i, skill.Name)
-		DisplayText(57, line+i, skill.StatBuffed)
-		DisplayText(68, line+i, strconv.Itoa(skill.MpCost))
-		DisplayText(73, line+i, "MP")
+		DisplayText(31, line+i, skill.Name, CYAN)
+		DisplayText(57, line+i, skill.Kind, CYAN)
+		DisplayText(68, line+i, strconv.Itoa(skill.MpCost), CYAN)
+		DisplayText(73, line+i, "MP", CYAN)
 	}
 }
 
@@ -1108,23 +1108,23 @@ func displayCombatPotions(myChar *char.Character) []string {
 	}
 	for i, potion := range myPotions {
 		currentPotion := char.FindPotion(potion)
-		DisplayText(31, line+i, currentPotion.Name)
+		DisplayText(31, line+i, currentPotion.Name, CYAN)
 		if currentPotion.Buff != 0 {
-			DisplayText(49, line+i, "+"+strconv.Itoa(currentPotion.Buff))
-			DisplayText(53, line+i, currentPotion.StatBuffed)
+			DisplayText(49, line+i, "+"+strconv.Itoa(currentPotion.Buff), CYAN)
+			DisplayText(53, line+i, currentPotion.StatBuffed, CYAN)
 		}
 		if currentPotion.Debuff != 0 {
-			DisplayText(62, line+i, "-"+strconv.Itoa(currentPotion.Debuff))
-			DisplayText(66, line+i, currentPotion.StatDebuffed)
+			DisplayText(62, line+i, "-"+strconv.Itoa(currentPotion.Debuff), CYAN)
+			DisplayText(66, line+i, currentPotion.StatDebuffed, CYAN)
 		}
-		DisplayText(74, line+i, strconv.Itoa(myChar.Inventory[potion]))
+		DisplayText(74, line+i, strconv.Itoa(myChar.Inventory[potion]), CYAN)
 	}
 	return myPotions
 }
 
 func clearDisplayCombatOptions() {
 	for i := 12; i < 17; i++ {
-		DisplayText(24, i, "                                                     ")
+		DisplayText(24, i, "                                                     ", CYAN)
 	}
 }
 
@@ -1133,11 +1133,11 @@ func displayCombatActionTypeCursor(option, previousOption int) {
 	lines := []int{12, 13, 14, 16}
 
 	if option != 0 {
-		DisplayText(column, lines[option-1], string(CharMenuCursor))
+		DisplayText(column, lines[option-1], string(CharMenuCursor), CYAN)
 	}
 
 	if previousOption != 0 {
-		DisplayText(column, lines[previousOption-1], "     ")
+		DisplayText(column, lines[previousOption-1], "     ", CYAN)
 	}
 }
 
@@ -1145,11 +1145,11 @@ func displayCombatSpecificCursor(option, previousOption int) {
 	column := 25
 	line := 12
 	if option != 0 {
-		DisplayText(column, line+option-1, string(CharMenuCursor))
+		DisplayText(column, line+option-1, string(CharMenuCursor), CYAN)
 	}
 
 	if previousOption != 0 {
-		DisplayText(column, line+previousOption-1, "     ")
+		DisplayText(column, line+previousOption-1, "     ", CYAN)
 	}
 }
 

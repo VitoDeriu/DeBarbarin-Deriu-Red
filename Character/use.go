@@ -234,3 +234,45 @@ func (char *Character) SpellBook(s SpellBook) {
 	char.Skills = append(char.Skills, s.Skill)
 	char.RemoveSpellBook(s)
 }
+
+func (myChar *Character) UseSkill(skill Skill, enemy *Enemy, buffDefense int) (bool, int, int) {
+	if myChar.Mp < skill.MpCost {
+		return false, 0, 0
+	}
+	if skill.Kind == "Attaque" {
+		var damage int
+		myChar.Mp -= skill.MpCost
+		damage = enemy.Attack + skill.Attack
+		if myChar.Defense+buffDefense >= damage {
+			damage /= 2
+		} else {
+			damage -= (myChar.Defense + buffDefense) / 10
+		}
+		enemy.Hp -= damage
+		return true, skill.Defense, damage
+	} else {
+		myChar.Mp -= skill.MpCost
+		return true, skill.Defense, 0
+	}
+}
+
+func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int) (int, int) {
+	if enemy.Mp < skill.MpCost {
+		return 0, 0
+	}
+	if skill.Kind == "Attaque" {
+		var damage int
+		enemy.Mp -= skill.MpCost
+		damage = enemy.Attack + skill.Attack
+		if myChar.Defense+buffDefense >= damage {
+			damage /= 2
+		} else {
+			damage -= (myChar.Defense + buffDefense) / 10
+		}
+		myChar.Hp -= damage
+		return skill.Defense, damage
+	} else {
+		enemy.Mp -= skill.MpCost
+		return skill.Defense, 0
+	}
+}

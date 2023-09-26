@@ -27,6 +27,8 @@ type Enemy struct {
 	Level      int
 	Hp         int
 	HpMax      int
+	Mp         int
+	MpMax      int
 	Attack     int
 	Defense    int
 	Agility    int
@@ -47,12 +49,11 @@ type Race struct {
 }
 
 type Skill struct {
-	Name       string
-	Attack     int
-	Defense    int
-	StatBuffed string
-	Buff       int
-	MpCost     int
+	Name    string
+	Attack  int
+	Defense int
+	Kind    string
+	MpCost  int
 }
 
 // struct des items

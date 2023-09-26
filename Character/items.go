@@ -71,6 +71,27 @@ var PotionDeSoin = Potion{
 	EffectOnTime: 0,
 	Price:        3,
 }
+var GrandePotionDeSoin = Potion{
+	Name:         "Potion de soin +",
+	StatBuffed:   "Hp",
+	Buff:         40,
+	EffectOnTime: 0,
+	Price:        8,
+}
+var PotionDeMana = Potion{
+	Name:         "Potion de mana",
+	StatBuffed:   "Mp",
+	Buff:         30,
+	EffectOnTime: 0,
+	Price:        5,
+}
+var GrandePotionDeMana = Potion{
+	Name:         "Potion de mana +",
+	StatBuffed:   "Mp",
+	Buff:         50,
+	EffectOnTime: 0,
+	Price:        10,
+}
 var PotionDePoison = Potion{
 	Name:         "Potion de poison",
 	StatDebuffed: "Hp",
@@ -82,6 +103,9 @@ var PotionDePoison = Potion{
 var AllPotion = []Potion{
 	PotionDePoison,
 	PotionDeSoin,
+	GrandePotionDeSoin,
+	PotionDeMana,
+	GrandePotionDeMana,
 }
 
 // Déclarations des SpellBooks
@@ -109,52 +133,49 @@ var AllSpellBook = []SpellBook{
 
 // Déclaration des Skills
 var FireBall = Skill{
-	Name:       "Boule de feu",
-	Attack:     20,
-	StatBuffed: "Attaque",
-	MpCost:     10,
+	Name:   "Boule de feu",
+	Attack: 20,
+	Kind:   "Attaque",
+	MpCost: 8,
 }
 var ElfPunch = Skill{
-	Name:       "Coup de poing elfe",
-	Attack:     10,
-	Defense:    0,
-	StatBuffed: "Agilité",
-	Buff:       5,
-	MpCost:     0,
+	Name:    "Coup de poing elfe",
+	Attack:  16,
+	Defense: 0,
+	Kind:    "Attaque",
+	MpCost:  2,
 }
 var HumanPunch = Skill{
-	Name:       "Coup de poing humain",
-	Attack:     10,
-	Defense:    0,
-	StatBuffed: "Attaque",
-	Buff:       5,
-	MpCost:     0,
+	Name:    "Coup de poing humain",
+	Attack:  12,
+	Defense: 0,
+	Kind:    "Attaque",
+	MpCost:  0,
 }
 var DwarfPunch = Skill{
-	Name:       "Coup de poing nain",
-	Attack:     10,
-	Defense:    0,
-	StatBuffed: "Défense",
-	Buff:       5,
-	MpCost:     0,
+	Name:    "Coup de poing nain",
+	Attack:  10,
+	Defense: 2,
+	Kind:    "Attaque",
+	MpCost:  0,
 }
 var SlimeShot = Skill{
-	Name:       "Coup de Slime",
-	Attack:     2,
-	StatBuffed: "Attaque",
-	MpCost:     0,
+	Name:   "Coup de Slime",
+	Attack: 2,
+	Kind:   "Attaque",
+	MpCost: 0,
 }
 var SwordSlash = Skill{
-	Name:       "Coup d'épée",
-	Attack:     15,
-	StatBuffed: "Attaque",
-	MpCost:     0,
+	Name:   "Coup d'épée",
+	Attack: 15,
+	Kind:   "Attaque",
+	MpCost: 0,
 }
 var SwordGuard = Skill{
-	Name:       "Blocage à l'épée",
-	Defense:    20,
-	StatBuffed: "Défense",
-	MpCost:     0,
+	Name:    "Blocage à l'épée",
+	Defense: 20,
+	Kind:    "Défense",
+	MpCost:  0,
 }
 
 var Skills = []Skill{

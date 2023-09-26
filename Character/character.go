@@ -59,12 +59,31 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 }
 
 // fonction de mort et respawn. a faire checker a chaque dégat pris
-func (char *Character) Dead() {
+func (char *Character) Dead() bool {
 	if char.Hp <= 0 {
 		fmt.Println("Vous avez succombé a vos blessures sale noob")
 		time.Sleep(1 * time.Second)
 		fmt.Println("Aller, go respawn !")
 		char.Hp = char.HpMax / 2
 		fmt.Println("HP : ", char.Hp)
+		return true
 	}
+	return false
+}
+
+func (char *Character) LevelUp() bool {
+	var hasLevelledUp bool
+	for char.Xp >= 100*char.Level {
+		hasLevelledUp = true
+		char.Xp -= 100 * char.Level
+		char.Level++
+		char.HpMax += 5
+		char.Attack += 5
+		char.Defense += 5
+		char.Agility += 2
+		char.Hp = char.HpMax
+		char.MpMax += 5
+		char.Mp = char.MpMax
+	}
+	return hasLevelledUp
 }

@@ -1,10 +1,12 @@
 package character
 
+import "math/rand"
+
 //Fichier pour le Marchand, on y retrouve des fonctions d'achat. en relation avec le fichier inventory.
 
 var Merchant = Character{
 	Name:      "Marchand",
-	Inventory: map[string]int{"Potion de soin": 3, "Potion de poison": 3, "Grimoire boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5},
+	Inventory: map[string]int{"Potion de soin +": 10, "Potion de soin": 15, "Potion de poison": 3, "Grimoire: boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5},
 	Gold:      10000,
 }
 
@@ -73,5 +75,24 @@ func (buyer *Character) BuyRessource(seller *Character, s Ressource) {
 		}
 	} else {
 		println("je n'ai plus de ", s.Name, " frérot !")
+	}
+}
+
+func (merchant *Character) AddItems() {
+	i := rand.Intn(100)
+	j := rand.Intn(100)
+	switch {
+	case i < 25:
+		merchant.Inventory[AllEquipement[i%len(AllEquipement)].Name] = 3
+		merchant.Inventory[AllEquipement[j%len(AllEquipement)].Name] = 3
+	case i > 25 && i < 50:
+		merchant.Inventory[AllSpellBook[i%len(AllSpellBook)].Name] = 3
+		merchant.Inventory[AllSpellBook[j%len(AllSpellBook)].Name] = 3
+	case i > 50 && i < 75:
+		merchant.Inventory[AllPotion[i%len(AllPotion)].Name] = 3
+		merchant.Inventory[AllPotion[j%len(AllPotion)].Name] = 3
+	case i > 75:
+		merchant.Inventory[AllRessources[i%len(AllRessources)].Name] = 3
+		merchant.Inventory[AllRessources[j%len(AllRessources)].Name] = 3
 	}
 }

@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"os"
 	"os/exec"
+	"strconv"
 	"time"
 	"unicode"
 
@@ -16,6 +17,13 @@ import (
 var introductionStory [][]rune
 var MainChar char.Character
 var GameStatus int
+var hourMerchantVisit, minutesMerchantVisit int
+
+const (
+	CYAN  = 0
+	GREEN = 1
+	RED   = 2
+)
 
 func ClearTerminal() {
 	cmd := exec.Command("cmd", "/c", "cls")
@@ -109,8 +117,8 @@ func PrincipalMenu() {
 	case 3: // AFFICHER LE BONUS : Spielberg et ABBA ;)
 		ClearTerminal()
 		DisplayBlankMenu(BONUS_MENU)
-		DisplayText(23, 5, "La réponse à la question bonus est :")
-		DisplayText(30, 10, "Spielberg,  ABBA et Queen")
+		DisplayText(23, 5, "La réponse à la question bonus est :", CYAN)
+		DisplayText(30, 10, "Spielberg,  ABBA et Queen", CYAN)
 		time.Sleep(time.Second * 3)
 		PrincipalMenu()
 
@@ -128,14 +136,32 @@ func PrincipalMenu() {
 	}
 }
 
-func DisplayRune(column, line int, char rune) {
-	term.SetCell(column, line, char, term.ColorCyan, term.ColorDefault)
+func DisplayRune(column, line int, char rune, colorNb int) {
+	var color term.Attribute
+	switch colorNb {
+	case CYAN:
+		color = term.ColorCyan
+	case GREEN:
+		color = term.ColorGreen
+	case RED:
+		color = term.ColorRed
+	}
+	term.SetCell(column, line, char, color, term.ColorDefault)
 	term.Flush()
 }
 
-func DisplayText(column, line int, text string) {
+func DisplayText(column, line int, text string, colorNb int) {
+	var color term.Attribute
+	switch colorNb {
+	case CYAN:
+		color = term.ColorCyan
+	case GREEN:
+		color = term.ColorGreen
+	case RED:
+		color = term.ColorRed
+	}
 	for _, char := range text {
-		term.SetCell(column, line, char, term.ColorCyan, term.ColorDefault)
+		term.SetCell(column, line, char, color, term.ColorDefault)
 		column += rwidth.RuneWidth(char)
 	}
 	term.Flush()
@@ -162,7 +188,7 @@ func TextInput() string {
 
 		case term.EventKey:
 			if isAlpha(ev.Ch) {
-				DisplayRune(column, line, ev.Ch)
+				DisplayRune(column, line, ev.Ch, CYAN)
 				name = append(name, ev.Ch)
 				column += rwidth.RuneWidth(ev.Ch)
 			}
@@ -175,7 +201,7 @@ func TextInput() string {
 			case term.KeyBackspace:
 				if column > 13 {
 					column -= rwidth.RuneWidth(name[len(name)-1])
-					DisplayRune(column, line, ' ')
+					DisplayRune(column, line, ' ', CYAN)
 					if len(name) < 2 {
 						name = []rune("")
 					} else {
@@ -184,7 +210,7 @@ func TextInput() string {
 				}
 
 			case term.KeySpace:
-				DisplayRune(column, line, ' ')
+				DisplayRune(column, line, ' ', CYAN)
 				name = append(name, ' ')
 				column += rwidth.RuneWidth(' ')
 
@@ -267,6 +293,8 @@ func CharacterCreationMenu() {
 	term.Clear(term.ColorDefault, term.ColorDefault)
 	MainChar = char.CreateMainCharacter(name, selectedOption)
 	GameStatus = STROLL_CASTLE
+	hourMerchantVisit = time.Now().Hour()
+	minutesMerchantVisit = time.Now().Minute()
 
 	//Run the beginning of the game (like the cinematic introduction and then send to the first location)
 	// PresentationCinematic(MainChar.Name)
@@ -703,10 +731,12 @@ func Stroll(myChar *char.Character, nbMenu int) {
 			switch selectedOption {
 
 			case 1:
+				merchantDeliveryTime()
 				Inventory(&char.Merchant, BUY_MERCHANT)
 			case 2:
 				nbMenu = STROLL_MARKET
 			case 3:
+				merchantDeliveryTime()
 				Inventory(&MainChar, SELL_MERCHANT)
 			}
 		}
@@ -850,8 +880,33 @@ func Combat(myChar *char.Character, combatType int) {
 	previousPointingAt := 1
 	options := 4
 	var myCharPotions []string
+	var myCharBuffDefense, IABuffDefense int
+	var turn int
+	const (
+		MYCHARTURN = 1
+		IATURN     = 2
+	)
+
+	if myChar.Agility > enemy.Agility {
+		turn = MYCHARTURN
+	} else {
+		turn = IATURN
+	}
 
 	for {
+		if turn == IATURN {
+			IABuffDefense = IACombatTurn(myChar, &enemy, myCharBuffDefense)
+			if myChar.Dead() {
+				return
+			}
+			if myCharBuffDefense != 0 {
+				DisplayText(25, 9, "     ", RED)
+			}
+			myCharBuffDefense = 0
+			turn = MYCHARTURN
+			continue
+		}
+
 		ClearTerminal()
 		term.Clear(term.ColorDefault, term.ColorDefault)
 		DisplayCombatMenu(myChar, &enemy, combatType)
@@ -915,17 +970,33 @@ func Combat(myChar *char.Character, combatType int) {
 		var actionOptions int
 
 		switch selectedOption {
+		//Attack!
 		case 1:
 			actionOptions = len(myChar.Skills)
 
 		//Absolute defense!
 		case 2:
+			myCharBuffDefense = myChar.Defense / 2
+			DisplayText(25, 9, "+"+strconv.Itoa(myCharBuffDefense), GREEN)
 			selectedAction = 1
 
+		//Boire une potion
 		case 3:
 			actionOptions = len(myCharPotions)
 
+		//Fuite!!
 		case 4:
+			if myChar.Hp <= enemy.Attack {
+				DisplayText(25, 6, "-"+strconv.Itoa(myChar.Hp-1), RED)
+				time.Sleep(time.Second * 1)
+				DisplayText(25, 6, "     ", RED)
+				myChar.Hp = 1
+			} else {
+				myChar.Hp -= enemy.Attack
+				DisplayText(25, 6, "-"+strconv.Itoa(enemy.Attack), RED)
+				time.Sleep(time.Second * 1)
+				DisplayText(25, 6, "     ", RED)
+			}
 			return
 
 		}
@@ -975,36 +1046,88 @@ func Combat(myChar *char.Character, combatType int) {
 
 		//Use the skill!
 		case 1:
+			var hasAttacked bool
 			if myChar.Mp >= myChar.Skills[selectedAction-1].MpCost {
-				myChar.Mp -= myChar.Skills[selectedAction-1].MpCost
-				enemy.Hp -= myChar.Attack + myChar.Skills[selectedAction-1].Attack
-				if enemy.Hp <= 0 {
-					myChar.Xp += enemy.Level * (enemy.HpMax / 4)
-					if rand.Intn(10) >= 5 && enemy.Loot != nil {
-						var loot string
-						for item := range enemy.Loot {
-							loot = item
-							break
-						}
-						if myChar.Inventory[loot] == 0 && myChar.FullInventory() {
-							myChar.Inventory[loot] = 1
-						} else {
-							myChar.Inventory[loot] += 1
-						}
+				var damage int
+				hasAttacked, myCharBuffDefense, damage = myChar.UseSkill(myChar.Skills[selectedAction-1], &enemy, IABuffDefense)
+				DisplayText(67, 3, "-"+strconv.Itoa(damage), RED)
+				if myCharBuffDefense != 0 {
+					DisplayText(25, 9, "+"+strconv.Itoa(myCharBuffDefense), GREEN)
+				}
+				if myChar.Skills[selectedAction-1].MpCost == 0 && myChar.Mp < myChar.MpMax-myChar.MpMax/15 {
+					myChar.Mp += myChar.MpMax / 15
+					DisplayText(25, 7, "+"+strconv.Itoa(myChar.MpMax/15), GREEN)
+				}
+				time.Sleep(time.Second * 1)
+				DisplayText(67, 4, "     ", GREEN)
+				DisplayText(67, 3, "     ", RED)
+				if victory, levelUp := enemy.EnemyDeath(myChar); victory {
+					if levelUp {
+						DisplayText(8, 3, "Vous avez gagné et augmenté de niveau!", GREEN)
+					} else {
+						DisplayText(8, 3, "Vous avez gagné!", GREEN)
 					}
+					time.Sleep(time.Second * 1)
 					return
 				}
 			}
-			selectedOption = 0
+			if hasAttacked {
+				selectedOption = 0
+				IABuffDefense = 0
+				turn = IATURN
+			}
 
 		//Return to the first menu
 		case 2:
 			selectedOption = 0
+			turn = IATURN
 
 		//Drink a potion!
 		case 3:
 			myChar.TakePotion(char.FindPotion(myCharPotions[selectedAction-1]))
+			selectedOption = 0
+			turn = IATURN
 		}
 
 	}
+}
+
+func IACombatTurn(myChar *char.Character, enemy *char.Enemy, buffDefense int) int {
+	var skill char.Skill
+	var isSelected bool
+	var outOfOptions int
+	for !isSelected {
+		if len(enemy.Skills) > 1 {
+			skill = enemy.Skills[rand.Intn(len(enemy.Skills))]
+			if enemy.Mp >= skill.MpCost {
+				isSelected = true
+			}
+		} else {
+			skill = enemy.Skills[0]
+		}
+		outOfOptions++
+		if outOfOptions == 6 {
+			skill = char.HumanPunch
+			isSelected = true
+		}
+	}
+	buff, damage := enemy.UseSkill(skill, myChar, buffDefense)
+	DisplayText(25, 6, "-"+strconv.Itoa(damage), RED)
+	time.Sleep(time.Second * 1)
+	DisplayText(25, 6, "     ", RED)
+	return buff
+}
+
+func merchantDeliveryTime() {
+	hourDiff := time.Now().Hour() - hourMerchantVisit
+	currentMinutes := time.Now().Minute()
+	if hourDiff < 0 {
+		hourDiff = 24 + hourDiff
+	}
+	currentMinutes += 60 * hourDiff
+	for i := (currentMinutes - minutesMerchantVisit) / 5; i > 0; i-- {
+		char.Merchant.AddItems()
+	}
+	hourMerchantVisit = time.Now().Hour()
+	minutesMerchantVisit = time.Now().Minute()
 }
