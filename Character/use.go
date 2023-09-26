@@ -231,6 +231,9 @@ func (char *Character) SpellBook(s SpellBook) {
 			return
 		}
 	}
+	if len(char.Skills) >= 5 {
+		char.Skills = char.Skills[1:]
+	}
 	char.Skills = append(char.Skills, s.Skill)
 	char.RemoveSpellBook(s)
 }

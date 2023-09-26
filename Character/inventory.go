@@ -43,12 +43,25 @@ func (char *Character) CheckGold(price int) bool {
 }
 
 // check si l'inventaire est plein a chaque fonction Add
+var InvMax int = 10
+
 func (char *Character) FullInventory() bool {
-	if len(char.Inventory) >= 10 {
+	if len(char.Inventory) >= InvMax {
 		println("inventaire plein.. deso")
 		return false
 	}
 	return true
+}
+
+// Augmentation de la taille de l'inventaire
+func (char *Character) UpgradeInventory() {
+	char.CheckGold(30)
+	if InvMax < 40 {
+		InvMax += 10
+		char.Gold -= 30
+	} else {
+		println("L'inventaire est déjà maxé")
+	}
 }
 
 // Add et Remove Inventory pour les Potions
