@@ -179,52 +179,6 @@ func (char *Character) TakePotion(p Potion) {
 	}
 }
 
-// fonction d'utilisation de la potion, a modifier en fonction générale pour tous les items suivant leur typeItem
-// du coup ne pas modifier ca sert a rien
-
-// func (char *Character) TakePotionSoin() {
-//
-//		if char.Inventory["Potion de soin"] != 0 {
-//			if char.Hp == char.HpMax {
-//				fmt.Println("Je n'ai pas soif !")
-//				return
-//			} else if char.HpMax-char.Hp < 20 {
-//				char.Hp = char.HpMax
-//			} else {
-//				char.Hp += PotionDeSoin.GainHp
-//			}
-//			char.Inventory["Potion de soin"] -= 1
-//			if char.Inventory["Potion de soin"] == 0 {
-//				delete(char.Inventory, "Potion de soin")
-//			}
-//			fmt.Println("+20 hp")
-//			fmt.Println(char.Hp, "/", char.HpMax)
-//			return
-//		} else {
-//			fmt.Println(char.Name, " ➵  Je n'ai pas de potion !")
-//		}
-//	}
-//
-// //fonction pour l'utilisation de la popo de poison
-//
-// func (char *Character) PoisonPot() {
-//
-//		if char.Inventory["Potion de Poison"] != 0 { //pas besoin d'aller check dans tout l'inventaire avec un for range, si y'a pas l'item ca renvoi au else
-//			println("\"C'EST DEGUEU !! Argh !\" Vous perdez 30hp...")
-//			for i := 0; i < PotionDePoison.EffectOnTime; i++ { // boucle qui prend en parametre le effectOnTime de item.potion pour appliquer l'effet plusieur fois en fonction du temps
-//				char.Hp -= PotionDePoison.LossHp
-//				char.Dead()
-//				time.Sleep(1 * time.Second)
-//			}
-//			println("Il vous reste ", char.Hp, " HP")
-//			println("Pas très malin tout ca...")
-//			char.RemovePotion(PotionDePoison) // appel fonction remove pour consommer la potion
-//		} else {
-//			println("je n'ai pas de Potion de Poison")
-//		}
-//	}
-
-// Fonction pour l'apprentissage des sort via les spellbooks
 func (char *Character) SpellBook(s SpellBook) {
 	for _, sk := range char.Skills {
 		if sk == s.Skill {
@@ -280,5 +234,52 @@ func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int, cr
 	} else {
 		enemy.Mp -= skill.MpCost
 		return skill.Defense, 0
+	}
+}
+
+// fonction pour équiper un item
+func (char *Character) Equiper(e Equipement) {
+	var toRemove Equipement
+	var IndRemove int
+	var isEmpty = true
+	//boucle for range pour verifier si on a pas déjà un item équipé
+	for i, val := range char.Equipement {
+		if val.Slot == e.Slot {
+			isEmpty = false
+			toRemove = val
+			IndRemove = i
+		}
+	}
+	//si y'a rien d'équipé
+	if isEmpty == true {
+		char.HpMax += e.HpMax
+		char.MpMax += e.MpMax
+		char.Defense += e.Defense
+		char.Agility += e.Agility
+		char.Attack += e.Attack
+		char.Equipement = append(char.Equipement, e)
+		char.RemoveEquipement(e)
+		return
+	}
+	//si y'a qqch d'équipé
+	if isEmpty == false {
+		//on retire les stats de l'objet a enlever
+		char.HpMax -= toRemove.HpMax
+		char.MpMax -= toRemove.MpMax
+		char.Defense -= toRemove.Defense
+		char.Agility -= toRemove.Agility
+		char.Attack -= toRemove.Attack
+		char.AddEquipement(toRemove)
+		//on ajoute les stats du nouvel objet
+		char.HpMax += e.HpMax
+		char.MpMax += e.MpMax
+		char.Defense += e.Defense
+		char.Agility += e.Agility
+		char.Attack += e.Attack
+		//on ajoute le nouvel objet a la slice d'équipement
+		char.Equipement = append(char.Equipement, e)
+		//on retire l'ancien objet de la slice char.equipement
+		char.Equipement = append(char.Equipement[:IndRemove], char.Equipement[IndRemove+1:]...)
+		return
 	}
 }
