@@ -129,7 +129,8 @@ func PrincipalMenu() {
 
 	case 5:
 		ClearTerminal()
-		fmt.Println("Bye bye !")
+		term.Clear(term.ColorDefault, term.ColorDefault)
+		Bye()
 		time.Sleep(time.Second * 3)
 		ClearTerminal()
 		os.Exit(0)
@@ -306,7 +307,7 @@ func CharMenu(myChar *char.Character) {
 		pointingAt := 1
 		selectedOption := 0
 		previousPointingAt := 1
-		options := 4
+		options := 3
 
 		displayCharMenu(&MainChar)
 		DisplayCharMenuCursor(pointingAt, 0)
@@ -350,15 +351,13 @@ func CharMenu(myChar *char.Character) {
 		case 1: //Display the inventory
 			Inventory(myChar, CHAR_INVENTORY)
 
-		case 2: //Need to implement that display (Equipment managing menu)!!
-			PrincipalMenu()
-
-		case 3: //return to where you called the function
+		case 2: //return to where you called the function
 			return
 
-		case 4: //Exiting the program... bye!
+		case 3: //Exiting the program... bye!
 			ClearTerminal()
-			fmt.Println("Bye bye !")
+			term.Clear(term.ColorDefault, term.ColorDefault)
+			Bye()
 			time.Sleep(time.Second * 3)
 			ClearTerminal()
 			os.Exit(0)
@@ -373,21 +372,29 @@ func Inventory(myChar *char.Character, whichMenu int) {
 	pointingAt := 1
 	selectedOption := 0
 	previousPointingAt := 1
-	var options int
+	currentPage := 1
+	previousPage := 1
+	var currentItems []string
+	var options, nbPages int
 	for {
 		ClearTerminal()
 		term.Clear(term.ColorDefault, term.ColorDefault)
-		items := displayInventory(*myChar, &options, whichMenu)
-		if len(items) == 0 {
+		currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage)
+		options = len(currentItems)
+
+		if len(currentItems) == 0 {
 			time.Sleep(time.Second * 1)
 			ClearTerminal()
 			term.Clear(term.ColorDefault, term.ColorDefault)
 			return
+
 		}
-		if pointingAt > len(items) {
-			pointingAt = len(items)
+
+		if pointingAt > len(currentItems) {
+			pointingAt = len(currentItems)
 		}
-		displayItemDescription(items[pointingAt-1])
+
+		displayItemDescription(currentItems[pointingAt-1])
 		displayCharInventoryItemsCursor(pointingAt, 0)
 
 		for selectedOption == 0 {
@@ -401,12 +408,16 @@ func Inventory(myChar *char.Character, whichMenu int) {
 				case term.KeyArrowUp:
 					if pointingAt > 1 {
 						pointingAt--
+					} else if currentPage > 1 {
+						currentPage--
 					}
 
 				//Arrow down
 				case term.KeyArrowDown:
 					if pointingAt < options {
 						pointingAt++
+					} else if currentPage < nbPages {
+						currentPage++
 					}
 
 				//Enter
@@ -424,9 +435,19 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 			//Change the display only if necessary.
 			if previousPointingAt != pointingAt {
+				displayItemDescription(currentItems[pointingAt-1])
 				displayCharInventoryItemsCursor(pointingAt, previousPointingAt)
-				displayItemDescription(items[pointingAt-1])
 				previousPointingAt = pointingAt
+			}
+			if previousPage != currentPage {
+				currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage)
+				options = len(currentItems)
+				previousPage = currentPage
+				if pointingAt > len(currentItems) {
+					pointingAt = len(currentItems)
+					displayCharInventoryItemsCursor(pointingAt, previousPointingAt)
+					previousPointingAt = pointingAt
+				}
 			}
 		}
 
@@ -486,14 +507,14 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 			//Use the item!
 			case 1:
-				switch retreiveItemType(items[pointingAt-1]) {
+				switch retreiveItemType(currentItems[pointingAt-1]) {
 
 				case "Équipement":
 					//Equip the item!
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
-						if items[pointingAt-1] == potion.Name {
+						if currentItems[pointingAt-1] == potion.Name {
 							myChar.TakePotion(potion)
 							time.Sleep(time.Second * 2)
 							ClearTerminal()
@@ -504,7 +525,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 				case "Livre de sort":
 					for _, spellBook := range char.AllSpellBook {
-						if items[pointingAt-1] == spellBook.Name {
+						if currentItems[pointingAt-1] == spellBook.Name {
 							myChar.SpellBook(spellBook)
 							term.Clear(term.ColorDefault, term.ColorDefault)
 							return
@@ -515,25 +536,25 @@ func Inventory(myChar *char.Character, whichMenu int) {
 			//Throw away the item!
 			case 2:
 
-				switch retreiveItemType(items[pointingAt-1]) {
+				switch retreiveItemType(currentItems[pointingAt-1]) {
 
 				case "Équipement":
 					for _, equipement := range char.AllEquipement {
-						if items[pointingAt-1] == equipement.Name {
+						if currentItems[pointingAt-1] == equipement.Name {
 							myChar.RemoveEquipement(equipement)
 						}
 					}
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
-						if items[pointingAt-1] == potion.Name {
+						if currentItems[pointingAt-1] == potion.Name {
 							myChar.RemovePotion(potion)
 						}
 					}
 
 				case "Livre de sort":
 					for _, spellBook := range char.AllSpellBook {
-						if items[pointingAt-1] == spellBook.Name {
+						if currentItems[pointingAt-1] == spellBook.Name {
 							myChar.RemoveSpellBook(spellBook)
 						}
 					}
@@ -551,11 +572,11 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 			//Buy the item
 			case 1:
-				switch retreiveItemType(items[pointingAt-1]) {
+				switch retreiveItemType(currentItems[pointingAt-1]) {
 
 				case "Équipement":
 					for _, equipement := range char.AllEquipement {
-						if items[pointingAt-1] == equipement.Name {
+						if currentItems[pointingAt-1] == equipement.Name {
 							if whichMenu == BUY_MERCHANT {
 								MainChar.BuyEquipement(&char.Merchant, equipement)
 							} else {
@@ -566,7 +587,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
-						if items[pointingAt-1] == potion.Name {
+						if currentItems[pointingAt-1] == potion.Name {
 							if whichMenu == BUY_MERCHANT {
 								MainChar.BuyPotion(&char.Merchant, potion)
 							} else {
@@ -577,7 +598,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 				case "Livre de sort":
 					for _, spellBook := range char.AllSpellBook {
-						if items[pointingAt-1] == spellBook.Name {
+						if currentItems[pointingAt-1] == spellBook.Name {
 							if whichMenu == BUY_MERCHANT {
 								MainChar.BuySpellBook(&char.Merchant, spellBook)
 							} else {
@@ -588,7 +609,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 
 				case "Ressource":
 					for _, ressource := range char.AllRessources {
-						if items[pointingAt-1] == ressource.Name {
+						if currentItems[pointingAt-1] == ressource.Name {
 							if whichMenu == BUY_MERCHANT {
 								MainChar.BuyRessource(&char.Merchant, ressource)
 							} else {
@@ -881,7 +902,7 @@ func Combat(myChar *char.Character, combatType int) {
 	options := 4
 	var myCharPotions []string
 	var myCharBuffDefense, IABuffDefense int
-	var turn int
+	var turn, round int
 	const (
 		MYCHARTURN = 1
 		IATURN     = 2
@@ -894,8 +915,9 @@ func Combat(myChar *char.Character, combatType int) {
 	}
 
 	for {
+		round++
 		if turn == IATURN {
-			IABuffDefense = IACombatTurn(myChar, &enemy, myCharBuffDefense)
+			IABuffDefense = IACombatTurn(myChar, &enemy, myCharBuffDefense, round%3 == rand.Intn(100)%3)
 			if myChar.Dead() {
 				return
 			}
@@ -1092,7 +1114,7 @@ func Combat(myChar *char.Character, combatType int) {
 	}
 }
 
-func IACombatTurn(myChar *char.Character, enemy *char.Enemy, buffDefense int) int {
+func IACombatTurn(myChar *char.Character, enemy *char.Enemy, buffDefense int, crit bool) int {
 	var skill char.Skill
 	var isSelected bool
 	var outOfOptions int
@@ -1111,7 +1133,7 @@ func IACombatTurn(myChar *char.Character, enemy *char.Enemy, buffDefense int) in
 			isSelected = true
 		}
 	}
-	buff, damage := enemy.UseSkill(skill, myChar, buffDefense)
+	buff, damage := enemy.UseSkill(skill, myChar, buffDefense, crit)
 	DisplayText(25, 6, "-"+strconv.Itoa(damage), RED)
 	time.Sleep(time.Second * 1)
 	DisplayText(25, 6, "     ", RED)

@@ -27,7 +27,8 @@ var MenuLateralBar,
 	BlacksmithMenuText,
 	StrollGrid,
 	StrollCursor,
-	CombatGrid [][]rune
+	CombatGrid,
+	ByeDisplay [][]rune
 
 var BottomBar,
 	CharMenuTitleBar,
@@ -144,7 +145,6 @@ func CreateDisplayVariables() {
 	CharMenuText = append(CharMenuText, []rune("Jambes"))
 	CharMenuText = append(CharMenuText, []rune("Pieds"))
 	CharMenuText = append(CharMenuText, []rune("Inventaire"))
-	CharMenuText = append(CharMenuText, []rune("Équipement"))
 	CharMenuText = append(CharMenuText, []rune("Retour"))
 	CharMenuText = append(CharMenuText, []rune("Quitter"))
 
@@ -237,6 +237,13 @@ func CreateDisplayVariables() {
 	CombatGrid = append(CombatGrid, []rune("           │"))
 	CombatGrid = append(CombatGrid, []rune("Fuir       │"))
 
+	ByeDisplay = append(ByeDisplay, []rune("  ____                 _   _                  _ "))
+	ByeDisplay = append(ByeDisplay, []rune(" / ___| ___   ___   __| | | |__  _   _  ___  | |"))
+	ByeDisplay = append(ByeDisplay, []rune("| |  _ / _ \\ / _ \\ / _` | | '_ \\| | | |/ _ \\ | |"))
+	ByeDisplay = append(ByeDisplay, []rune("| |_| | (_) | (_) | (_| | | |_) | |_| |  __/ |_|"))
+	ByeDisplay = append(ByeDisplay, []rune(" \\____|\\___/ \\___/ \\__,_| |_.__/ \\__, |\\___| (_)"))
+	ByeDisplay = append(ByeDisplay, []rune("                                 |___/          "))
+
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
 	CharMenuTitleBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪ Menu du personnage ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
@@ -325,6 +332,16 @@ func loadingBar() {
 		loadingBar += "₪"
 		loadingPercentage += 1.36
 		fmt.Print("\r", int(loadingPercentage), "% ", loadingBar)
+	}
+}
+
+func Bye() {
+	for i := range ByeDisplay {
+		column := 8
+		for _, char := range ByeDisplay[i] {
+			DisplayRune(column, i+6, char, CYAN)
+			column += rwidth.RuneWidth(char)
+		}
 	}
 }
 
@@ -648,8 +665,8 @@ func displayCharMenuGrid() {
 
 func displayCharMenuText() {
 	var column int
-	var columns = []int{8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 12, 12, 12, 12}
-	var lines = []int{4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 10, 12, 14, 15}
+	var columns = []int{8, 8, 8, 8, 26, 26, 26, 26, 44, 44, 44, 44, 44, 12, 12, 12}
+	var lines = []int{4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 10, 13, 15}
 
 	for i := range CharMenuText {
 		column = columns[i]
@@ -662,7 +679,7 @@ func displayCharMenuText() {
 
 func DisplayCharMenuCursor(option, previousOption int) {
 	column := 6
-	var lines = []int{10, 12, 14, 15}
+	var lines = []int{10, 13, 15}
 
 	DisplayText(column, lines[option-1], string(CharMenuCursor), CYAN)
 
@@ -759,12 +776,16 @@ func displayCharInventoryText(whichMenu int) {
 	}
 }
 
-func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu int) []string {
+func displayInventoryItems(myChar *char.Character, whichMenu, currentPage int) ([]string, int) {
+
+	for line := 3; line < 13; line++ {
+		DisplayText(17, line, "                                                          ", CYAN)
+	}
 
 	if len(myChar.Inventory) == 0 {
 		DisplayText(17, 4, "Votre inventaire est vide !", CYAN)
 		time.Sleep(time.Second * 2)
-		return nil
+		return nil, 0
 	}
 
 	var inventory []string
@@ -772,10 +793,25 @@ func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu i
 		inventory = append(inventory, item)
 	}
 
-	*itemOptions = len(inventory)
+	var nbPages int
+	var currentItems []string
+	if len(inventory) > 10 {
+		if len(inventory)%10 > 0 {
+			nbPages++
+		}
+		nbPages += len(inventory) / 10
+		if currentPage < nbPages {
+			currentItems = inventory[(currentPage*10)-10 : currentPage*10]
+		} else {
+			currentItems = inventory[(currentPage*10)-10:]
+		}
+	} else {
+		currentPage = 1
+		currentItems = inventory
+	}
 
 	line := 3
-	for index, item := range inventory {
+	for index, item := range currentItems {
 		if index == 10 {
 			break
 		}
@@ -813,14 +849,14 @@ func displayInventoryItems(myChar *char.Character, itemOptions *int, whichMenu i
 		}
 		DisplayText(67, line+index, strconv.Itoa(myChar.Inventory[item]), CYAN)
 	}
-	return inventory
+	return currentItems, nbPages
 }
 
-func displayInventory(myChar char.Character, itemOptions *int, whichMenu int) []string {
+func displayInventory(myChar char.Character, whichMenu, currentPage int) ([]string, int) {
 	DisplayBlankMenu(whichMenu)
 	displayCharInventoryGrid()
 	displayCharInventoryText(whichMenu)
-	return displayInventoryItems(&myChar, itemOptions, whichMenu)
+	return displayInventoryItems(&myChar, whichMenu, currentPage)
 }
 
 func displayCharInventoryItemsCursor(option, previousOption int) {
@@ -1171,7 +1207,7 @@ func DisplayCombatMenu(myChar *char.Character, enemy *char.Enemy, combatType int
 //  \/┃\/ ╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┐Buff ╮ \/┃\/
 //  //┃\\ ⎯{==- Inventaire │┟──────────────────────┼─────┼─────┼─────────┼─────┧ //┃\\
 //  \\┃//      (Croissance)│┃ Coup de poing humain │ 240 │ 100 │ Agilité │ 105 ┃ \\┃//
-//  /\┃/\       Équipement │┃ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 ┃ /\┃/\
+//  /\┃/\      (Équipement)│┃ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 ┃ /\┃/\
 //  \/┃\/                  │╿ Coup de poing humain │ 240 │ 100 │ Défense │ 105 ╿ \/┃\/
 //  //┃\\       Retour     ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ //┃\\
 //  \\┃//       Quitter    ││ Coup de poing humain │ 240 │ 100 │ Attaque │ 105 │ \\┃//

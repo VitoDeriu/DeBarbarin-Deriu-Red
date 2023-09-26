@@ -73,7 +73,7 @@ func (char *Character) Dead() bool {
 
 func (char *Character) LevelUp() bool {
 	var hasLevelledUp bool
-	for char.Xp >= 100*char.Level {
+	for char.Xp >= 80*char.Level {
 		hasLevelledUp = true
 		char.Xp -= 100 * char.Level
 		char.Level++
