@@ -215,7 +215,7 @@ func (myChar *Character) UseSkill(skill Skill, enemy *Enemy, buffDefense int) (b
 	}
 }
 
-func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int) (int, int) {
+func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int, crit bool) (int, int) {
 	if enemy.Mp < skill.MpCost {
 		return 0, 0
 	}
@@ -227,6 +227,9 @@ func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int) (i
 			damage /= 2
 		} else {
 			damage -= (myChar.Defense + buffDefense) / 10
+		}
+		if crit {
+			damage += enemy.Attack / 2
 		}
 		myChar.Hp -= damage
 		return skill.Defense, damage
