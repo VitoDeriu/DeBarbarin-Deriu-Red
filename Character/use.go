@@ -199,11 +199,13 @@ func (myChar *Character) UseSkill(skill Skill, enemy *Enemy, buffDefense int) (b
 	if skill.Kind == "Attaque" {
 		var damage int
 		myChar.Mp -= skill.MpCost
+
 		damage = myChar.Attack + skill.Attack
 		if enemy.Defense+buffDefense >= damage {
+
 			damage /= 2
 		} else {
-			damage -= (enemy.Defense + buffDefense) / 10
+			damage -= (myChar.Defense + buffDefense) / 10
 		}
 		enemy.Hp -= damage
 		return true, skill.Defense, damage
@@ -213,7 +215,7 @@ func (myChar *Character) UseSkill(skill Skill, enemy *Enemy, buffDefense int) (b
 	}
 }
 
-func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int, crit bool) (int, int) {
+func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int) (int, int) {
 	if enemy.Mp < skill.MpCost {
 		return 0, 0
 	}
@@ -225,9 +227,6 @@ func (enemy *Enemy) UseSkill(skill Skill, myChar *Character, buffDefense int, cr
 			damage /= 2
 		} else {
 			damage -= (myChar.Defense + buffDefense) / 10
-		}
-		if crit {
-			damage += enemy.Attack / 2
 		}
 		myChar.Hp -= damage
 		return skill.Defense, damage
@@ -269,6 +268,8 @@ func (char *Character) Equiper(e Equipement) {
 		char.Defense -= toRemove.Defense
 		char.Agility -= toRemove.Agility
 		char.Attack -= toRemove.Attack
+		//on enlève l'objet a equiper de l'inventaire et on y ajoute celui qu'on retire
+		char.RemoveEquipement(e)
 		char.AddEquipement(toRemove)
 		//on ajoute les stats du nouvel objet
 		char.HpMax += e.HpMax
