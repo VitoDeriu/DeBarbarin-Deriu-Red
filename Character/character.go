@@ -75,7 +75,7 @@ func (char *Character) LevelUp() bool {
 	var hasLevelledUp bool
 	for char.Xp >= 80*char.Level {
 		hasLevelledUp = true
-		char.Xp -= 100 * char.Level
+		char.Xp -= 80 * char.Level
 		char.Level++
 		char.HpMax += 5
 		char.Attack += 5
@@ -86,4 +86,13 @@ func (char *Character) LevelUp() bool {
 		char.Mp = char.MpMax
 	}
 	return hasLevelledUp
+}
+
+func (myChar *Character) UseSpecialItem() {
+	myChar.Hp = myChar.HpMax
+	myChar.Mp = myChar.MpMax
+	myChar.Attack += 3
+	myChar.Defense += 3
+	myChar.Agility += 1
+	myChar.Xp += 10
 }

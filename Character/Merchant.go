@@ -6,7 +6,7 @@ import "math/rand"
 
 var Merchant = Character{
 	Name:      "Marchand",
-	Inventory: map[string]int{"Potion de soin +": 10, "Potion de soin": 15, "Potion de poison": 3, "Grimoire: boule de feu": 1, "Fourrure de loup": 5, "Peau de troll": 5, "Cuir de sanglier": 5, "Plume de corbeau": 5, "Épée d'entrainement": 1, "Manuel: coup d'épée": 1, "Potion de mana": 5, "Potion de mana +": 1},
+	Inventory: map[string]int{GrandePotionDeSoin.Name: 10, PotionDeSoin.Name: 15, PotionDePoison.Name: 3, SpellBookFireBall.Name: 1, FourrureDeLoup.Name: 5, PeauDeTroll.Name: 5, CuirDeSanglier.Name: 5, PlumeDeCorbeau.Name: 5, TrainingSword.Name: 1, SpellBookSwordSlash.Name: 1, PotionDeMana.Name: 5, GrandePotionDeMana.Name: 1},
 	Gold:      10000,
 }
 

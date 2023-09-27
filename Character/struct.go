@@ -70,7 +70,7 @@ type Potion struct {
 
 type Equipement struct {
 	Name    string
-	Slot    string // "Tete" , "Torse", "Mains", "Jambes", "Pieds"
+	Slot    string // "head" , "chest", "arms", "legs", "feet"
 	Recipe  map[Ressource]int
 	HpMax   int
 	MpMax   int

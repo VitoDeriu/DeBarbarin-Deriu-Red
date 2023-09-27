@@ -26,6 +26,17 @@ var PlumeDeCorbeau = Ressource{
 	Price: 1,
 }
 
+// Treasure item you seldom win when winning against an enemy (each race has its own, for consistency)
+var WorldTreeLeaf = Ressource{
+	Name: "Feuille d'Yggdrasil",
+}
+var MountainHeart = Ressource{
+	Name: "Coeur de montagne",
+}
+var GraalFragment = Ressource{
+	Name: "Fragment du Graal",
+}
+
 var AllRessources = []Ressource{
 	FourrureDeLoup,
 	PeauDeTroll,
@@ -36,24 +47,58 @@ var AllRessources = []Ressource{
 // Déclaration des Equipements
 var TrainingSword = Equipement{
 	Name:   "Épée d'entrainement",
-	Slot:   "Mains",
+	Slot:   "arms",
 	Attack: 5,
+	Price:  15,
 }
 var ChapeauDelAventurier = Equipement{
 	Name:   "Chapeau de l'aventurier",
-	Slot:   "Tete",
-	Recipe: map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1},
+	Slot:   "head",
 	HpMax:  10,
+	Price:  12,
+	Recipe: map[Ressource]int{PlumeDeCorbeau: 1, CuirDeSanglier: 1},
 }
 var TuniqueDelAventurier = Equipement{
-	Name:   "Tunique de l'aventurier",
-	Slot:   "Torse",
-	Recipe: map[Ressource]int{FourrureDeLoup: 2, PeauDeTroll: 1},
+	Name:    "Tunique de l'aventurier",
+	Slot:    "chest",
+	Defense: 3,
+	Price:   7,
+	Recipe:  map[Ressource]int{FourrureDeLoup: 2, PeauDeTroll: 1},
 }
 var BotteDelAventurier = Equipement{
-	Name:   "Bottes de l'aventurier",
-	Slot:   "Pieds",
-	Recipe: map[Ressource]int{FourrureDeLoup: 1, CuirDeSanglier: 1},
+	Name:    "Bottes de l'aventurier",
+	Slot:    "feet",
+	Agility: 3,
+	Price:   10,
+	Recipe:  map[Ressource]int{FourrureDeLoup: 1, CuirDeSanglier: 1},
+}
+var ElfHat = Equipement{
+	Name:  "Chapeau elfe",
+	Slot:  "head",
+	MpMax: 10,
+	Price: 25,
+}
+var ElfSword = Equipement{
+	Name:   "Épée elfe",
+	Slot:   "arms",
+	Attack: 10,
+	MpMax:  20,
+	Price:  35,
+}
+var ElfTunic = Equipement{
+	Name:    "Tunique elfe",
+	Slot:    "chest",
+	Defense: 10,
+	MpMax:   10,
+	HpMax:   5,
+	Price:   35,
+}
+var ElfBoots = Equipement{
+	Name:    "Bottes elfes",
+	Slot:    "feet",
+	Defense: 5,
+	Agility: 10,
+	Price:   30,
 }
 
 var AllEquipement = []Equipement{
@@ -61,6 +106,10 @@ var AllEquipement = []Equipement{
 	ChapeauDelAventurier,
 	TuniqueDelAventurier,
 	BotteDelAventurier,
+	ElfHat,
+	ElfSword,
+	ElfTunic,
+	ElfBoots,
 }
 
 // Déclaration des Potions

@@ -1,6 +1,8 @@
 package character
 
-import "math/rand"
+import (
+	"math/rand"
+)
 
 var OrdinarySlime = Enemy{
 	Name:    "Slime ordinaire",
@@ -50,7 +52,20 @@ var Enemies = []Enemy{
 func (enemy *Enemy) EnemyDeath(myChar *Character) (bool, bool) {
 	if enemy.Hp <= 0 {
 		myChar.Xp += enemy.Level * (enemy.HpMax / 4)
-		if i := rand.Intn(10); i >= 5 && enemy.Loot != nil {
+		if i := rand.Intn(100); i >= 5 && enemy.Loot != nil {
+
+			//How to win the treasure item of the race!
+			if i < 15 {
+				switch myChar.Class {
+				case Elf:
+					myChar.AddRessource(WorldTreeLeaf)
+				case Dwarf:
+					myChar.AddRessource(MountainHeart)
+				case Human:
+					myChar.AddRessource(GraalFragment)
+				default:
+				}
+			}
 			var loot string
 			for item := range enemy.Loot {
 				loot = item

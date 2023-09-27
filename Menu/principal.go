@@ -302,7 +302,7 @@ func CharacterCreationMenu() {
 	Stroll(&MainChar, GameStatus)
 }
 
-func CharMenu(myChar *char.Character) {
+func CharMenu(myChar *char.Character, nbMenu int) {
 	for {
 		pointingAt := 1
 		selectedOption := 0
@@ -349,7 +349,11 @@ func CharMenu(myChar *char.Character) {
 		switch selectedOption {
 
 		case 1: //Display the inventory
-			Inventory(myChar, CHAR_INVENTORY)
+			var blacksmithFacility bool
+			if nbMenu == STROLL_MARKET {
+				blacksmithFacility = true
+			}
+			Inventory(myChar, CHAR_INVENTORY, blacksmithFacility)
 
 		case 2: //return to where you called the function
 			return
@@ -365,7 +369,7 @@ func CharMenu(myChar *char.Character) {
 	}
 }
 
-func Inventory(myChar *char.Character, whichMenu int) {
+func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 
 	term.Clear(term.ColorDefault, term.ColorDefault)
 
@@ -379,7 +383,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 	for {
 		ClearTerminal()
 		term.Clear(term.ColorDefault, term.ColorDefault)
-		currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage)
+		currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage, blacksmithFacility)
 		options = len(currentItems)
 
 		if len(currentItems) == 0 {
@@ -440,7 +444,7 @@ func Inventory(myChar *char.Character, whichMenu int) {
 				previousPointingAt = pointingAt
 			}
 			if previousPage != currentPage {
-				currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage)
+				currentItems, nbPages = displayInventory(*myChar, whichMenu, currentPage, blacksmithFacility)
 				options = len(currentItems)
 				previousPage = currentPage
 				if pointingAt > len(currentItems) {
@@ -510,7 +514,13 @@ func Inventory(myChar *char.Character, whichMenu int) {
 				switch retreiveItemType(currentItems[pointingAt-1]) {
 
 				case "Équipement":
-					//Equip the item!
+					for _, equipment := range char.AllEquipement {
+						if equipment.Name == currentItems[pointingAt-1] {
+							myChar.Equiper(equipment)
+							term.Clear(term.ColorDefault, term.ColorDefault)
+							return
+						}
+					}
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
@@ -531,6 +541,22 @@ func Inventory(myChar *char.Character, whichMenu int) {
 							return
 						}
 					}
+
+					//Using the special treasure item of the race!
+				case "Trésor":
+					switch currentItems[pointingAt-1] {
+					case "Feuille d'Yggdrasil":
+						myChar.RemoveRessource(char.WorldTreeLeaf)
+						myChar.UseSpecialItem()
+					case "Coeur de montagne":
+						myChar.RemoveRessource(char.MountainHeart)
+						myChar.UseSpecialItem()
+					case "Fragment du Graal":
+						myChar.RemoveRessource(char.GraalFragment)
+						myChar.UseSpecialItem()
+					}
+					term.Clear(term.ColorDefault, term.ColorDefault)
+					return
 				}
 
 			//Throw away the item!
@@ -542,6 +568,22 @@ func Inventory(myChar *char.Character, whichMenu int) {
 					for _, equipement := range char.AllEquipement {
 						if currentItems[pointingAt-1] == equipement.Name {
 							myChar.RemoveEquipement(equipement)
+
+							//Sneaky possibility to recycle equipment (you need to visit the Blacksmith often enough to find it ;))
+							if blacksmithFacility && equipement.Recipe != nil {
+								var recycledRessource char.Ressource
+								var quantity int
+								for ressource := range equipement.Recipe {
+									if recycledRessource.Price < ressource.Price {
+										recycledRessource = ressource
+										quantity = equipement.Recipe[ressource]
+									}
+								}
+								for i := 0; i < quantity; i++ {
+									myChar.AddRessource(recycledRessource)
+								}
+							}
+
 						}
 					}
 
@@ -556,6 +598,13 @@ func Inventory(myChar *char.Character, whichMenu int) {
 					for _, spellBook := range char.AllSpellBook {
 						if currentItems[pointingAt-1] == spellBook.Name {
 							myChar.RemoveSpellBook(spellBook)
+						}
+					}
+
+				case "Ressource":
+					for _, ressource := range char.AllRessources {
+						if currentItems[pointingAt-1] == ressource.Name {
+							myChar.RemoveRessource(ressource)
 						}
 					}
 				}
@@ -670,7 +719,7 @@ func Stroll(myChar *char.Character, nbMenu int) {
 				case term.KeySpace:
 					selectedOption = 0
 					term.Clear(term.ColorDefault, term.ColorDefault)
-					CharMenu(myChar)
+					CharMenu(myChar, nbMenu)
 					term.Clear(term.ColorDefault, term.ColorDefault)
 					displayStrollMenu(myChar, nbMenu)
 					displayStrollCursor(pointingAt, 0)
@@ -753,12 +802,12 @@ func Stroll(myChar *char.Character, nbMenu int) {
 
 			case 1:
 				merchantDeliveryTime()
-				Inventory(&char.Merchant, BUY_MERCHANT)
+				Inventory(&char.Merchant, BUY_MERCHANT, false)
 			case 2:
 				nbMenu = STROLL_MARKET
 			case 3:
 				merchantDeliveryTime()
-				Inventory(&MainChar, SELL_MERCHANT)
+				Inventory(&MainChar, SELL_MERCHANT, false)
 			}
 		}
 

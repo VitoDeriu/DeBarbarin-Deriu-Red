@@ -22,6 +22,7 @@ var MenuLateralBar,
 	CharMenuMainGrid,
 	CharInventoryGrid,
 	CharInventoryText,
+	CharInventoryTextBlacksmithFacility,
 	MerchantInventoryText,
 	SellMerchantInventoryText,
 	BlacksmithMenuText,
@@ -152,7 +153,7 @@ func CreateDisplayVariables() {
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│ ├────────┬───────────────────────┤"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┬───────────────┤ │"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("├─────────────────┴───────────────╯ ╰────────┴───────────────────────╯"))
-	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Stat ──┬─ MP ╮"))
+	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰────────────────╮╭───── Compétence ─────┬ Att ┬ Def ┬─ Type ──┬ MP ─╮"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("│├──────────────────────┼─────┼─────┼─────────┼─────┤"))
 	CharMenuMainGrid = append(CharMenuMainGrid, []rune("╰┴──────────────────────┴─────┴─────┴─────────┴─────╯"))
 
@@ -171,6 +172,15 @@ func CreateDisplayVariables() {
 	CharInventoryText = append(CharInventoryText, []rune("Jeter"))
 	CharInventoryText = append(CharInventoryText, []rune("Annuler"))
 	CharInventoryText = append(CharInventoryText, []rune("Description :"))
+
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("╳  Esc"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Nom"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Type"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Quantité"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Utiliser"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Recycler"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Annuler"))
+	CharInventoryTextBlacksmithFacility = append(CharInventoryTextBlacksmithFacility, []rune("Description :"))
 
 	MerchantInventoryText = append(MerchantInventoryText, []rune("╳  Esc"))
 	MerchantInventoryText = append(MerchantInventoryText, []rune("Nom"))
@@ -237,12 +247,22 @@ func CreateDisplayVariables() {
 	CombatGrid = append(CombatGrid, []rune("           │"))
 	CombatGrid = append(CombatGrid, []rune("Fuir       │"))
 
-	ByeDisplay = append(ByeDisplay, []rune("  ____                 _   _                  _ "))
-	ByeDisplay = append(ByeDisplay, []rune(" / ___| ___   ___   __| | | |__  _   _  ___  | |"))
-	ByeDisplay = append(ByeDisplay, []rune("| |  _ / _ \\ / _ \\ / _` | | '_ \\| | | |/ _ \\ | |"))
-	ByeDisplay = append(ByeDisplay, []rune("| |_| | (_) | (_) | (_| | | |_) | |_| |  __/ |_|"))
-	ByeDisplay = append(ByeDisplay, []rune(" \\____|\\___/ \\___/ \\__,_| |_.__/ \\__, |\\___| (_)"))
-	ByeDisplay = append(ByeDisplay, []rune("                                 |___/          "))
+	ByeDisplay = append(ByeDisplay, []rune(" .--..--..--..--..--..--..--..--..--..--..--..--..--..--..--. "))
+	ByeDisplay = append(ByeDisplay, []rune("/ .. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\"))
+	ByeDisplay = append(ByeDisplay, []rune("\\ \\/\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ \\/ /"))
+	ByeDisplay = append(ByeDisplay, []rune(" \\/ /`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'\\/ / "))
+	ByeDisplay = append(ByeDisplay, []rune(" / /\\                                                    / /\\ "))
+	ByeDisplay = append(ByeDisplay, []rune("/ /\\ \\   ____                 _   _                  _  / /\\ \\"))
+	ByeDisplay = append(ByeDisplay, []rune("\\ \\/ /  / ___| ___   ___   __| | | |__  _   _  ___  | | \\ \\/ /"))
+	ByeDisplay = append(ByeDisplay, []rune(" \\/ /  | |  _ / _ \\ / _ \\ / _` | | '_ \\| | | |/ _ \\ | |  \\/ / "))
+	ByeDisplay = append(ByeDisplay, []rune(" / /\\  | |_| | (_) | (_) | (_| | | |_) | |_| |  __/ |_|  / /\\ "))
+	ByeDisplay = append(ByeDisplay, []rune("/ /\\ \\  \\____|\\___/ \\___/ \\__,_| |_.__/ \\__, |\\___| (_) / /\\ \\"))
+	ByeDisplay = append(ByeDisplay, []rune("\\ \\/ /                                  |___/           \\ \\/ /"))
+	ByeDisplay = append(ByeDisplay, []rune(" \\/ /                                                    \\/ / "))
+	ByeDisplay = append(ByeDisplay, []rune(" / /\\.--..--..--..--..--..--..--..--..--..--..--..--..--./ /\\ "))
+	ByeDisplay = append(ByeDisplay, []rune("/ /\\ \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\.. \\/\\ \\"))
+	ByeDisplay = append(ByeDisplay, []rune("\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `'\\ `' /"))
+	ByeDisplay = append(ByeDisplay, []rune(" `--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--'`--' "))
 
 	BottomBar = []rune("  ₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪₪")
 
@@ -337,9 +357,9 @@ func loadingBar() {
 
 func Bye() {
 	for i := range ByeDisplay {
-		column := 8
+		column := 10
 		for _, char := range ByeDisplay[i] {
-			DisplayRune(column, i+6, char, CYAN)
+			DisplayRune(column, i+1, char, CYAN)
 			column += rwidth.RuneWidth(char)
 		}
 	}
@@ -689,8 +709,23 @@ func DisplayCharMenuCursor(option, previousOption int) {
 }
 
 func displayCharMenuStats(myChar *char.Character) {
+	myEquipment := make([]string, 5)
+	for _, equipment := range myChar.Equipement {
+		switch equipment.Slot {
+		case "head":
+			myEquipment[0] = equipment.Name
+		case "chest":
+			myEquipment[1] = equipment.Name
+		case "arms":
+			myEquipment[2] = equipment.Name
+		case "legs":
+			myEquipment[3] = equipment.Name
+		case "feet":
+			myEquipment[4] = equipment.Name
+		}
+	}
 	var column int
-	var columns = []int{9, 32, 20, 20, 20, 20, 31, 31, 31, 31, 53, 53, 53, 53, 53, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
+	var columns = []int{9, 32, 20, 20, 20, 20, 31, 31, 31, 31, 52, 52, 52, 52, 52, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71, 26, 49, 55, 61, 71}
 	var lines = []int{2, 2, 4, 5, 6, 7, 4, 5, 6, 7, 3, 4, 5, 6, 7, 11, 11, 11, 11, 11, 12, 12, 12, 12, 12, 13, 13, 13, 13, 13, 14, 14, 14, 14, 14, 15, 15, 15, 15, 15}
 	var stats []string
 	stats = append(stats, myChar.Name)
@@ -703,11 +738,11 @@ func displayCharMenuStats(myChar *char.Character) {
 	stats = append(stats, strconv.Itoa(myChar.Hp)+"/"+strconv.Itoa(myChar.HpMax))
 	stats = append(stats, strconv.Itoa(myChar.Mp)+"/"+strconv.Itoa(myChar.MpMax))
 	stats = append(stats, strconv.Itoa(myChar.Gold))
-	stats = append(stats, "rien")
-	stats = append(stats, "rien")
-	stats = append(stats, "rien")
-	stats = append(stats, "rien")
-	stats = append(stats, "rien")
+	stats = append(stats, myEquipment[0])
+	stats = append(stats, myEquipment[1])
+	stats = append(stats, myEquipment[2])
+	stats = append(stats, myEquipment[3])
+	stats = append(stats, myEquipment[4])
 	for _, skill := range myChar.Skills {
 		stats = append(stats, skill.Name)
 		stats = append(stats, strconv.Itoa(skill.Attack))
@@ -745,7 +780,7 @@ func displayCharInventoryGrid() {
 	}
 }
 
-func displayCharInventoryText(whichMenu int) {
+func displayCharInventoryText(whichMenu int, blacksmithFacility bool) {
 
 	var columns []int
 	var lines []int
@@ -754,7 +789,11 @@ func displayCharInventoryText(whichMenu int) {
 
 	switch whichMenu {
 	case CHAR_INVENTORY:
-		inventoryText = CharInventoryText
+		if blacksmithFacility {
+			inventoryText = CharInventoryTextBlacksmithFacility
+		} else {
+			inventoryText = CharInventoryText
+		}
 		columns = []int{6, 24, 49, 64, 12, 12, 12, 26}
 		lines = []int{1, 1, 1, 1, 14, 15, 16, 14}
 	case BUY_MERCHANT:
@@ -832,7 +871,7 @@ func displayInventoryItems(myChar *char.Character, whichMenu, currentPage int) (
 						DisplayText(49, line+index, strconv.Itoa(spellBook.Price), CYAN)
 					}
 				}
-			case "Equipement":
+			case "Équipement":
 				for _, equipement := range char.AllEquipement {
 					if item == equipement.Name {
 						DisplayText(49, line+index, strconv.Itoa(equipement.Price), CYAN)
@@ -852,10 +891,10 @@ func displayInventoryItems(myChar *char.Character, whichMenu, currentPage int) (
 	return currentItems, nbPages
 }
 
-func displayInventory(myChar char.Character, whichMenu, currentPage int) ([]string, int) {
+func displayInventory(myChar char.Character, whichMenu, currentPage int, blacksmithFacility bool) ([]string, int) {
 	DisplayBlankMenu(whichMenu)
 	displayCharInventoryGrid()
-	displayCharInventoryText(whichMenu)
+	displayCharInventoryText(whichMenu, blacksmithFacility)
 	return displayInventoryItems(&myChar, whichMenu, currentPage)
 }
 
@@ -881,26 +920,35 @@ func displayItemDescription(item string) {
 	case "Équipement":
 		for _, singleItem := range char.AllEquipement {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est un équipement.  " // Add Description field in the Equipment struct!!!
+				description = singleItem.Name + " est un équipement.     " // Add Description field in the Equipment struct!!!
 			}
 		}
 	case "Potion":
 		for _, singleItem := range char.AllPotion {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est une potion.       " // Add Description field in the Potion struct!!!
+				description = singleItem.Name + " est une potion.          " // Add Description field in the Potion struct!!!
 			}
 		}
 	case "Livre de sort":
 		for _, singleItem := range char.AllSpellBook {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est un livre de sort.  " // Add Description field in the SpellBook struct!!!
+				description = singleItem.Name + " est un livre de sort. " // Add Description field in the SpellBook struct!!!
 			}
 		}
 	case "Ressource":
 		for _, singleItem := range char.AllRessources {
 			if item == singleItem.Name {
-				description = singleItem.Name + " est une ressource.  " // Add Description field in the Ressource struct!!!
+				description = singleItem.Name + " est une ressource.      " // Add Description field in the Ressource struct!!!
 			}
+		}
+	case "Trésor":
+		switch item {
+		case char.WorldTreeLeaf.Name:
+			description = item + " est un trésor elfe. À utiliser.  "
+		case char.MountainHeart.Name:
+			description = item + " est un trésor nain. À utiliser.  "
+		case char.GraalFragment.Name:
+			description = item + " est un trésor humain. À utiliser.  "
 		}
 	default:
 		description = "Item inconnu"
@@ -948,6 +996,10 @@ func retreiveItemType(s string) string {
 		if s == name.Name {
 			return "Ressource"
 		}
+	}
+	switch s {
+	case char.WorldTreeLeaf.Name, char.MountainHeart.Name, char.GraalFragment.Name:
+		return "Trésor"
 	}
 	return "Inconnu" // Dommage, cet item n'est par répertorié dans les slices présentes dans la fonction... :´(
 }
