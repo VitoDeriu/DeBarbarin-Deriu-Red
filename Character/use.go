@@ -199,7 +199,7 @@ func (myChar *Character) UseSkill(skill Skill, enemy *Enemy, buffDefense int) (b
 	if skill.Kind == "Attaque" {
 		var damage int
 		myChar.Mp -= skill.MpCost
-		damage = enemy.Attack + skill.Attack
+		damage = myChar.Attack + skill.Attack
 		if enemy.Defense+buffDefense >= damage {
 			damage /= 2
 		} else {
