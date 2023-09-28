@@ -6,7 +6,7 @@ import "math/rand"
 
 var Merchant = Character{
 	Name:      "Marchand",
-	Inventory: map[string]int{GrandePotionDeSoin.Name: 10, PotionDeSoin.Name: 15, PotionDePoison.Name: 3, SpellBookFireBall.Name: 1, FourrureDeLoup.Name: 5, PeauDeTroll.Name: 5, CuirDeSanglier.Name: 5, PlumeDeCorbeau.Name: 5, TrainingSword.Name: 1, SpellBookSwordSlash.Name: 1, PotionDeMana.Name: 5, GrandePotionDeMana.Name: 1},
+	Inventory: map[string]int{EnhanceInventory.Name: 3, GrandePotionDeSoin.Name: 10, PotionDeSoin.Name: 15, PotionDePoison.Name: 3, SpellBookFireBall.Name: 1, FourrureDeLoup.Name: 5, PeauDeTroll.Name: 5, CuirDeSanglier.Name: 5, PlumeDeCorbeau.Name: 5, TrainingSword.Name: 1, SpellBookSwordSlash.Name: 1, PotionDeMana.Name: 5, GrandePotionDeMana.Name: 1},
 	Gold:      10000,
 }
 
@@ -82,17 +82,17 @@ func (merchant *Character) AddItems() {
 	i := rand.Intn(100)
 	j := rand.Intn(100)
 	switch {
-	case i < 25:
-		merchant.Inventory[AllEquipement[i%len(AllEquipement)].Name] = 3
-		merchant.Inventory[AllEquipement[j%len(AllEquipement)].Name] = 3
-	case i > 25 && i < 50:
-		merchant.Inventory[AllSpellBook[i%len(AllSpellBook)].Name] = 3
-		merchant.Inventory[AllSpellBook[j%len(AllSpellBook)].Name] = 3
-	case i > 50 && i < 75:
-		merchant.Inventory[AllPotion[i%len(AllPotion)].Name] = 3
-		merchant.Inventory[AllPotion[j%len(AllPotion)].Name] = 3
-	case i > 75:
-		merchant.Inventory[AllRessources[i%len(AllRessources)].Name] = 3
-		merchant.Inventory[AllRessources[j%len(AllRessources)].Name] = 3
+	case i <= 15:
+		merchant.Inventory[AllEquipement[i%len(AllEquipement)].Name] += 3
+		merchant.Inventory[AllEquipement[j%len(AllEquipement)].Name] += 3
+	case i > 15 && i <= 35:
+		merchant.Inventory[AllSpellBook[i%len(AllSpellBook)].Name] += 3
+		merchant.Inventory[AllSpellBook[j%len(AllSpellBook)].Name] += 3
+	case i > 35 && i < 80:
+		merchant.Inventory[AllPotion[i%len(AllPotion)].Name] += 3
+		merchant.Inventory[AllPotion[j%len(AllPotion)].Name] += 3
+	case i >= 80:
+		merchant.Inventory[AllRessources[i%len(AllRessources)].Name] += 3
+		merchant.Inventory[AllRessources[j%len(AllRessources)].Name] += 3
 	}
 }

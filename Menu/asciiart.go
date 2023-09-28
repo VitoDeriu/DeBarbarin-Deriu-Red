@@ -315,6 +315,7 @@ func LoadingScreen() {
 	fmt.Println()
 	fmt.Println("Chargement :")
 	loadingBar()
+	CreateDisplayVariables()
 	time.Sleep(time.Second * 1)
 }
 

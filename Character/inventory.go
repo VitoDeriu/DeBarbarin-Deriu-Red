@@ -55,10 +55,10 @@ func (char *Character) FullInventory() bool {
 
 // Augmentation de la taille de l'inventaire
 func (char *Character) UpgradeInventory() {
-	char.CheckGold(30)
+	char.CheckGold(EnhanceInventory.Price)
 	if InvMax < 40 {
 		InvMax += 10
-		char.Gold -= 30
+		char.Gold -= EnhanceInventory.Price
 	} else {
 		println("L'inventaire est déjà maxé")
 	}
@@ -74,7 +74,6 @@ func (char *Character) AddPotion(s Potion) {
 			}
 		}
 		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
 	}
 }
 
@@ -86,11 +85,9 @@ func (char *Character) RemovePotion(s Potion) {
 			if char.Inventory[key] <= 0 {
 				delete(char.Inventory, key)
 			}
-			fmt.Println("retrait de 1", s.Name, ".")
 			return
 		}
 	}
-	fmt.Println("Impossible de retirer un objet que tu ne possède pas")
 }
 
 // Add et Remove pour les SpellBooks
@@ -103,7 +100,6 @@ func (char *Character) AddSpellBook(s SpellBook) {
 			}
 		}
 		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
 	}
 }
 
@@ -114,7 +110,6 @@ func (char *Character) RemoveSpellBook(s SpellBook) {
 			if char.Inventory[key] <= 0 {
 				delete(char.Inventory, key)
 			}
-			fmt.Println("retrait de 1", s.Name, ".")
 			return
 		}
 	}
@@ -131,7 +126,6 @@ func (char *Character) AddEquipement(s Equipement) {
 			}
 		}
 		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
 	}
 }
 
@@ -142,7 +136,6 @@ func (char *Character) RemoveEquipement(s Equipement) {
 			if char.Inventory[key] <= 0 {
 				delete(char.Inventory, key)
 			}
-			fmt.Println("retrait de 1", s.Name, ".")
 			return
 		}
 	}
@@ -159,7 +152,6 @@ func (char *Character) AddRessource(s Ressource) {
 			}
 		}
 		char.Inventory[s.Name] = 1
-		fmt.Println("ajout de 1 ", s.Name, ".")
 	}
 }
 
@@ -170,7 +162,6 @@ func (char *Character) RemoveRessource(s Ressource) {
 			if char.Inventory[key] <= 0 {
 				delete(char.Inventory, key)
 			}
-			fmt.Println("retrait de 1", s.Name, ".")
 			return
 		}
 	}

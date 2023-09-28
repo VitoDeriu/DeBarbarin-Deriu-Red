@@ -1,10 +1,5 @@
 package character
 
-import (
-	"fmt"
-	"time"
-)
-
 var Elf = Race{
 	Name:        "Elfe",
 	HpMax:       80,
@@ -58,19 +53,6 @@ func CreateMainCharacter(name string, selectedRace int) Character {
 	return MainChar
 }
 
-// fonction de mort et respawn. a faire checker a chaque dégat pris
-func (char *Character) Dead() bool {
-	if char.Hp <= 0 {
-		fmt.Println("Vous avez succombé a vos blessures sale noob")
-		time.Sleep(1 * time.Second)
-		fmt.Println("Aller, go respawn !")
-		char.Hp = char.HpMax / 2
-		fmt.Println("HP : ", char.Hp)
-		return true
-	}
-	return false
-}
-
 func (char *Character) LevelUp() bool {
 	var hasLevelledUp bool
 	for char.Xp >= 80*char.Level {
@@ -86,13 +68,4 @@ func (char *Character) LevelUp() bool {
 		char.Mp = char.MpMax
 	}
 	return hasLevelledUp
-}
-
-func (myChar *Character) UseSpecialItem() {
-	myChar.Hp = myChar.HpMax
-	myChar.Mp = myChar.MpMax
-	myChar.Attack += 3
-	myChar.Defense += 3
-	myChar.Agility += 1
-	myChar.Xp += 10
 }

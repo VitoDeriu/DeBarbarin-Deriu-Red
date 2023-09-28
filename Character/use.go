@@ -1,13 +1,13 @@
 package character
 
 import (
-	"fmt"
+	"strconv"
 	"time"
 )
 
 // Fonction permettant d'utiliser n'importe quelle potion avec ses buffs et ses debuffs
-func (char *Character) TakePotion(p Potion) {
-
+func (char *Character) TakePotion(p Potion) string {
+	message := "Je n'ai pas cette potion!"
 	if char.Inventory[p.Name] != 0 {
 
 		//Vérification de chaque stat qui peut être boostée
@@ -15,8 +15,8 @@ func (char *Character) TakePotion(p Potion) {
 
 		case "Hp":
 			if char.Hp == char.HpMax {
-				fmt.Println("Je n'ai pas soif !")
-				return
+				message = "Je n'ai pas soif !"
+				return message
 			} else if char.HpMax-char.Hp < p.Buff {
 				char.Hp = char.HpMax
 			} else {
@@ -29,13 +29,12 @@ func (char *Character) TakePotion(p Potion) {
 					char.Hp += p.Buff
 				}
 			}
-			fmt.Println("+", p.Buff, " ", p.StatBuffed)
-			fmt.Println(char.Hp, "/", char.HpMax)
+			message = "Glou glou glou...   " + "+" + strconv.Itoa(p.Buff) + " " + p.StatBuffed
 
 		case "Mp":
 			if char.Mp == char.MpMax {
-				fmt.Println("Je n'ai pas soif !")
-				return
+				message = "Je n'ai pas soif !"
+				return message
 			} else if char.MpMax-char.Mp < p.Buff {
 				char.Mp = char.MpMax
 			} else {
@@ -48,8 +47,7 @@ func (char *Character) TakePotion(p Potion) {
 					char.Mp += p.Buff
 				}
 			}
-			fmt.Println("+", p.Buff, " ", p.StatBuffed)
-			fmt.Println(char.Mp, "/", char.MpMax)
+			message = "Glou glou glou...   " + "+" + strconv.Itoa(p.Buff) + " " + p.StatBuffed
 
 		case "Attack":
 			if p.EffectOnTime > 0 {
@@ -60,8 +58,7 @@ func (char *Character) TakePotion(p Potion) {
 			} else {
 				char.Attack += p.Buff
 			}
-			fmt.Println("+", p.Buff, " ", p.StatBuffed)
-			fmt.Println(char.Attack)
+			message = "Glou glou glou...   " + "+" + strconv.Itoa(p.Buff) + " " + p.StatBuffed
 
 		case "Defense":
 			if p.EffectOnTime > 0 {
@@ -72,8 +69,7 @@ func (char *Character) TakePotion(p Potion) {
 			} else {
 				char.Defense += p.Buff
 			}
-			fmt.Println("+", p.Buff, " ", p.StatBuffed)
-			fmt.Println(char.Defense)
+			message = "Glou glou glou...   " + "+" + strconv.Itoa(p.Buff) + " " + p.StatBuffed
 
 		case "Agility":
 			if p.EffectOnTime > 0 {
@@ -84,32 +80,27 @@ func (char *Character) TakePotion(p Potion) {
 			} else {
 				char.Agility += p.Buff
 			}
-			fmt.Println("+", p.Buff, " ", p.StatBuffed)
-			fmt.Println(char.Agility)
+			message = "Glou glou glou...   " + "+" + strconv.Itoa(p.Buff) + " " + p.StatBuffed
 		}
-
 		//Vérification de chaque stat qui peut être handicapée
 		switch p.StatDebuffed {
 
 		case "Hp":
 			if char.Hp <= p.Debuff {
 				char.Hp = 0
-				char.Dead()
+				char.IsDead(OrdinarySlime)
 			} else {
 				if p.EffectOnTime > 0 {
 					for i := 0; i < p.EffectOnTime; i++ {
 						char.Hp -= p.Debuff
-						char.Dead()
+						char.IsDead(OrdinarySlime)
 						time.Sleep(time.Second * 1)
 					}
 				} else {
 					char.Hp -= p.Debuff
 				}
 			}
-			fmt.Println("\"C'EST DEGUEU !! Argh !\" Vous perdez ", p.StatDebuffed, " ", p.Debuff, "...")
-			fmt.Println("-", p.Debuff, " ", p.StatDebuffed)
-			fmt.Println("Il vous reste ", char.Hp, "/", char.HpMax)
-			fmt.Println("Pas très malin tout ca...")
+			message = "Glou glou glou...   " + "-" + strconv.Itoa(p.Debuff) + " " + p.StatDebuffed
 
 		case "Mp":
 			if char.Mp <= p.Debuff {
@@ -127,8 +118,7 @@ func (char *Character) TakePotion(p Potion) {
 					char.Mp = 0
 				}
 			}
-			fmt.Println("-", p.Debuff, " ", p.StatDebuffed)
-			fmt.Println(char.Mp, "/", char.MpMax)
+			message = "Glou glou glou...   " + "-" + strconv.Itoa(p.Debuff) + " " + p.StatDebuffed
 
 		case "Attack":
 			if p.EffectOnTime > 0 {
@@ -142,8 +132,7 @@ func (char *Character) TakePotion(p Potion) {
 			if char.Attack < 0 {
 				char.Attack = 0
 			}
-			fmt.Println("-", p.Debuff, " ", p.StatDebuffed)
-			fmt.Println(char.Attack)
+			message = "Glou glou glou...   " + "-" + strconv.Itoa(p.Debuff) + " " + p.StatDebuffed
 
 		case "Defense":
 			if p.EffectOnTime > 0 {
@@ -157,8 +146,7 @@ func (char *Character) TakePotion(p Potion) {
 			if char.Defense < 0 {
 				char.Defense = 0
 			}
-			fmt.Println("-", p.Debuff, " ", p.StatDebuffed)
-			fmt.Println(char.Defense)
+			message = "Glou glou glou...   " + "-" + strconv.Itoa(p.Debuff) + " " + p.StatDebuffed
 
 		case "Agility":
 			if p.EffectOnTime > 0 {
@@ -172,11 +160,11 @@ func (char *Character) TakePotion(p Potion) {
 			if char.Agility < 0 {
 				char.Agility = 0
 			}
-			fmt.Println("-", p.Debuff, " ", p.StatDebuffed)
-			fmt.Println(char.Agility)
+			message = "Glou glou glou...   " + "-" + strconv.Itoa(p.Debuff) + " " + p.StatDebuffed
 		}
 		char.RemovePotion(p)
 	}
+	return message
 }
 
 func (char *Character) SpellBook(s SpellBook) {

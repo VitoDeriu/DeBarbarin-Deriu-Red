@@ -568,6 +568,10 @@ func displayInventoryItems(myChar *char.Character, whichMenu, currentPage int) (
 						DisplayText(49, line+index, strconv.Itoa(ressource.Price), CYAN)
 					}
 				}
+			default:
+				if item == char.EnhanceInventory.Name {
+					DisplayText(49, line+index, strconv.Itoa(char.EnhanceInventory.Price), CYAN)
+				}
 			}
 
 		}
@@ -639,6 +643,9 @@ func displayItemDescription(item string) {
 			description = item + " est un trésor humain. À utiliser.  "
 		}
 	default:
+		if item == char.EnhanceInventory.Name {
+			description = "Augmenter la capacité de l'inventaire.  "
+		}
 		description = "Item inconnu"
 	}
 

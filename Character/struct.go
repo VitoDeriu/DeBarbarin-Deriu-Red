@@ -90,3 +90,25 @@ type Ressource struct {
 	Name  string
 	Price int
 }
+
+func (myChar *Character) UseSpecialItem() {
+	myChar.Hp = myChar.HpMax
+	myChar.Mp = myChar.MpMax
+	myChar.Attack += 2
+	myChar.Defense += 2
+	myChar.Xp += 5
+}
+
+// fonction de mort et respawn. a faire checker a chaque dégat pris
+func (char *Character) IsDead(enemy Enemy) (bool, int) {
+	var xpLost int
+	if char.Hp <= 0 {
+		char.Hp = char.HpMax / 2
+		if enemy.Level-char.Level < 4 {
+			xpLost = enemy.Level * (enemy.HpMax / 4)
+			char.Xp -= xpLost
+		}
+		return true, xpLost
+	}
+	return false, xpLost
+}

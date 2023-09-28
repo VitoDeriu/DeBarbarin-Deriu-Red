@@ -100,6 +100,12 @@ var ElfBoots = Equipement{
 	Agility: 10,
 	Price:   30,
 }
+var SteelSword = Equipement{
+	Name:   "Épée en acier",
+	Slot:   "arms",
+	Attack: 25,
+	Price:  350,
+}
 
 var AllEquipement = []Equipement{
 	TrainingSword,
@@ -147,6 +153,10 @@ var PotionDePoison = Potion{
 	Debuff:       10,
 	EffectOnTime: 3,
 	Price:        6,
+}
+var EnhanceInventory = Potion{
+	Name:  "Inventaire ++",
+	Price: 150,
 }
 
 var AllPotion = []Potion{
@@ -210,7 +220,13 @@ var DwarfPunch = Skill{
 }
 var SlimeShot = Skill{
 	Name:   "Coup de Slime",
-	Attack: 2,
+	Attack: 25,
+	Kind:   "Attaque",
+	MpCost: 0,
+}
+var OrcPunch = Skill{
+	Name:   "Coup de poing orque",
+	Attack: 30,
 	Kind:   "Attaque",
 	MpCost: 0,
 }
@@ -235,4 +251,5 @@ var Skills = []Skill{
 	SlimeShot,
 	SwordSlash,
 	SwordGuard,
+	OrcPunch,
 }

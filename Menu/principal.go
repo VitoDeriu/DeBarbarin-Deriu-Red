@@ -19,10 +19,12 @@ var MainChar char.Character
 var GameStatus int
 var hourMerchantVisit, minutesMerchantVisit int
 
+// Constantes pour spécifier les couleurs d'affichage et constante indiquant la fréquence d'AddItems du marchand
 const (
-	CYAN  = 0
-	GREEN = 1
-	RED   = 2
+	CYAN              = 0
+	GREEN             = 1
+	RED               = 2
+	MERCHANT_INTERVAL = 2
 )
 
 func ClearTerminal() {
@@ -31,6 +33,13 @@ func ClearTerminal() {
 	cmd.Run()
 }
 
+// Run the game! It is the only function to call in "func main()" to play the game !
+func Run() {
+	LoadingScreen()
+	PrincipalMenu()
+}
+
+// Display the introduction message. WARNING: call it after the character creation menu because it takes the name's user into account.
 func PresentationCinematic(name string) {
 	ClearTerminal()
 	messageIntro(name)
@@ -112,6 +121,7 @@ func PrincipalMenu() {
 	case 2:
 		ClearTerminal()
 		LoadingScreen()
+		ClearTerminal()
 		PrincipalMenu()
 
 	case 3: // AFFICHER LE BONUS : Spielberg et ABBA ;)
@@ -298,7 +308,7 @@ func CharacterCreationMenu() {
 	minutesMerchantVisit = time.Now().Minute()
 
 	//Run the beginning of the game (like the cinematic introduction and then send to the first location)
-	// PresentationCinematic(MainChar.Name)
+	PresentationCinematic(MainChar.Name)
 	Stroll(&MainChar, GameStatus)
 }
 
@@ -525,7 +535,11 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 				case "Potion":
 					for _, potion := range char.AllPotion {
 						if currentItems[pointingAt-1] == potion.Name {
-							myChar.TakePotion(potion)
+							message := myChar.TakePotion(potion)
+							DisplayText(26, 14, "                                                   ", CYAN)
+							DisplayText(26, 15, "                                                   ", CYAN)
+							DisplayText(26, 16, "                                                   ", CYAN)
+							DisplayText(30, 15, message, GREEN)
 							time.Sleep(time.Second * 2)
 							ClearTerminal()
 							term.Clear(term.ColorDefault, term.ColorDefault)
@@ -586,6 +600,8 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 
 						}
 					}
+					selectedOption = 0
+					displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 
 				case "Potion":
 					for _, potion := range char.AllPotion {
@@ -633,8 +649,13 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 							}
 						}
 					}
+					selectedOption = 0
+					displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 
 				case "Potion":
+					if currentItems[pointingAt-1] == char.EnhanceInventory.Name {
+						myChar.UpgradeInventory()
+					}
 					for _, potion := range char.AllPotion {
 						if currentItems[pointingAt-1] == potion.Name {
 							if whichMenu == BUY_MERCHANT {
@@ -644,6 +665,8 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 							}
 						}
 					}
+					selectedOption = 0
+					displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 
 				case "Livre de sort":
 					for _, spellBook := range char.AllSpellBook {
@@ -655,6 +678,8 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 							}
 						}
 					}
+					selectedOption = 0
+					displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 
 				case "Ressource":
 					for _, ressource := range char.AllRessources {
@@ -667,6 +692,8 @@ func Inventory(myChar *char.Character, whichMenu int, blacksmithFacility bool) {
 						}
 					}
 				}
+				selectedOption = 0
+				displayCharInventoryActionCursor(0, actionPointingAt, whichMenu)
 
 			//return to item selection
 			case 2:
@@ -943,8 +970,24 @@ func BlacksmithMenu(myChar *char.Character) {
 }
 
 func Combat(myChar *char.Character, combatType int) {
+	var enemy char.Enemy
+	switch combatType {
+	case TRAINING:
+		if myChar.Level < len(char.Trainers) {
+			enemy = char.Trainers[myChar.Level-1]
+		} else {
+			enemy = char.Trainers[2]
+		}
 
-	enemy := char.Enemies[rand.Intn(len(char.Enemies))]
+	case TOURNAMENT:
+		enemy = char.EnemiesTournament[rand.Intn(len(char.EnemiesTournament))]
+
+	case STROLL_ARENA:
+		enemy = char.EnemiesArena[rand.Intn(len(char.EnemiesArena))]
+
+	case STROLL_MISSIONS:
+		enemy = char.EnemiesMission[rand.Intn(len(char.EnemiesMission))]
+	}
 	pointingAt := 1
 	selectedOption := 0
 	previousPointingAt := 1
@@ -963,11 +1006,21 @@ func Combat(myChar *char.Character, combatType int) {
 		turn = IATURN
 	}
 
+	term.Clear(term.ColorDefault, term.ColorDefault)
+	DisplayCombatMenu(myChar, &enemy, combatType)
+	displayCombatActionTypeCursor(pointingAt, 0)
+	time.Sleep(time.Second / 2)
 	for {
 		round++
+
 		if turn == IATURN {
 			IABuffDefense = IACombatTurn(myChar, &enemy, myCharBuffDefense, round%3 == rand.Intn(100)%3)
-			if myChar.Dead() {
+			if isDead, xpLost := myChar.IsDead(enemy); isDead {
+				DisplayText(7, 3, "Vous avez succombé à vos blessures!", RED)
+				if xpLost > 0 {
+					DisplayText(25, 5, "-"+strconv.Itoa(xpLost)+"XP", RED)
+				}
+				time.Sleep(time.Second * 1)
 				return
 			}
 			if myCharBuffDefense != 0 {
@@ -975,13 +1028,12 @@ func Combat(myChar *char.Character, combatType int) {
 			}
 			myCharBuffDefense = 0
 			turn = MYCHARTURN
+			term.Clear(term.ColorDefault, term.ColorDefault)
+			DisplayCombatMenu(myChar, &enemy, combatType)
+			displayCombatActionTypeCursor(pointingAt, 0)
+			time.Sleep(time.Second / 2)
 			continue
 		}
-
-		ClearTerminal()
-		term.Clear(term.ColorDefault, term.ColorDefault)
-		DisplayCombatMenu(myChar, &enemy, combatType)
-		displayCombatActionTypeCursor(pointingAt, 0)
 
 		switch pointingAt {
 		case 1:
@@ -1196,7 +1248,7 @@ func merchantDeliveryTime() {
 		hourDiff = 24 + hourDiff
 	}
 	currentMinutes += 60 * hourDiff
-	for i := (currentMinutes - minutesMerchantVisit) / 5; i > 0; i-- {
+	for i := (currentMinutes - minutesMerchantVisit) / MERCHANT_INTERVAL; i > 0; i-- {
 		char.Merchant.AddItems()
 	}
 	hourMerchantVisit = time.Now().Hour()
