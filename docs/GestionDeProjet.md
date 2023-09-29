@@ -11,3 +11,5 @@ Ensuite, après le premier "merge" nécessaire (qui ne nous a pas vraiment plu),
 Assez vite Antoine a essayé de préciser le projet dans son scénario, interface et gameplay, ce qui a dès le début compliqué le travail, car on allait directement commencer par travailler avec des structs pour chaque type de personnage ou objet et des fonctions les plus complètes et polyvalentes possible.
 
 Je joins dans ce dossier des captures d'écran de certains schémas d'organisation utilisés dans la conception du projet et qui nous a guidé dans sa production, notamment l'organigramme avec tous les menus et actions disponibles au joueur.
+
+Lien vers la RoadMap Trello : https://trello.com/b/GqHAW3km
