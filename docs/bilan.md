@@ -1,5 +1,6 @@
 # Réunion de bilan de fin de projet
 
+- On a beaucoup appris pendant le projet et on y a pris du plaisir
 - Nous ne nous avions pas vraiment divisé les tâches (en tout cas pas d'une manière très claire)
 - On n'a pas travaillé autant l'un que l'autre sur le projet
 - On a eu du mal à nous organiser et nous répartir les tâches parce que c'était la première fois sur un projet de ce genre (développement d'un jeu) et qu'on avait du mal à se rendre compte de ce que chaque tâche représentait véritablement en charge de travail. Notre visibilité n'était pas très bonne, on va dire.
